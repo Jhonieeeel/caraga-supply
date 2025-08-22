@@ -18,12 +18,24 @@
     </head>
     <body class="font-sans antialiased">
             <x-layout> 
+                <x-slot:header>
+                    <x-layout.header>
+                        <x-slot:right>
+                            <x-dropdown text="Hello, {{ auth()->user()->name }}!">
+                                <form method="POST">
+                                    @csrf
+                                    <x-dropdown.items text="Logout" onclick="event.preventDefault(); this.closest('form').submit();" />
+                                </form>
+                            </x-dropdown>
+                        </x-slot:right>
+                    </x-layout.header>
+                </x-slot:header>
                 <x-slot:menu>
                     <x-side-bar  smart navigate thin-scroll collapsible>
                         <x-slot:brand>
-                            <div class="flex flex-col items-center justify-center sm:pt-12">
+                            <div class="flex flex-col items-center justify-center sm:pt-12 pt-6">
                                 <img src="{{ asset('ocd-avatar.png') }}" alt="Avatar" class="w-15 rounded-full" />
-                                <span class="xxs:hidden">
+                                <span class="w-[88px]:hidden">
                                     <x-side-bar.separator text="Office of Civil Defense" line-right/> 
                                 </span>
                             </div>
