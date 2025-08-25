@@ -2,11 +2,97 @@
 
 namespace App\Livewire\Pages\Afms;
 
+use App\Actions\Stock\CreateStockAction;
+use App\Actions\Stock\EditStockAction;
+use App\Livewire\Forms\StockForm;
+use App\Models\Stock;
+use App\Models\Supply;
+use Illuminate\Contracts\Database\Query\Builder;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class StockTable extends Component
 {
+
+    use WithPagination;
+
+    public $quantity = 5;
+    public $search = '';
+
+    public array $headers = [];
+
+    // form
+    public StockForm $stockForm;
+    public Stock $stock;
+
+
+    public function mount() {
+        $this->headers = [
+            ['index' => 'barcode', 'label' => 'Barcode'],
+            ['index' => 'supply.name', 'label' => 'Supply'],
+            ['index' => 'stock_number', 'label' => 'Stock No.'],
+            ['index' => 'quantity', 'label' => 'Quantity'],
+            ['index' => 'price', 'label' => 'Price'],
+            ['index' => 'action'],
+        ];
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    #[Computed()]
+    public function rows()
+    {
+        return Stock::query()
+            ->with('supply:id,name')
+            ->where('quantity','>=', 1)
+            ->when($this->search, function($query) {
+                $query->whereHas('supply', function(Builder $supplyQuery) {
+                    return $supplyQuery->where('name', 'like', "{$this->search}%");
+                });
+            })
+            ->paginate($this->quantity)
+            ->withQueryString();
+    }
+
+   #[Computed()]
+    public function getSupplies()
+    {
+        return Supply::all(['id', 'name'])
+            ->map(fn($supply) => [
+                'label' => $supply->name,
+                'value' => $supply->id,
+            ]);
+    }
+    // crud
+    // create
+    public function create(CreateStockAction $create_stock_action) {
+        $this->stockForm->create($create_stock_action);
+        $this->dispatch('modal:add-close');
+    }
+    // edit and update
+    public function edit(Stock $stock) {
+        $this->stock = $stock;
+        $this->stockForm->fillForm($stock);
+        $this->dispatch('modal:edit-stock-open');
+    }
+
+    public function update(EditStockAction $edit_stock_action) {
+        $this->stockForm->update($this->stock, $edit_stock_action);
+        $this->dispatch('modal:edit-stock-close');
+        $this->resetPage();
+    }
+
+    // delete
+    public function delete($id){
+        Stock::findOrFail($id)->delete();
+        $this->resetPage();
+    }
+
     #[Layout('layouts.app')]
     public function render()
     {
