@@ -17,8 +17,8 @@
                 @endif
                 <x-table :$headers :rows='$this->rows' :filter="['quantity' => 'quantity', 'search' => 'search']" :quantity="[2, 5, 10]" paginate loading>
                     @interact('column_action', $supply)
-                        <x-button color="red" icon="trash" wire:click="delete('{{ $supply->id }}')" />
-                        <x-button color="teal" icon="pencil-square" wire:click='edit({{ $supply }})' />
+                        <x-button.circle color="red" icon="trash" wire:click="delete('{{ $supply->id }}')" />
+                        <x-button.circle color="teal" icon="pencil-square" wire:click='edit({{ $supply }})' />
                     @endinteract
                 </x-table>
             </div>

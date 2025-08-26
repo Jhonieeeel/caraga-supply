@@ -2,33 +2,28 @@
 
 namespace App\Livewire\Forms;
 
-use App\Models\RequisitionItem;
-use Livewire\Attributes\Rule;
+use App\Actions\RequisitionItem\CreateItemAction;
+use App\Models\Requisition;
 use Livewire\Form;
 
 class ItemForm extends Form
 {
-    #[Rule(['required', 'exists:stocks,id'])]
-    public $stock_id;
 
-    #[Rule(['required', 'exists:requisitions,id'])]
-    public $requisition_id;
+    public array $selectedStockIds = [];
+    public array $requestedItems = [];
 
-    #[Rule(['required', 'min:1'])]
-    public $requested_qty;
-
-    public function fillForm(RequisitionItem $item): void {
-        $this->stock_id = $item->stock_id;
-        $this->requisition_id = $item->requisition_id;
-        $this->requested_qty = $item->requested_qty;
-    }
-
-    public function toArray(): array {
+    public function rules(): array
+    {
         return [
-            'stock_id' => $this->stock_id,
-            'requisition_id' => $this->requisition_id,
-            'requested_qty' => $this->requested_qty
+            'selectedStockIds' => ['required', 'array'],
+            'selectedStockIds.*' => ['integer', 'exists:stocks,id'],
         ];
     }
 
+    public function create(CreateItemAction $create_item_action, Requisition $requisition)
+    {
+        $create_item_action->handle($requisition, $this->requestedItems);
+        $this->reset();
+        return;
+    }
 }

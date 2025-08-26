@@ -10,9 +10,12 @@ use App\Models\Supply;
 use Illuminate\Contracts\Database\Query\Builder;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Lazy;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+
+#[Lazy()]
 class StockTable extends Component
 {
 
@@ -28,7 +31,8 @@ class StockTable extends Component
     public Stock $stock;
 
 
-    public function mount() {
+    public function mount()
+    {
         $this->headers = [
             ['index' => 'barcode', 'label' => 'Barcode'],
             ['index' => 'supply.name', 'label' => 'Supply'],
@@ -49,9 +53,9 @@ class StockTable extends Component
     {
         return Stock::query()
             ->with('supply:id,name')
-            ->where('quantity','>=', 1)
-            ->when($this->search, function($query) {
-                $query->whereHas('supply', function(Builder $supplyQuery) {
+            ->where('quantity', '>=', 1)
+            ->when($this->search, function ($query) {
+                $query->whereHas('supply', function (Builder $supplyQuery) {
                     return $supplyQuery->where('name', 'like', "{$this->search}%");
                 });
             })
@@ -59,7 +63,7 @@ class StockTable extends Component
             ->withQueryString();
     }
 
-   #[Computed()]
+    #[Computed()]
     public function getSupplies()
     {
         return Supply::all(['id', 'name'])
@@ -70,25 +74,29 @@ class StockTable extends Component
     }
     // crud
     // create
-    public function create(CreateStockAction $create_stock_action) {
+    public function create(CreateStockAction $create_stock_action)
+    {
         $this->stockForm->create($create_stock_action);
         $this->dispatch('modal:add-close');
     }
+
     // edit and update
-    public function edit(Stock $stock) {
+    public function edit(Stock $stock)
+    {
         $this->stock = $stock;
         $this->stockForm->fillForm($stock);
         $this->dispatch('modal:edit-stock-open');
     }
-
-    public function update(EditStockAction $edit_stock_action) {
+    public function update(EditStockAction $edit_stock_action)
+    {
         $this->stockForm->update($this->stock, $edit_stock_action);
         $this->dispatch('modal:edit-stock-close');
         $this->resetPage();
     }
 
     // delete
-    public function delete($id){
+    public function delete($id)
+    {
         Stock::findOrFail($id)->delete();
         $this->resetPage();
     }

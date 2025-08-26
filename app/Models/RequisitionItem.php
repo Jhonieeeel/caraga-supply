@@ -12,6 +12,11 @@ class RequisitionItem extends Model
         'requested_qty'
     ];
 
+    public function stock()
+    {
+        return $this->belongsTo(Stock::class);
+    }
+
     public function requisition()
     {
         return $this->belongsTo(Requisition::class);

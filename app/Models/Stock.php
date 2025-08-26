@@ -21,4 +21,9 @@ class Stock extends Model
     {
         return $this->belongsTo(Supply::class);
     }
+
+    public function items()
+    {
+        return $this->belongsTo(RequisitionItem::class);
+    }
 }

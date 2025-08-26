@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Actions\Requisition\CreateRequestAction;
+use App\Actions\Requisition\UpdateRequestAction;
 use App\Models\Requisition;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Rule;
@@ -10,11 +11,8 @@ use Livewire\Form;
 
 class RequisitionForm extends Form
 {
-    #[Rule(['required', 'nullable'])]
+    #[Rule(['nullable', 'min:6'])]
     public $ris;
-
-    #[Rule(['required', 'exists:users,id'])]
-    public $user_id;
 
     #[Rule(['nullable', 'exists:users,id'])]
     public $requested_by;
@@ -28,11 +26,31 @@ class RequisitionForm extends Form
     #[Rule(['nullable', 'exists:users,id'])]
     public $received_by;
 
-    public function create(CreateRequestAction $create_request_action) {
-        return $create_request_action->handle($this->toArray());
+    public function create(CreateRequestAction $create_request_action)
+    {
+        $this->validate();
+        $requisition = Requisition::where('user_id', Auth::id())->where('completed', false)->first();
+        if (!$requisition) {
+            return $create_request_action->handle($this->toArray());
+        }
+
+        return $requisition;
     }
 
-    public function toArray(): array {
+    public function update(Requisition $requisition, UpdateRequestAction $edit_request_action)
+    {
+        $this->validate([
+            'ris' => ['required'],
+            'requested_by' => ['required', 'exists:users,id'],
+            'issued_by' => ['required', 'exists:users,id'],
+            'approved_by' => ['required', 'exists:users,id'],
+            'received_by' => ['required', 'exists:users,id'],
+        ]);
+        return $edit_request_action->handle($requisition, $this->toArray());
+    }
+
+    public function toArray(): array
+    {
         return [
             'ris' => $this->ris,
             'user_id' => Auth::id(),
@@ -43,9 +61,9 @@ class RequisitionForm extends Form
         ];
     }
 
-    public function fillForm(Requisition $requisition): void {
+    public function fillForm(Requisition $requisition): void
+    {
         $this->ris = $requisition->ris;
-        $this->user_id = $requisition->user_id;
         $this->requested_by = $requisition->requested_by;
         $this->approved_by = $requisition->approved_by;
         $this->issued_by = $requisition->issued_by;
