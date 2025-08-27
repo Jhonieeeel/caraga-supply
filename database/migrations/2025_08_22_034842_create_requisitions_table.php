@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->foreignId('issued_by')->nullable()->constrained('users');
             $table->foreignId('received_by')->nullable()->constrained('users');
+            $table->text('purpose')->nullable();
             $table->boolean('completed')->default(false);
             $table->string('pdf')->nullable();
             $table->timestamps();

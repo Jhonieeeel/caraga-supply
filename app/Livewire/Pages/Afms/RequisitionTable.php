@@ -5,42 +5,51 @@ namespace App\Livewire\Pages\Afms;
 use App\Actions\Requisition\CreateRequestAction;
 use App\Actions\Requisition\UpdateRequestAction;
 use App\Actions\RequisitionItem\CreateItemAction;
+use App\Actions\RequisitionItem\UpdateItemAction;
 use App\Livewire\Forms\ItemForm;
 use App\Livewire\Forms\RequisitionForm;
 use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\Stock;
 use App\Models\User;
+use App\Services\Afms\ConvertRisService;
+use App\Services\Afms\GenerateRisService;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class RequisitionTable extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     // for modal table
     public $headers = [];
     public $search = '';
     public $quantity = 5;
 
-
-
     // for request headers
     public $requestHeaders = [];
     public $requestSearch = '';
+
 
     // Tab
     public $tab = 'Requests List';
     public $step = 1;
 
     public ?Requisition $requisition;
+    public ?RequisitionItem $requisitionItem;
 
     // form
     public RequisitionForm $requestForm;
     public ItemForm $itemForm;
+
+    public $temporaryFile;
 
     public function mount()
     {
@@ -56,6 +65,62 @@ class RequisitionTable extends Component
             ['index' => 'items_count', 'label' => 'Total Requested Items'],
             ['index' => 'action']
         ];
+    }
+
+
+    // RSMI
+    public function getRSMI()
+    {
+        $rsmi = Requisition::where('completed', true)->where('created_at', Carbon::now()->month)->where('created_at', Carbon::now()->year)->get();
+    }
+
+    public function editRequestItem(RequisitionItem $item)
+    {
+        $this->requisitionItem = $item;
+        $this->itemForm->fillForm($this->requisitionItem);
+        $this->dispatch('modal:edit-item-open');
+    }
+
+    public function updateRequestItem(UpdateItemAction $update_item_action)
+    {
+        $this->itemForm->update($update_item_action, $this->item);
+    }
+
+    // RIS
+    public function updateRIS(UpdateRequestAction $edit_request_action)
+    {
+        $this->requestForm->temporaryFile = $this->temporaryFile;
+
+        $requisition = $this->requestForm->update($this->requisition, $edit_request_action);
+
+        if (!$requisition) {
+            return session()->flash('message', [
+                'text' => 'Requisition Update Failed.',
+                'color' => 'red',
+                'title' => 'Error'
+            ]);
+        }
+
+        $this->requestForm->fillForm($requisition);
+
+        return session()->flash('message', [
+            'text' => 'Requisition Updated Successfully.',
+            'color' => 'teal',
+            'title' => 'Success'
+        ]);
+    }
+
+    // generate ris
+    public function getRIS(GenerateRisService $generate_ris_service, ConvertRisService $convert_ris_service)
+    {
+        $requisitionDocx = $generate_ris_service->handle($this->requisition);
+        $convert_ris_service->handle($requisitionDocx, $this->requisition);
+
+        return session()->flash('message', [
+            'text' => 'Requisition Generated successfully.',
+            'color' => 'teal',
+            'title' => 'Requisition and Issuance Slip'
+        ]);
     }
 
     public function deleteRequisition($requisitionId)
@@ -101,6 +166,7 @@ class RequisitionTable extends Component
             ->withQueryString();
     }
 
+    #[On('refresh')]
     #[Computed()]
     public function requestRows()
     {
@@ -128,8 +194,7 @@ class RequisitionTable extends Component
 
     public function update(UpdateRequestAction $update_request_action)
     {
-        $data = $this->requestForm->update($this->requisition, $update_request_action);
-        dd($data);
+        $this->requestForm->update($this->requisition, $update_request_action);
     }
 
     public function generateRIS()

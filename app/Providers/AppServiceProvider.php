@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 
 // tallstackui
@@ -38,5 +39,13 @@ class AppServiceProvider extends ServiceProvider
             ->block('item.state.normal', 'text-primary-700 hover:bg-primary-200 dark:hover:bg-dark-600 dark:text-white');
 
         Model::automaticallyEagerLoadRelationships();
+
+        $storage = Storage::disk('local');
+        foreach ($storage->allFiles('livewire-tmp') as $file) {
+            $yesterday = now()->subDay()->timestamp;
+            if ($yesterday > $storage->lastModified($file)) {
+                $storage->delete($file);
+            }
+        }
     }
 }
