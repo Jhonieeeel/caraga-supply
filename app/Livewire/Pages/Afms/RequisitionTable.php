@@ -84,12 +84,13 @@ class RequisitionTable extends Component
     #[Computed()]
     public function getSupplies()
     {
-        return RequisitionItem::with(['stock.supply', 'requisition'])
+        return RequisitionItem::with('requisition')
             ->whereHas('requisition', function ($query) {
-                $query->where('completed', true);
+                $query->whereCompleted('true');
             })
+            ->distinct('stock_id')
             ->get()
-            ->filter(fn($item) => $item->stock && $item->stock->supply)
+            ->load('stock.supply')
             ->map(fn($item) => [
                 'label' => $item->stock->supply->name,
                 'value' => $item->stock_id,
@@ -99,16 +100,18 @@ class RequisitionTable extends Component
 
     public function createRsmi()
     {
-        $date = Carbon::parse($this->rsmiDate);
+
+        $end = Carbon::parse($this->rsmiDate[1])->addDay();
 
         $this->rsmi = Requisition::with('items.stock')
             ->where('completed', true)
-            ->whereMonth('created_at', $date->month)
-            ->whereYear('created_at', $date->year)
+            ->whereBetween('created_at', [$this->rsmiDate[0], $end])
             ->whereHas('items', function ($query) {
                 $query->where('stock_id', $this->rsmiSearch);
             })
             ->get();
+
+        dd($this->rsmi);
 
         return $this->rsmi;
     }
@@ -117,13 +120,13 @@ class RequisitionTable extends Component
     #[Computed()]
     public function getRSMI()
     {
-        return Requisition::with('items')
-            ->where('completed', true)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year)
-            ->whereHas('items', function ($query) {
-                $query->where('stock_id', 1);
-            })->get();
+        return RequisitionItem::with('requisition')
+            ->whereHas('requisition', function ($query) {
+                $query->whereCompleted('true');
+            })
+            ->distinct('stock_id')
+            ->get()
+            ->load('stock');
     }
 
     public function editRequestItem(RequisitionItem $item)
@@ -149,10 +152,7 @@ class RequisitionTable extends Component
     public function updateRIS(UpdateRequestAction $edit_request_action)
     {
         $this->requestForm->temporaryFile = $this->temporaryFile;
-        $requisition = $this->requestForm->update($this->requisition, $edit_request_action);
-
-        $this->requisition = $requisition;
-        dd($this->requisition, $this->requestForm, $this->itemForm);
+        $this->requisition = $this->requestForm->update($this->requisition, $edit_request_action);
 
         session()->flash('message', [
             'text' => 'Requisition Updated Successfully.',
@@ -160,7 +160,7 @@ class RequisitionTable extends Component
             'title' => 'Success'
         ]);
 
-        return;
+        return redirect(route('requisition.index'));
     }
 
     // generate ris

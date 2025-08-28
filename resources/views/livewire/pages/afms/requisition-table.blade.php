@@ -275,7 +275,7 @@
                             <form wire:submit.prevent="createRsmi"
                                 class="sm:pb-4 sm:pt-6 grid sm:grid-cols-3 sm:gap-4 gap-3">
                                 <div class="sm:col-span-2">
-                                    <x-date helpers wire:model="rsmiDate" label="Date"
+                                    <x-date range helpers wire:model="rsmiDate/" label="Date"
                                         hint="Select your Date of Report" format="DD [of] MMMM [of] YYYY" />
                                 </div>
                                 <div class="sm:col-span-2">
