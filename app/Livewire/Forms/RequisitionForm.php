@@ -38,9 +38,11 @@ class RequisitionForm extends Form
     public function create(CreateRequestAction $create_request_action)
     {
         $this->validate();
+
         $requisition = Requisition::where('user_id', Auth::id())->where('completed', false)->first();
+
         if (!$requisition) {
-            return $create_request_action->handle($this->toArray());
+            return $create_request_action->handle($this->newArray());
         }
 
         return $requisition;
@@ -82,7 +84,21 @@ class RequisitionForm extends Form
             'issued_by' => $this->issued_by,
             'received_by' => $this->received_by,
             'pdf' => $uploadedPdf,
-            'completed' => $this->completed
+            'completed' => $this->completed ?? false
+        ];
+    }
+
+    public function newArray(): array
+    {
+        return [
+            'ris' => null,
+            'user_id' => Auth::id(),
+            'requested_by' => Auth::id(),
+            'approved_by' => null,
+            'issued_by' => null,
+            'received_by' => null,
+            'pdf' => null,
+            'completed' => false
         ];
     }
 
@@ -93,5 +109,6 @@ class RequisitionForm extends Form
         $this->approved_by = $requisition->approved_by;
         $this->issued_by = $requisition->issued_by;
         $this->received_by = $requisition->received_by;
+        $this->completed = $requisition->completed;
     }
 }

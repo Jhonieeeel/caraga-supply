@@ -14,16 +14,17 @@ class CreateItemAction
         DB::transaction(function () use ($requisition, $data) {
             foreach ($data as $stock_id => $qty) {
                 $items = $requisition->items()->where('stock_id', $stock_id)->first();
-
-                RequisitionItem::updateOrCreate(
-                    [
-                        'stock_id' => $stock_id,
-                        'requisition_id' => $requisition->id,
-                    ],
-                    [
-                        'requested_qty' => $items ? $items->requested_qty + (int) $qty : (int) $qty,
-                    ]
-                );
+                if ($qty != 0) {
+                    RequisitionItem::updateOrCreate(
+                        [
+                            'stock_id' => $stock_id,
+                            'requisition_id' => $requisition->id,
+                        ],
+                        [
+                            'requested_qty' => $items ? $items->requested_qty + (int) $qty : (int) $qty,
+                        ]
+                    );
+                }
             }
         });
 

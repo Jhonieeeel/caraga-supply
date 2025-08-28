@@ -25,17 +25,9 @@ class ItemForm extends Form
     public array $selectedStockIds = [];
     public array $requestedItems = [];
 
-    public function rules(): array
-    {
-        return [
-            'selectedStockIds' => ['required', 'array'],
-            'selectedStockIds.*' => ['integer', 'exists:stocks,id'],
-        ];
-    }
-
     public function update(UpdateItemAction $update_item_action, RequisitionItem $item)
     {
-        $this->validate($update_item_action, $item);
+        $this->validate();
         $update_item_action->handle($item, $this->toArray());
     }
 
@@ -69,6 +61,7 @@ class ItemForm extends Form
 
     public function create(CreateItemAction $create_item_action, Requisition $requisition)
     {
+        $this->validate();
         $create_item_action->handle($requisition, $this->requestedItems);
         $this->reset();
         return;

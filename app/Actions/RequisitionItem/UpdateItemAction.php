@@ -9,6 +9,7 @@ class UpdateItemAction
     public function handle(RequisitionItem $item, array $data): RequisitionItem
     {
         $item->update($data);
+
         return $item;
     }
 }

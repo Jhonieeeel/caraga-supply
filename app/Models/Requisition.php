@@ -13,6 +13,7 @@ class Requisition extends Model
         'approved_by',
         'issued_by',
         'received_by',
+        'completed',
         'pdf'
     ];
 

@@ -21,24 +21,29 @@ class SupplyForm extends Form
     public $unit;
 
 
-    public function create(CreateSupplyAction $create_supply_action){
+    public function create(CreateSupplyAction $create_supply_action)
+    {
         $this->validate();
         $create_supply_action->handle($this->toArray());
+        $this->reset();
     }
 
-    public function update(Supply $supply, EditSupplyAction $edit_supply_action) {
+    public function update(Supply $supply, EditSupplyAction $edit_supply_action)
+    {
         $this->validate();
         $edit_supply_action->handle($supply, $this->toArray());
         $this->reset();
     }
 
-    public function fillForm(Supply $supply): void {
+    public function fillForm(Supply $supply): void
+    {
         $this->name = $supply->name;
         $this->category = $supply->category;
         $this->unit = $supply->unit;
     }
 
-    public function toArray(): array {
+    public function toArray(): array
+    {
         return [
             'name' => $this->name,
             'category' => $this->category,

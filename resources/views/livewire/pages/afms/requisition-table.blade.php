@@ -22,6 +22,13 @@
                         </x-slot:right>
                         <div>
                             <x-table :headers="$this->requestHeaders" :rows="$this->requestRows" filter :quantity="[3, 5, 10]" loading paginate>
+                                @interact('column_completed', $requisition)
+                                    @if ($requisition->completed)
+                                        <x-badge text="Completed" color="green" outline />
+                                    @else
+                                        <x-badge text="Pending" color="red" outline />
+                                    @endif
+                                @endinteract
                                 @interact('column_action', $requisition)
                                     <x-button.circle color="teal" icon="magnifying-glass"
                                         wire:click="viewRequisition({{ $requisition }})" />
@@ -149,8 +156,9 @@
                                                                             <x-button.circle
                                                                                 wire:click="editRequestItem({{ $item }})"
                                                                                 icon="pencil" color="teal" />
-                                                                            <x-button.circle icon="trash"
-                                                                                color="red" />
+                                                                            <x-button.circle
+                                                                                wire:click="deleteRequisitionItem({{ $item->id }})"
+                                                                                icon="trash" color="red" />
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -169,8 +177,7 @@
                             @endif
                         </div>
                     </x-tab.items>
-                    <x-tab.items tab="RIS"
-                        wire:click="$set('step', {{ $requisition && $requisition->pdf ? 2 : 1 }})">
+                    <x-tab.items tab="RIS">
                         <x-slot:right>
                             <x-icon name="document" class="w-5 h-5" />
                         </x-slot:right>
@@ -183,30 +190,28 @@
                                     $requisition->received_by;
                             @endphp
                             <div>
-                                <x-step wire:model="step" panels navigate-previous>
-                                    <x-step.items step="1"
-                                        title="{{ $isApproved ? 'Approved' : 'Pending Approval' }}"
-                                        description="{{ $isApproved ? 'Request Approved by the Admin' : 'Awaiting Admin Approval' }}"
-                                        :completed="$isApproved">
+                                <x-step wire:model="step" panels>
+                                    <x-step.items step="1" title="Admin Approval"
+                                        description="Your request has been processed">
                                         <small
                                             class="text-sm py-6 text-center">{{ $isApproved
-                                                ? 'You may now proceed to generate the RIS.'
+                                                ? "Generate the RIS and proceed to 'Next' "
                                                 : 'Please wait while the requisition is being approved by all parties.' }}</small>
                                         <div class="sm:py-3">
                                             @if ($isApproved)
-                                                <x-button wire:click="getRIS" text="Generate RIS" icon="document"
-                                                    position="right" color="teal" outline />
+                                                <x-button wire:click="getRIS" loading wire:target="getRIS"
+                                                    text="Generate RIS" icon="document" position="right"
+                                                    color="teal" outline />
                                             @endif
                                         </div>
                                         <div class="flex justify-end w-full">
-
                                             <x-button wire:click="$set('step', 2), getRIS" :disabled="!$requisition?->pdf">
                                                 Next
                                             </x-button>
                                         </div>
                                     </x-step.items>
                                     <x-step.items step="2" title="RIS Ready to Print"
-                                        description="Proceed to download or print the RIS.">
+                                        description="Proceed to print the RIS.">
                                         <small class="text-sm py-6 text-center">You can now print the generated
                                             RIS.</small>
                                         <div class="sm:py-3 py-2">
@@ -256,7 +261,86 @@
                             <x-icon name="cog-6-tooth" class="w-5 h-5" />
                         </x-slot:right>
                         <div>
-                            <small class="text-sm text-gray-600">RSMI Here</small>
+                            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                                Report of Supplies and Materials Issued
+                            </h2>
+                            <div class="bg-teal-100 p-3 rounded sm:my-3">
+                                <p class="text-sm text-teal-800">
+                                    <span class="font-semibold text-teal-600 pr-1" aria-hidden="true">Note:</span>
+                                    Supplies listed below are from <span class="font-semibold">completed</span>
+                                    requisitions only.
+                                </p>
+                            </div>
+
+                            <form wire:submit.prevent="createRsmi"
+                                class="sm:pb-4 sm:pt-6 grid sm:grid-cols-3 sm:gap-4 gap-3">
+                                <div class="sm:col-span-2">
+                                    <x-date helpers wire:model="rsmiDate" label="Date"
+                                        hint="Select your Date of Report" format="DD [of] MMMM [of] YYYY" />
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <x-select.styled wire:model.live.debounce.300ms="rsmiSearch" label="Supply name"
+                                        hint="Select Supply name" :options="$this->getSupplies" searchable />
+                                </div>
+                                <div class="col-span-2">
+                                    <x-button text="Submit" submit />
+                                </div>
+                            </form>
+                            @if ($rsmi)
+                                <div class="-m-1.5 overflow-x-auto">
+                                    <div class="p-1.5 min-w-full inline-block align-middle">
+                                        <div class="overflow-hidden">
+                                            <table class="min-w-full divide-y divide-gray-200">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col"
+                                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                            RIS</th>
+                                                        <th scope="col"
+                                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                            Stock No.</th>
+                                                        <th scope="col"
+                                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                            Supply Name</th>
+                                                        <th scope="col"
+                                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                            Unit</th>
+                                                        <th scope="col"
+                                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                            Requested Qty</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-gray-200">
+                                                    @foreach ($rsmi as $requisition)
+                                                        <tr>
+                                                            <td
+                                                                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                                                {{ $requisition->ris }}
+                                                            </td>
+                                                            <td
+                                                                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                                                {{ $requisition->items->first()->stock->stock_number }}
+                                                            </td>
+                                                            <td
+                                                                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                                                {{ $requisition->items->first()->stock->supply->name }}
+                                                            </td>
+                                                            <td
+                                                                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                                                {{ $requisition->items->first()->stock->supply->unit }}
+                                                            </td>
+                                                            <td
+                                                                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                                                {{ $requisition->items->first()->requested_qty }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </x-tab.items>
                 </x-tab>

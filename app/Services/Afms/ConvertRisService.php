@@ -36,9 +36,6 @@ class ConvertRisService
         $requisition->pdf = 'ris/' . $pdfFileName;
         $requisition->save();
 
-        return [
-            'pdf_path' => $requisition->pdf,
-            'file_name' => $pdfFileName,
-        ];
+        return $requisition;
     }
 }

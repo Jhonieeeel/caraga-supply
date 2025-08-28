@@ -50,7 +50,9 @@
                     :href="route('requisition.index')" />
             </x-side-bar>
         </x-slot:menu>
-        {{ $slot }}
+        <div class="min-h-screen">
+            {{ $slot }}
+        </div>
     </x-layout>
     @livewireScripts
 </body>
