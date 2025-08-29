@@ -14,6 +14,7 @@ class Stock extends Model
         'barcode',
         'stock_number',
         'quantity',
+        'initial_quantity',
         'price',
     ];
 

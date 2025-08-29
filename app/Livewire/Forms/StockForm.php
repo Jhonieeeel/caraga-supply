@@ -24,23 +24,28 @@ class StockForm extends Form
     #[Rule(['required', 'numeric'])]
     public $quantity;
 
+    public $initial_quantity;
+
     #[Rule(['required', 'numeric'])]
     public $price;
 
 
-
-    public function create(CreateStockAction $create_stock_action) {
+    public function create(CreateStockAction $create_stock_action)
+    {
         $this->validate();
+        $this->initial_quantity = $this->quantity;
         $create_stock_action->handle($this->toArray());
     }
 
-    public function update(Stock $stock, EditStockAction $edit_stock_action) {
+    public function update(Stock $stock, EditStockAction $edit_stock_action)
+    {
         $this->validate();
         $edit_stock_action->handle($stock, $this->toArray());
         $this->reset();
     }
 
-    public function fillForm(Stock $stock): void {
+    public function fillForm(Stock $stock): void
+    {
         $this->supply_id = $stock->supply_id;
         $this->barcode = $stock->barcode;
         $this->stock_number = $stock->stock_number;
@@ -48,12 +53,14 @@ class StockForm extends Form
         $this->price = $stock->price;
     }
 
-    public function toArray(): array {
+    public function toArray(): array
+    {
         return [
             'supply_id' => $this->supply_id,
             'barcode' => $this->barcode,
             'stock_number' => $this->stock_number,
             'quantity' => $this->quantity,
+            'initial_quantity' => $this->initial_quantity,
             'price' => $this->price
         ];
     }

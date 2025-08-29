@@ -32,8 +32,10 @@
                                 @interact('column_action', $requisition)
                                     <x-button.circle color="teal" icon="magnifying-glass"
                                         wire:click="viewRequisition({{ $requisition }})" />
-                                    <x-button.circle color="red" icon="trash"
-                                        wire:click="deleteRequisition({{ $requisition->id }})" />
+                                    @if (!$requisition->completed)
+                                        <x-button.circle color="red" icon="trash"
+                                            wire:click="deleteRequisition({{ $requisition->id }})" />
+                                    @endif
                                 @endinteract
                             </x-table>
                         </div>
@@ -51,25 +53,32 @@
                                         $requisition->issued_by &&
                                         $requisition->received_by;
                                 @endphp
-                                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                                    Requests Detail
-                                </h2>
-                                @if ($isApproved)
-                                    <div class="bg-teal-100 p-3 rounded sm:my-3">
-                                        <p class="text-sm text-teal-800">
-                                            <span class="font-semibold text-teal-600 pr-1"
-                                                aria-hidden="true">Ready:</span>
-                                            All required fields are completed. You can now generate the RIS copy.
-                                        </p>
-                                    </div>
-                                @else
-                                    <div class="bg-orange-100 p-3 rounded sm:my-3">
-                                        <p class="text-sm text-orange-800">
-                                            <span class="font-semibold text-orange-600 pr-1"
-                                                aria-hidden="true">Note:</span>
-                                            Please complete all required fields to enable RIS copy generation.
-                                        </p>
-                                    </div>
+                                <div class="sm:flex items-center gap-x-4">
+                                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                                        Requests Detail
+                                    </h2>
+                                    @if ($requisition->completed)
+                                        <x-badge text="Completed" color="green" light />
+                                    @endif
+                                </div>
+                                @if (!$requisition->completed)
+                                    @if ($isApproved)
+                                        <div class="bg-teal-100 p-3 rounded sm:my-3">
+                                            <p class="text-sm text-teal-800">
+                                                <span class="font-semibold text-teal-600 pr-1"
+                                                    aria-hidden="true">Ready:</span>
+                                                All required fields are completed. You can now generate the RIS copy.
+                                            </p>
+                                        </div>
+                                    @else
+                                        <div class="bg-orange-100 p-3 rounded sm:my-3">
+                                            <p class="text-sm text-orange-800">
+                                                <span class="font-semibold text-orange-600 pr-1"
+                                                    aria-hidden="true">Note:</span>
+                                                Please complete all required fields to enable RIS copy generation.
+                                            </p>
+                                        </div>
+                                    @endif
                                 @endif
 
                                 <div class="sm:py-4 py-3">
@@ -77,34 +86,42 @@
                                         class="w-full grid grid-cols-2 sm:grid-cols-4 gap-4">
                                         <div class="col-span-4 sm:flex items-center gap-3.5">
                                             <div class="flex-1">
-                                                <x-input wire:model="requestForm.ris" label="RIS" hint="Input RIS"
-                                                    class="w-full" />
+                                                <x-input :disabled="$isApproved" wire:model="requestForm.ris" label="RIS"
+                                                    hint="Input RIS" class="w-full" />
                                             </div>
                                             <div>
-                                                <x-button wire:click="generateRIS" class="w-full sm:w-auto" md>Generate
-                                                    RIS Code</x-button>
+                                                @if (!$isApproved)
+                                                    <x-button wire:click="generateRIS" loading="generateRIS"
+                                                        class="w-full sm:w-auto" md>Generate
+                                                        RIS Code</x-button>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="sm:col-span-2 col-span-4">
-                                            <x-select.styled wire:model="requestForm.requested_by"
+                                            <x-select.styled :disabled="$isApproved" wire:model="requestForm.requested_by"
                                                 label="Requested by *" hint="Select requester" :options="$this->getUsers"
                                                 searchable />
                                         </div>
                                         <div class="sm:col-span-2 col-span-4">
-                                            <x-select.styled wire:model="requestForm.approved_by" label="Approved by *"
-                                                hint="Select approver" :options="$this->getUsers" searchable />
+                                            <x-select.styled :disabled="$isApproved" wire:model="requestForm.approved_by"
+                                                label="Approved by *" hint="Select approver" :options="$this->getUsers"
+                                                searchable />
                                         </div>
                                         <div class="sm:col-span-2 col-span-4">
-                                            <x-select.styled wire:model="requestForm.issued_by" label="Issued by *"
-                                                hint="Select issuenace" :options="$this->getUsers" searchable />
+                                            <x-select.styled :disabled="$isApproved" wire:model="requestForm.issued_by"
+                                                label="Issued by *" hint="Select issuenace" :options="$this->getUsers"
+                                                searchable />
                                         </div>
                                         <div class="sm:col-span-2 col-span-4">
-                                            <x-select.styled wire:model="requestForm.received_by" label="Received by *"
-                                                hint="Select receiver" :options="$this->getUsers" searchable />
+                                            <x-select.styled :disabled="$isApproved" wire:model="requestForm.received_by"
+                                                label="Received by *" hint="Select receiver" :options="$this->getUsers"
+                                                searchable />
                                         </div>
                                         <div class="sm:col-span-4 col-span-4 sm:ms-auto flex sm:items-center gap-x-3">
-                                            <x-button submit loading icon="document" wire:target='update'
-                                                position="right">Update</x-button>
+                                            @if (!$isApproved)
+                                                <x-button submit loading="update" icon="document"
+                                                    position="right">Update</x-button>
+                                            @endif
                                         </div>
                                     </form>
                                     <form>
@@ -130,9 +147,11 @@
                                                                     <th scope="col"
                                                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                                                         Requested Quantity</th>
-                                                                    <th scope="col"
-                                                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                                        Action</th>
+                                                                    @if (!$isApproved)
+                                                                        <th scope="col"
+                                                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                                            Action</th>
+                                                                    @endif
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-gray-200">
@@ -151,15 +170,17 @@
                                                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                                             {{ $item->requested_qty }}
                                                                         </td>
-                                                                        <td
-                                                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                                            <x-button.circle
-                                                                                wire:click="editRequestItem({{ $item }})"
-                                                                                icon="pencil" color="teal" />
-                                                                            <x-button.circle
-                                                                                wire:click="deleteRequisitionItem({{ $item->id }})"
-                                                                                icon="trash" color="red" />
-                                                                        </td>
+                                                                        @if (!$isApproved)
+                                                                            <td
+                                                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                                                <x-button.circle
+                                                                                    wire:click="editRequestItem({{ $item }})"
+                                                                                    icon="pencil" color="teal" />
+                                                                                <x-button.circle
+                                                                                    wire:click="deleteRequisitionItem({{ $item->id }})"
+                                                                                    icon="trash" color="red" />
+                                                                            </td>
+                                                                        @endif
                                                                     </tr>
                                                                 @endforeach
                                                             </tbody>
@@ -193,17 +214,21 @@
                                 <x-step wire:model="step" panels>
                                     <x-step.items step="1" title="Admin Approval"
                                         description="Your request has been processed">
-                                        <small
-                                            class="text-sm py-6 text-center">{{ $isApproved
-                                                ? "Generate the RIS and proceed to 'Next' "
-                                                : 'Please wait while the requisition is being approved by all parties.' }}</small>
-                                        <div class="sm:py-3">
-                                            @if ($isApproved)
-                                                <x-button wire:click="getRIS" loading wire:target="getRIS"
-                                                    text="Generate RIS" icon="document" position="right"
-                                                    color="teal" outline />
-                                            @endif
-                                        </div>
+                                        @if (!$requisition->completed)
+                                            <small
+                                                class="text-sm py-6 text-center">{{ $isApproved
+                                                    ? "Generate the RIS and proceed to 'Next' "
+                                                    : 'Please wait while the requisition is being approved by all parties.' }}</small>
+                                            <div class="sm:py-3">
+                                                @if ($isApproved)
+                                                    <x-button wire:click="getRIS" loading="getRIS"
+                                                        text="Generate RIS" icon="document" position="right"
+                                                        color="teal" outline />
+                                                @endif
+                                            </div>
+                                        @else
+                                            <small class="text-sm py-6 text-center">Proceed to Next to view PDF</small>
+                                        @endif
                                         <div class="flex justify-end w-full">
                                             <x-button wire:click="$set('step', 2), getRIS" :disabled="!$requisition?->pdf">
                                                 Next
@@ -215,10 +240,9 @@
                                         <small class="text-sm py-6 text-center">You can now print the generated
                                             RIS.</small>
                                         <div class="sm:py-3 py-2">
-                                            <a href="{{ asset('storage/' . $requisition->pdf) }}" target="_blank"
-                                                class="text-blue-600 underline">
-                                                View PDF
-                                            </a>
+                                            <iframe src="{{ asset('storage/' . $requisition->pdf) }}" width="100%"
+                                                height="700px" frameborder="0" class="border border-gray-300 mt-4">
+                                            </iframe>
                                         </div>
                                         <div class="sm:pt-4 pt-3 flex justify-between w-full">
                                             <x-button wire:click="$set('step', 1)">
@@ -232,21 +256,32 @@
                                     <x-step.items step="3" title="Upload Signed Document"
                                         description="Upload the signed RIS.">
                                         <small class="text-sm py-6 text-center">File Updated.</small>
-                                        <form wire:submit.prevent="updateRIS" enctype="multipart/form-data">
-                                            <div class="sm:py-4 py-2">
-                                                <x-upload accept="application/pdf" wire:model="temporaryFile"
-                                                    label="RIS Document" hint="Please upload RIS document."
-                                                    tip="Upload our Signed RIS here" />
-                                            </div>
+                                        @if (!$requisition->completed)
+                                            <form wire:submit.prevent="updateRIS" enctype="multipart/form-data">
+                                                <div class="sm:py-4 py-2">
+                                                    <x-upload accept="application/pdf" wire:model="temporaryFile"
+                                                        label="RIS Document" hint="Please upload RIS document."
+                                                        tip="Upload our Signed RIS here" />
+                                                </div>
+                                                <div class="sm:pt-4 pt-3 flex justify-between w-full">
+                                                    <x-button wire:click="$set('step', 2)">
+                                                        Previous
+                                                    </x-button>
+                                                    <x-button submit wire:click="$set('step', 2)" :disabled="!$this->temporaryFile">
+                                                        Finish
+                                                    </x-button>
+                                                </div>
+                                            </form>
+                                        @else
                                             <div class="sm:pt-4 pt-3 flex justify-between w-full">
                                                 <x-button wire:click="$set('step', 2)">
                                                     Previous
                                                 </x-button>
-                                                <x-button submit :disabled="!$this->temporaryFile">
+                                                <x-button wire:click="$set('step', 4)">
                                                     Finish
                                                 </x-button>
                                             </div>
-                                        </form>
+                                        @endif
                                     </x-step.items>
                                 </x-step>
                             </div>
@@ -275,12 +310,12 @@
                             <form wire:submit.prevent="createRsmi"
                                 class="sm:pb-4 sm:pt-6 grid sm:grid-cols-3 sm:gap-4 gap-3">
                                 <div class="sm:col-span-2">
-                                    <x-date range helpers wire:model="rsmiDate/" label="Date"
+                                    <x-date range helpers wire:model.live.300ms="rsmiDate" label="Date"
                                         hint="Select your Date of Report" format="DD [of] MMMM [of] YYYY" />
                                 </div>
                                 <div class="sm:col-span-2">
-                                    <x-select.styled wire:model.live.debounce.300ms="rsmiSearch" label="Supply name"
-                                        hint="Select Supply name" :options="$this->getSupplies" searchable />
+                                    <x-select.styled wire:model.live.debounce.300ms="rsmiSearch" :disabled="!$this?->getSupplies"
+                                        label="Supply name" hint="Select Supply name" :options="$this?->getSupplies" searchable />
                                 </div>
                                 <div class="col-span-2">
                                     <x-button text="Submit" submit />

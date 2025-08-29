@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Actions\Requisition\CreateRequestAction;
 use App\Actions\Requisition\UpdateRequestAction;
+use App\Actions\Stock\UpdateStockQuantity;
 use App\Models\Requisition;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Rule;
@@ -48,7 +49,7 @@ class RequisitionForm extends Form
         return $requisition;
     }
 
-    public function update(Requisition $requisition, UpdateRequestAction $edit_request_action)
+    public function update(Requisition $requisition, UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity)
     {
         $this->validate();
 
@@ -65,9 +66,13 @@ class RequisitionForm extends Form
 
             $this->pdf = $storedPath;
             $this->completed = true;
+            $update_stock_quantity->handle($requisition);
         }
 
-        return $edit_request_action->handle($requisition, $this->toArray());
+        $edit_request_action->handle($requisition, $this->toArray());
+
+
+        return $requisition;
     }
 
     public function toArray(): array

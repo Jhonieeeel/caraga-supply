@@ -15,6 +15,7 @@ use App\Models\Stock;
 use App\Models\User;
 use App\Services\Afms\ConvertRisService;
 use App\Services\Afms\GenerateRisService;
+use App\Services\Afms\GenerateRsmiService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -84,21 +85,29 @@ class RequisitionTable extends Component
     #[Computed()]
     public function getSupplies()
     {
-        return RequisitionItem::with('requisition')
-            ->whereHas('requisition', function ($query) {
-                $query->whereCompleted('true');
-            })
-            ->distinct('stock_id')
-            ->get()
-            ->load('stock.supply')
-            ->map(fn($item) => [
-                'label' => $item->stock->supply->name,
-                'value' => $item->stock_id,
-                'note' => $item->stock->stock_number
-            ]);
+        if ($this->rsmiDate) {
+            $start = Carbon::parse($this->rsmiDate[0]);
+            $end = Carbon::parse($this->rsmiDate[1])->addDay();
+
+            return RequisitionItem::with(['stock.supply'])
+                ->whereHas('requisition', function ($query) use ($start, $end) {
+                    $query->where('completed', true)
+                        ->whereBetween('created_at', [$start, $end]);
+                })
+                ->select('stock_id')
+                ->distinct()
+                ->get()
+                ->map(fn($item) => [
+                    'label' => $item->stock->supply->name ?? 'N/A',
+                    'value' => $item->stock_id,
+                    'note'  => $item->stock->stock_number ?? 'N/A',
+                ]);
+        }
+
+        return [];
     }
 
-    public function createRsmi()
+    public function createRsmi(GenerateRsmiService $generate_rsmi_service)
     {
 
         $end = Carbon::parse($this->rsmiDate[1])->addDay();
@@ -111,7 +120,7 @@ class RequisitionTable extends Component
             })
             ->get();
 
-        dd($this->rsmi);
+        $generate_rsmi_service->handle($this->rsmi, $this->rsmiDate);
 
         return $this->rsmi;
     }
@@ -149,10 +158,10 @@ class RequisitionTable extends Component
     }
 
     // RIS
-    public function updateRIS(UpdateRequestAction $edit_request_action)
+    public function updateRIS(UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity)
     {
         $this->requestForm->temporaryFile = $this->temporaryFile;
-        $this->requisition = $this->requestForm->update($this->requisition, $edit_request_action);
+        $this->requisition = $this->requestForm->update($this->requisition, $edit_request_action, $update_stock_quantity);
 
         session()->flash('message', [
             'text' => 'Requisition Updated Successfully.',
@@ -254,9 +263,9 @@ class RequisitionTable extends Component
         ]);
     }
 
-    public function update(UpdateRequestAction $update_request_action, UpdateStockQuantity $update_stock_quantity)
+    public function update(UpdateRequestAction $update_request_action, UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity)
     {
-        $response = $this->requestForm->update($this->requisition, $update_request_action);
+        $response = $this->requestForm->update($this->requisition, $update_request_action, $update_stock_quantity);
 
         if ($response->completed) {
             $update_stock_quantity->handle($response);
