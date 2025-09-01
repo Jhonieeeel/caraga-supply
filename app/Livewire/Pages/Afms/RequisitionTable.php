@@ -14,6 +14,7 @@ use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\Stock;
 use App\Models\User;
+use App\Services\Afms\GenerateRpciService;
 use App\Services\Afms\GenerateRsmiService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Query\Builder;
@@ -105,7 +106,7 @@ class RequisitionTable extends Component
         return [];
     }
 
-    public function createRsmi(GenerateRsmiService $generate_rsmi_service)
+    public function createRsmi(GenerateRsmiService $generate_rsmi_service, GenerateRpciService $generate_rpci_service)
     {
 
         $end = Carbon::parse($this->rsmiDate[1])->addDay();
@@ -117,7 +118,7 @@ class RequisitionTable extends Component
                 $query->where('stock_id', $this->rsmiSearch);
             })
             ->get();
-
+        dd($generate_rpci_service->handle());
         $generate_rsmi_service->handle($this->rsmi, $this->rsmiDate);
 
         return $this->rsmi;
@@ -167,6 +168,9 @@ class RequisitionTable extends Component
             'title' => 'Success'
         ]);
 
+        $this->requisition = null;
+        $this->requestForm->reset();
+
         return redirect(route('requisition.index'));
     }
 
@@ -180,6 +184,11 @@ class RequisitionTable extends Component
             'color' => 'teal',
             'title' => 'Requisition and Issuance Slip'
         ]);
+    }
+
+    public function refreshRequisition()
+    {
+        $this->requisition->refresh();
     }
 
     public function deleteRequisition($requisitionId)
@@ -273,10 +282,9 @@ class RequisitionTable extends Component
 
     public function generateRIS()
     {
-        $date = now()->format('m-d-Y');
+        $date = now()->format('Y-m');
         $count = Requisition::count();
-        $current_user = Auth::id();
-        return $this->requestForm->ris = "RIS_{$current_user}_{$date}_{$count}";
+        return $this->requestForm->ris = "RIS-{$date}-{$count}";
     }
 
     #[Layout('layouts.app')]

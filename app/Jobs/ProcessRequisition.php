@@ -8,7 +8,7 @@ use App\Services\Afms\GenerateRisService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
-class ProcessRequisition implements ShouldQueue
+class   ProcessRequisition implements ShouldQueue
 {
     use Queueable;
 
@@ -17,17 +17,13 @@ class ProcessRequisition implements ShouldQueue
      */
     public function __construct(
         public Requisition $requisition
-    )
-    {
-        //
-    }
+    ) {}
 
     /**
      * Execute the job.
      */
     public function handle(GenerateRisService $word, ConvertRisService $pdf): void
     {
-        $generatedWord = $word->handle($this->requisition);
-        $pdf->handle($generatedWord, $this->requisition);
+        $pdf->handle($word->handle($this->requisition), $this->requisition);
     }
 }

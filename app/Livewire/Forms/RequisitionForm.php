@@ -13,7 +13,7 @@ use Livewire\Form;
 
 class RequisitionForm extends Form
 {
-    #[Rule(['nullable', 'min:6'])]
+    #[Rule(['unique:requisitions,ris', 'nullable', 'min:6'])]
     public $ris;
 
     #[Rule(['nullable', 'exists:users,id'])]
@@ -51,12 +51,15 @@ class RequisitionForm extends Form
 
     public function update(Requisition $requisition, UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity)
     {
-        $this->validate();
+        if (!$this->ris) {
+            $this->validate();
+        }
 
         $currentPath = storage_path('app/public/' . $requisition->pdf);
 
         if ($this->temporaryFile && file_exists($currentPath)) {
             unlink($currentPath);
+
 
             $storedPath = $this->temporaryFile->storeAs(
                 'ris',

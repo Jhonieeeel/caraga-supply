@@ -212,7 +212,7 @@
                             @endphp
                             <div>
                                 <x-step wire:model="step" panels>
-                                    <x-step.items step="1" title="Admin Approval"
+                                    <x-step.items :completed="$requisition->completed" step="1" title="Admin Approval"
                                         description="Your request has been processed">
                                         @if (!$requisition->completed)
                                             <small
@@ -229,19 +229,20 @@
                                         @else
                                             <small class="text-sm py-6 text-center">Proceed to Next to view PDF</small>
                                         @endif
-                                        <div class="flex justify-end w-full">
-                                            <x-button wire:click="$set('step', 2), getRIS" :disabled="!$requisition?->pdf">
+                                        <div wire:poll.visible.2s="refreshRequisition"
+                                            class="flex justify-end w-full">
+                                            <x-button wire:click="$set('step', 2)" :disabled="!$requisition?->pdf">
                                                 Next
                                             </x-button>
                                         </div>
                                     </x-step.items>
-                                    <x-step.items step="2" title="RIS Ready to Print"
+                                    <x-step.items :completed="$requisition->completed" step="2" title="RIS Ready to Print"
                                         description="Proceed to print the RIS.">
                                         <small class="text-sm py-6 text-center">You can now print the generated
                                             RIS.</small>
-                                        <div class="sm:py-3 py-2">
-                                            <iframe src="{{ asset('storage/' . $requisition->pdf) }}" width="100%"
-                                                height="700px" frameborder="0" class="border border-gray-300 mt-4">
+                                        <div class="sm:py-3 py-2 flex sm:justify-center">
+                                            <iframe src="{{ asset('storage/' . $requisition->pdf) }}" width="70%"
+                                                height="500px" frameborder="0" class="border border-gray-300 mt-4">
                                             </iframe>
                                         </div>
                                         <div class="sm:pt-4 pt-3 flex justify-between w-full">
@@ -253,9 +254,9 @@
                                             </x-button>
                                         </div>
                                     </x-step.items>
-                                    <x-step.items step="3" title="Upload Signed Document"
+                                    <x-step.items :completed="$requisition->completed" step="3" title="Upload Signed Document"
                                         description="Upload the signed RIS.">
-                                        <small class="text-sm py-6 text-center">File Updated.</small>
+                                        <small class="text-sm py-6 text-center">Update RIS. </small>
                                         @if (!$requisition->completed)
                                             <form wire:submit.prevent="updateRIS" enctype="multipart/form-data">
                                                 <div class="sm:py-4 py-2">
@@ -267,7 +268,7 @@
                                                     <x-button wire:click="$set('step', 2)">
                                                         Previous
                                                     </x-button>
-                                                    <x-button submit wire:click="$set('step', 2)" :disabled="!$this->temporaryFile">
+                                                    <x-button submit :disabled="!$this->temporaryFile">
                                                         Finish
                                                     </x-button>
                                                 </div>

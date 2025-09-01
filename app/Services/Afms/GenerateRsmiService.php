@@ -2,23 +2,21 @@
 
 namespace App\Services\Afms;
 
-use App\Models\Requisition;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class GenerateRsmiService
 {
     public function handle($rsmi, $rsmiDate)
     {
-        $rsmiTemplate = storage_path('app/public/rsmi_template.xls');
+        $rsmiTemplate = public_path('rsmi_template.xls');
         $spreadSheet = IOFactory::load($rsmiTemplate);
         $activeSheet = $spreadSheet->getActiveSheet();
 
         $activeSheet->setCellValue('B5', 'For the month of ' . Carbon::parse($rsmiDate[0])->format('F Y'));
-        $activeSheet->setCellValue('I7', 'Supply-1-' . Carbon::parse($rsmiDate[0])->format('Y') . '-1');
-        $activeSheet->setCellValue('I8', now());
+        $activeSheet->setCellValue('I7', 'Supply-' . Carbon::parse($rsmiDate[0])->format('Y') . '-1');
+        $activeSheet->setCellValue('I8', Carbon::parse(now()->format('Y-m-d'))->format('F-j-Y'));
 
         $rowStart = 13;
         foreach ($rsmi as $item) {
@@ -31,8 +29,8 @@ class GenerateRsmiService
         }
 
         $firstRequisition = $rsmi->first();
-        $initialQty = optional($firstRequisition->items->first()->stock)->quantity;
-        $activeSheet->setCellValue('D27', $initialQty);
+        $initialQty = optional($firstRequisition->items->first()->stock)->initial_quantity;
+        $activeSheet->setCellValue('D32', $initialQty);
 
         $directory = storage_path('app/public');
         if (!file_exists($directory)) {
@@ -40,7 +38,7 @@ class GenerateRsmiService
         }
 
         $writer = new Xls($spreadSheet);
-        $newFileName = 'rsmi_' . now()->format('Ymd_His') . '.xls';
+        $newFileName = 'rsmi_' . now()->format('Y-m') . '.xls';
         $outputPath = $directory . DIRECTORY_SEPARATOR . $newFileName;
         $writer->save($outputPath);
     }
