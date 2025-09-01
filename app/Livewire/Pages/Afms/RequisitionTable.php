@@ -7,19 +7,17 @@ use App\Actions\Requisition\UpdateRequestAction;
 use App\Actions\RequisitionItem\CreateItemAction;
 use App\Actions\RequisitionItem\UpdateItemAction;
 use App\Actions\Stock\UpdateStockQuantity;
+use App\Jobs\ProcessRequisition;
 use App\Livewire\Forms\ItemForm;
 use App\Livewire\Forms\RequisitionForm;
 use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\Stock;
 use App\Models\User;
-use App\Services\Afms\ConvertRisService;
-use App\Services\Afms\GenerateRisService;
 use App\Services\Afms\GenerateRsmiService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -173,12 +171,9 @@ class RequisitionTable extends Component
     }
 
     // generate ris
-    public function getRIS(GenerateRisService $generate_ris_service, ConvertRisService $convert_ris_service)
+    public function getRIS()
     {
-        $requisitionDocx = $generate_ris_service->handle($this->requisition);
-        $requisition = $convert_ris_service->handle($requisitionDocx, $this->requisition);
-
-        $this->requisition = $requisition;
+        ProcessRequisition::dispatch($this->requisition);
 
         return session()->flash('message', [
             'text' => 'Requisition Generated successfully.',
