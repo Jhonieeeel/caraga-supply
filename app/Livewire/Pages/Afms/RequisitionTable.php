@@ -14,11 +14,12 @@ use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\Stock;
 use App\Models\User;
+use App\Services\Afms\ConvertRisService;
+use App\Services\Afms\GenerateRisService;
 use App\Services\Afms\GenerateRpciService;
 use App\Services\Afms\GenerateRsmiService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Query\Builder;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -118,10 +119,8 @@ class RequisitionTable extends Component
                 $query->where('stock_id', $this->rsmiSearch);
             })
             ->get();
-        dd($generate_rpci_service->handle());
         $generate_rsmi_service->handle($this->rsmi, $this->rsmiDate);
-
-        return $this->rsmi;
+        $generate_rpci_service->handle($this->rsmi, $this->rsmiSearch);
     }
 
 
@@ -177,13 +176,15 @@ class RequisitionTable extends Component
     // generate ris
     public function getRIS()
     {
-        ProcessRequisition::dispatch($this->requisition);
+        ProcessRequisition::dispatch($this->requisition->id);
 
-        return session()->flash('message', [
+        session()->flash('message', [
             'text' => 'Requisition Generated successfully.',
             'color' => 'teal',
             'title' => 'Requisition and Issuance Slip'
         ]);
+
+        return;
     }
 
     public function refreshRequisition()

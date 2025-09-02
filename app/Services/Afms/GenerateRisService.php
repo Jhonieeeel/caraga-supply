@@ -8,7 +8,7 @@ class GenerateRisService
 {
     public function handle($requisition)
     {
-        $docx = new TemplateProcessor(storage_path("app/public/ris_template.docx"));
+        $docx = new TemplateProcessor(public_path("ris_template.docx"));
 
         // fields
         $docx->setValue('division', '');
@@ -28,10 +28,10 @@ class GenerateRisService
                 'stock_no' => $item->stock->barcode ?? '',
                 'unit' => $item->stock->supply->unit ?? '',
                 'item' => $item->stock->supply->name ?? '',
-                'quantity' => $item->quantity ?? '',
+                'quantity' => $item->requested_qty ?? '',
                 'yes' => '✓',
                 'no'  => '',
-                'remarks' => $item->remarks ?? 'test remarks',
+                'remarks' => $item->remarks ?? '',
             ];
         }
 
@@ -42,6 +42,10 @@ class GenerateRisService
         // ris docx and save
         $outputFile = storage_path('app/public/' . $fileName);
         $docx->saveAs($outputFile);
+
+        logger()->info('Done Generate Word', [
+            'id' => $requisition->id,
+        ]);
 
         return $outputFile;
     }

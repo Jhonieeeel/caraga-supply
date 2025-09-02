@@ -33,9 +33,11 @@ class ConvertRisService
             unlink($filepath);
         }
 
+        logger()->info('Pdf Created', [
+            'id' => $requisition->id,
+        ]);
+
         $requisition->pdf = 'ris/' . $pdfFileName;
         $requisition->save();
-
-        return $requisition;
     }
 }

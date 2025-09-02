@@ -2,49 +2,75 @@
 
 namespace App\Services\Afms;
 
+use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class GenerateRpciService
 {
-
-    public function handle()
+    public function handle($rsmi, $stockId)
     {
         $srcFile = public_path('rpci_template.xlsx');
         $spreadsheet = IOFactory::load($srcFile);
 
-        // Pick sheet (0-based index or by name)
-        $sheet = $spreadsheet->getSheet("1"); // first sheet
-        // $sheet = $spreadsheet->getSheetByName('Sheet1');
+        // ✅ pick sheet by name (if sheet names are stock IDs)
+        $sheet = $spreadsheet->getSheetByName((string) $stockId);
+        // or by index: $sheet = $spreadsheet->getSheet((int) $stockId);
 
-        // Which row to copy? Let's take the last used row
-        $sourceRow = $sheet->getHighestRow(); // e.g. 60
-        $targetRow = $sourceRow + 1;
+        $templateRow = $sheet->getHighestRow(); // last row is the "template"
+        $highestCol  = $sheet->getHighestColumn(); // e.g. "K"
 
-        // 1) Insert new row (so formatting/merged cells stay aligned)
-        $sheet->insertNewRowBefore($targetRow, 1);
+        foreach ($rsmi as $requisition) {
+            $targetRow = $sheet->getHighestRow() + 1;
 
-        // 2) Copy values + formulas + styles column by column
-        $highestCol = $sheet->getHighestColumn(); // e.g. "K"
-        $range = "E{$sourceRow}:{$highestCol}{$sourceRow}";
+            // insert a new row
+            $sheet->insertNewRowBefore($targetRow, 1);
 
-        // Copy styles for the whole row
-        $sheet->duplicateStyle($sheet->getStyle($range), "E{$targetRow}:{$highestCol}{$targetRow}");
+            // copy entire template row (values + formulas + styles)
+            $sourceRange = "E{$templateRow}:{$highestCol}{$templateRow}";
+            $targetRange = "E{$targetRow}:{$highestCol}{$targetRow}";
 
-        // Copy cell contents
-        foreach ($sheet->rangeToArray($range, null, true, true, true) as $rowData) {
-            foreach ($rowData as $col => $value) {
-                $sheet->setCellValue("{$col}{$targetRow}", $value);
+            $sheet->duplicateStyle($sheet->getStyle($sourceRange), $targetRange);
+
+            foreach (range("E", "K") as $col) {
+                $srcCell = $sheet->getCell("{$col}{$templateRow}");
+                $dstCell = $sheet->getCell("{$col}{$targetRow}");
+
+                if ($srcCell->isFormula()) {
+                    $formula = $srcCell->getValue(); // e.g. "=J59+G60-H60"
+
+                    $rowOffset = $targetRow - $templateRow;
+                    $newFormula = preg_replace_callback(
+                        '/([A-Z]+)(\d+)/',
+                        function ($matches) use ($rowOffset) {
+                            $col = $matches[1];
+                            $row = (int)$matches[2] + $rowOffset;
+                            return $col . $row;
+                        },
+                        $formula
+                    );
+
+                    $dstCell->setValueExplicit($newFormula, DataType::TYPE_FORMULA);
+                } else {
+                    $dstCell->setValue($srcCell->getValue());
+                }
             }
+
+            // fill requisition-specific values
+
+            $sheet->setCellValue("E{$targetRow}", Carbon::parse($requisition->updated_at)->format('m/d/Y'));
+
+            $sheet->setCellValue("F{$targetRow}", $requisition->ris);
+            $sheet->setCellValue("H{$targetRow}", $requisition->items->first()->requested_qty);
+
+            // keep row height
+            $sheet->getRowDimension($targetRow)
+                ->setRowHeight($sheet->getRowDimension($templateRow)->getRowHeight());
         }
 
-        // 3) Copy row height
-        $sheet->getRowDimension($targetRow)
-            ->setRowHeight($sheet->getRowDimension($sourceRow)->getRowHeight());
-
-        // Save new file
         $out = storage_path('app/public/rpci_template_test.xlsx');
         IOFactory::createWriter($spreadsheet, 'Xlsx')->save($out);
 
-        return $sheet->getHighestRow();
+        return;
     }
 }

@@ -229,7 +229,7 @@
                                         @else
                                             <small class="text-sm py-6 text-center">Proceed to Next to view PDF</small>
                                         @endif
-                                        <div wire:poll.visible.2s="refreshRequisition"
+                                        <div wire:poll.visible.3s="refreshRequisition"
                                             class="flex justify-end w-full">
                                             <x-button wire:click="$set('step', 2)" :disabled="!$requisition?->pdf">
                                                 Next
