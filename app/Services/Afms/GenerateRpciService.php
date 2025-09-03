@@ -10,7 +10,7 @@ class GenerateRpciService
 {
     public function handle($rsmi, $stockId)
     {
-        $srcFile = public_path('rpci_template.xlsx');
+        $srcFile = public_path('templates/rpci_template.xlsx');
         $spreadsheet = IOFactory::load($srcFile);
 
         // ✅ pick sheet by name (if sheet names are stock IDs)

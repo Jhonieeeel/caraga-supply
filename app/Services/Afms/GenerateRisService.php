@@ -8,7 +8,7 @@ class GenerateRisService
 {
     public function handle($requisition)
     {
-        $docx = new TemplateProcessor(public_path("ris_template.docx"));
+        $docx = new TemplateProcessor(public_path("templates/ris_template.docx"));
 
         // fields
         $docx->setValue('division', '');
