@@ -8,9 +8,9 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @theme {
-    --font-sans: Figtree, ui-sans-serif, system-ui, sans-serif,
-        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-        "Noto Color Emoji";
+    --font-sans:
+        Figtree, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 /*
@@ -44,6 +44,7 @@
     --color-primary-900: #312e81;
     --color-primary-950: #1e1b4b; */
 
+    /* orange */
     --color-primary-50: #fffbeb;
     --color-primary-100: #fef3c7;
     --color-primary-200: #fde68a;

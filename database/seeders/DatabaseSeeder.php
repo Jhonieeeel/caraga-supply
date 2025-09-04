@@ -21,6 +21,20 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
+        $supply = Supply::create([
+            'name' => 'Alcohol, 1 Litre',
+            'category' => 'Supplies',
+            'unit' => 'Bottle'
+        ]);
+
+        $supply->stocks()->create([
+            'barcode' => 'test-code',
+            'price' => 200,
+            'quantity' => 38,
+            'stock_number' => 'Supply-2025',
+            'initial_quantity' => 38
+        ]);
+
         // Supply::factory(20)->create();
     }
 }

@@ -3,11 +3,11 @@
 namespace App\Livewire\Pages\Afms\Components;
 
 use App\Livewire\Forms\RequisitionForm;
+use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
 use Livewire\Component;
 use Illuminate\Contracts\Database\Query\Builder;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 
@@ -25,6 +25,7 @@ class RequestTable extends Component
     public function mount()
     {
         $this->headers = [
+            ['index' => 'id', 'label' => 'REQUI ID'],
             ['index' => 'user.name', 'label' => 'Requested By'],
             ['index' => 'items_count', 'label' => 'Total Requested Items'],
             ['index' => 'completed', 'label' => 'Status'],
@@ -42,7 +43,7 @@ class RequestTable extends Component
     {
         Requisition::find($requisitionId)->delete();
 
-        $this->dispatch('refresh')->self();
+        $this->resetPage();
 
         return $this->dispatch('alert', [
             'text' => 'Requisition Deleted successfully.',
@@ -69,15 +70,18 @@ class RequestTable extends Component
 
     public function view(Requisition $requisition)
     {
-        $this->requisition = $requisition;
+
+
 
         // to Parent
-        $this->dispatch('change-tab', tab: 'Detail');
+        $this->dispatch('change-tab', tab: 'Detail')->to(RequisitionTable::class);
 
         // to Detail Tab
         $this->dispatch('view-requisition', id: $requisition->id)->to(RequestDetail::class);
 
         // to RIS Tab
-        $this->dispatch('current-data', id: $requisition->id);
+        $this->dispatch('current-data', id: $requisition->id)->to(RequestRIS::class);
+
+        $requisition = null;
     }
 }

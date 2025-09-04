@@ -61,9 +61,13 @@ class RequisitionForm extends Form
             unlink($currentPath);
 
 
+            $originalName = pathinfo($this->temporaryFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $this->temporaryFile->getClientOriginalExtension();
+            $uniqueName = $originalName . '_' . now()->format('Ymd_His') . '.' . $extension;
+
             $storedPath = $this->temporaryFile->storeAs(
                 'ris',
-                $this->temporaryFile->getClientOriginalName(),
+                $uniqueName,
                 'public'
             );
 

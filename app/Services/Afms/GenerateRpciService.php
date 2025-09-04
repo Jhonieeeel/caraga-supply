@@ -68,7 +68,8 @@ class GenerateRpciService
                 ->setRowHeight($sheet->getRowDimension($templateRow)->getRowHeight());
         }
 
-        $out = storage_path('app/public/rpci_template_test.xlsx');
+        $newFileName = 'rsmi_' . now()->format('Y-m-d_His') . '.xls';
+        $out = storage_path('app/public/rpci/' . $newFileName);
         IOFactory::createWriter($spreadsheet, 'Xlsx')->save($out);
 
         return;

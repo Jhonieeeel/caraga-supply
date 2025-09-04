@@ -77,7 +77,7 @@ class RequestDetail extends Component
     #[On('view-requisition')]
     public function view($id)
     {
-        $this->requisition = Requisition::findOrFail($id)->load('items.stock.supply');
+        $this->requisition = Requisition::find($id)->load('items.stock.supply');
         $this->requestForm->fillForm($this->requisition);
     }
 

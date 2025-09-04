@@ -11,6 +11,7 @@ use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\Stock;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -66,6 +67,12 @@ class RequisitionTable extends Component
 
     public function create(CreateRequestAction $create_request_action, CreateItemAction $create_item_action)
     {
+        if (!count($this->itemForm->requestedItems)) {
+            throw ValidationException::withMessages([
+                'itemForm.requestedItems' => 'Please add at least one item.',
+            ]);
+        }
+
         $newRequisition = $this->requestForm->create($create_request_action);
         $this->itemForm->create($create_item_action, $newRequisition);
 
@@ -74,12 +81,13 @@ class RequisitionTable extends Component
 
         $this->dispatch('modal:add-request-close');
         $this->dispatch('refresh')->to(RequestTable::class);
-
-        return session()->flash('message', [
+        $this->dispatch('alert', [
             'text' => 'Requisition added successfully.',
             'color' => 'green',
             'title' => 'Success'
         ]);
+
+        return;
     }
 
     #[On('change-tab')]

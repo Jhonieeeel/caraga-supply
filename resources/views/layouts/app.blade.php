@@ -20,6 +20,7 @@
 
 <body class="font-sans antialiased">
     <x-layout>
+        {{-- header --}}
         <x-slot:header>
             <x-layout.header>
                 <x-slot:right>
@@ -33,8 +34,9 @@
                 </x-slot:right>
             </x-layout.header>
         </x-slot:header>
+        {{-- menu --}}
         <x-slot:menu>
-            <x-side-bar smart navigate thin-scroll collapsible>
+            <x-side-bar smart navigate thin-scroll>
                 <x-slot:brand>
                     <div class="flex flex-col items-center justify-center sm:pt-12 pt-6">
                         <img src="{{ asset('ocd-avatar.svg') }}" alt="Avatar" class="w-15 rounded-full" />
@@ -43,17 +45,21 @@
                         </span>
                     </div>
                 </x-slot:brand>
-                <x-side-bar.item text="Home" icon="home" wire:navigate :current="request()->routeIs('dashboard')" :href="route('dashboard')" />
-                <x-side-bar.item text="Supply" icon="cube" wire:navigate :current="request()->routeIs('supply.index')" :href="route('supply.index')" />
-                <x-side-bar.item text="Stock" icon="hashtag" wire:navigate :current="request()->routeIs('stock.index')" :href="route('stock.index')" />
-                <x-side-bar.item text="Requisition" icon="clipboard-document-list" :current="request()->routeIs('requisition.index')" wire:navigate
-                    :href="route('requisition.index')" />
+                <x-side-bar.item text="GASU" :visible="true">
+                    <x-side-bar.item text="Home" icon="home" wire:navigate :current="request()->routeIs('dashboard')" :href="route('dashboard')" />
+                    <x-side-bar.item text="Supply" icon="cube" wire:navigate :current="request()->routeIs('supply.index')" :href="route('supply.index')" />
+                    <x-side-bar.item text="Stock" icon="hashtag" wire:navigate :current="request()->routeIs('stock.index')" :href="route('stock.index')" />
+                    <x-side-bar.item text="Requisition" icon="clipboard-document-list" :current="request()->routeIs('requisition.index')" wire:navigate
+                        :href="route('requisition.index')" />
+                </x-side-bar.item>
+                <x-side-bar.item text="PMU" :visible="true">
+                    <x-side-bar.item text="Home" />
+                </x-side-bar.item>
             </x-side-bar>
         </x-slot:menu>
-        <div class="min-h-screen">
-            {{ $slot }}
-        </div>
+        <div class="min-h-screen">{{ $slot }}</div>
     </x-layout>
+
     @livewireScripts
 </body>
 

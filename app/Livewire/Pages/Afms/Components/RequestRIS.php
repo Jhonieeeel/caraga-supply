@@ -6,6 +6,7 @@ use App\Actions\Requisition\UpdateRequestAction;
 use App\Actions\Stock\UpdateStockQuantity;
 use App\Jobs\ProcessRequisition;
 use App\Livewire\Forms\RequisitionForm;
+use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -25,15 +26,19 @@ class RequestRIS extends Component
     public function updateRIS(UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity)
     {
         $this->requestForm->temporaryFile = $this->temporaryFile;
+        $this->requestForm->fillForm($this->requisition);
         $this->requisition = $this->requestForm->update($this->requisition, $edit_request_action, $update_stock_quantity);
 
-        session()->flash('message', [
+        $this->dispatch('alert', [
             'text' => 'Requisition Updated Successfully.',
             'color' => 'teal',
             'title' => 'Success'
         ]);
 
-        return redirect(route('requisition.index'));
+        $this->dispatch('change-tab', tab: 'List')->to(RequisitionTable::class);
+        $this->dispatch('refresh')->to(RequestTable::class);
+
+        return;
     }
 
     // generate ris
@@ -41,22 +46,22 @@ class RequestRIS extends Component
     {
         ProcessRequisition::dispatch($this->requisition->id);
 
+        $this->requisition->refresh();
+        $this->dispatch('refresh');
+
         $this->dispatch('alert', [
             'text' => 'Requisition Generated successfully.',
             'color' => 'teal',
             'title' => 'Requisition and Issuance Slip'
         ]);
 
-        $this->dispatch('refresh');
-
-        return $this->requisition;
+        return;
     }
-
-
 
     #[On('current-data')]
     public function currentData($id): void
     {
+        $this->step = 1;
         $this->requisition = Requisition::find($id);
     }
 

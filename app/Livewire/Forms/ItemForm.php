@@ -29,6 +29,8 @@ class ItemForm extends Form
     {
         $this->validate();
         $update_item_action->handle($item, $this->toArray());
+
+        return;
     }
 
     public function toArray(): array

@@ -15,14 +15,15 @@
                 </div>
             @endif
             <x-tab wire:model.live="tab">
-                <div wire:loading.delay.short>
-                    <x-loading />
-                </div>
+
                 <x-tab.items tab="List">
                     <x-slot:right>
                         <x-icon name="list-bullet" class="w-5 h-5" />
                     </x-slot:right>
                     {{-- request table --}}
+                    <div wire:loading.delay.short>
+                        <x-loading />
+                    </div>
                     <livewire:pages.afms.components.request-table />
                 </x-tab.items>
                 <x-tab.items tab="Detail">
@@ -44,6 +45,7 @@
                         <x-icon name="cog-6-tooth" class="w-5 h-5" />
                     </x-slot:right>
                     {{-- rsmi --}}
+
                     <livewire:pages.afms.components.request-rsmi />
                 </x-tab.items>
             </x-tab>
@@ -60,6 +62,9 @@
                         wire:model="itemForm.requestedItems.{{ $stock->id }}" />
                 @endinteract
             </x-table>
+            @error('itemForm.requestedItems')
+                <span class="text-red-600 text-sm my-2">{{ $message }}</span>
+            @enderror
             <div class="sm:pt-4 py-2 flex justify-end items-center">
                 <x-button submit icon="cube" position="right">Submit</x-button>
             </div>
