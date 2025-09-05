@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Actions\Stock\CreateStockAction;
 use App\Actions\Stock\EditStockAction;
+use App\Actions\Transaction\CreateTransaction;
 use App\Models\Stock;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Validate;
@@ -29,12 +30,34 @@ class StockForm extends Form
     #[Rule(['required', 'numeric'])]
     public $price;
 
+    public function createPurchaseOrder(CreateTransaction $create_transaction)
+    {
+        $this->validate();
+
+        $stock = Stock::where('stock_number', $this->stock_number)->firstOrFail();
+        $stock->increment('quantity', $this->quantity);
+
+        $create_transaction->handle([
+            'stock_id' => $stock->id,
+            'quantity' => $this->quantity,
+            'type_of_transaction' => 'PO'
+        ]);
+
+        $this->reset();
+
+        return;
+    }
 
     public function create(CreateStockAction $create_stock_action)
     {
         $this->validate();
+
         $this->initial_quantity = $this->quantity;
-        $create_stock_action->handle($this->toArray());
+        $stock = $create_stock_action->handle($this->toArray());
+
+        $this->reset();
+
+        return $stock;
     }
 
     public function update(Stock $stock, EditStockAction $edit_stock_action)
@@ -51,6 +74,19 @@ class StockForm extends Form
         $this->stock_number = $stock->stock_number;
         $this->quantity = $stock->quantity;
         $this->price = $stock->price;
+    }
+
+    public function updatePartial(Stock $stock, EditStockAction $edit_stock_action)
+    {
+        $this->validate();
+        $edit_stock_action->handle($stock, $this->toArray());
+        $this->reset();
+    }
+
+    public function partialForm(Stock $stock): void
+    {
+        $this->supply_id = $stock->supply_id;
+        $this->stock_number = $stock->stock_number;
     }
 
     public function toArray(): array

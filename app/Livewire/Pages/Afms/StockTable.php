@@ -4,6 +4,7 @@ namespace App\Livewire\Pages\Afms;
 
 use App\Actions\Stock\CreateStockAction;
 use App\Actions\Stock\EditStockAction;
+use App\Actions\Transaction\CreateTransaction;
 use App\Livewire\Forms\StockForm;
 use App\Models\Stock;
 use App\Models\Supply;
@@ -72,7 +73,29 @@ class StockTable extends Component
                 'value' => $supply->id,
             ]);
     }
-    // crud
+
+    // purchase 
+    public function savePurchaseStock(CreateTransaction $create_transaction)
+    {
+        $stock = $this->stockForm->createPurchaseOrder($create_transaction);
+
+        $this->dispatch('modal:partial-edit-stock-close');
+
+        $this->dispatch('alert', [
+            'text' => 'Purchase Order Created Successfully.',
+            'color' => 'teal',
+            'title' => 'Success'
+        ]);
+
+        return;
+    }
+    public function selectStock(Stock $stock)
+    {
+        $this->stockForm->partialForm($stock);
+        $this->dispatch('modal:partial-edit-stock-open');
+    }
+
+    // C R U D
     // create
     public function create(CreateStockAction $create_stock_action)
     {
@@ -80,13 +103,15 @@ class StockTable extends Component
         $this->dispatch('modal:add-close');
     }
 
-    // edit and update
+    // edit  
     public function edit(Stock $stock)
     {
         $this->stock = $stock;
         $this->stockForm->fillForm($stock);
         $this->dispatch('modal:edit-stock-open');
     }
+
+    // update
     public function update(EditStockAction $edit_stock_action)
     {
         $this->stockForm->update($this->stock, $edit_stock_action);

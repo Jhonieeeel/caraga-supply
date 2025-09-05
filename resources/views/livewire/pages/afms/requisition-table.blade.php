@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto sm:px-3 sm:py-4 lg:px-6">
+<div class="max-w-7xl mx-auto sm:px-3 sm:py-4 lg:px-6 bg-white border shadow rounded">
     <div class="flex items-center justify-between sm:pb-4">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Requisition

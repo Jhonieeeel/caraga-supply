@@ -18,7 +18,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased bg-gray-50">
     <x-layout>
         {{-- header --}}
         <x-slot:header>
@@ -45,8 +45,11 @@
                         </span>
                     </div>
                 </x-slot:brand>
+                <x-side-bar.item text="ADMIN">
+                    <x-side-bar.item text="Dashboard" icon="chart-bar-square" wire:navigate :current="request()->routeIs('dashboard')"
+                        :href="route('dashboard')" />
+                </x-side-bar.item>
                 <x-side-bar.item text="GASU" :visible="true">
-                    <x-side-bar.item text="Home" icon="home" wire:navigate :current="request()->routeIs('dashboard')" :href="route('dashboard')" />
                     <x-side-bar.item text="Supply" icon="cube" wire:navigate :current="request()->routeIs('supply.index')" :href="route('supply.index')" />
                     <x-side-bar.item text="Stock" icon="hashtag" wire:navigate :current="request()->routeIs('stock.index')" :href="route('stock.index')" />
                     <x-side-bar.item text="Requisition" icon="clipboard-document-list" :current="request()->routeIs('requisition.index')" wire:navigate
@@ -57,7 +60,7 @@
                 </x-side-bar.item>
             </x-side-bar>
         </x-slot:menu>
-        <div class="min-h-screen">{{ $slot }}</div>
+        <div class="max-h-screen">{{ $slot }}</div>
     </x-layout>
 
     @livewireScripts

@@ -27,7 +27,7 @@
                         <small class="text-sm py-6 text-center">Proceed to Next to view PDF</small>
                     @endif
                     <div class="flex justify-end w-full">
-                        <x-button wire:click="$set('step', 2)" :disabled="!$requisition?->pdf">
+                        <x-button wire:click="$set('step', 2)" :disabled="!$pdfStatus">
                             Next
                         </x-button>
                     </div>

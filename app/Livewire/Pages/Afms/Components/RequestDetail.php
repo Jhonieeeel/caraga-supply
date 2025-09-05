@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Afms\Components;
 use App\Actions\Requisition\UpdateRequestAction;
 use App\Actions\RequisitionItem\UpdateItemAction;
 use App\Actions\Stock\UpdateStockQuantity;
+use App\Actions\Transaction\CreateTransaction;
 use App\Livewire\Forms\ItemForm;
 use App\Livewire\Forms\RequisitionForm;
 use App\Models\Requisition;
@@ -60,9 +61,9 @@ class RequestDetail extends Component
             ]);
     }
 
-    public function update(UpdateRequestAction $update_request_action, UpdateStockQuantity $update_stock_quantity)
+    public function update(UpdateRequestAction $update_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
     {
-        $response = $this->requestForm->update($this->requisition, $update_request_action, $update_stock_quantity);
+        $response = $this->requestForm->update($this->requisition, $update_request_action, $update_stock_quantity, $create_transaction);
 
         if ($response->completed) {
             $update_stock_quantity->handle($response);
@@ -71,7 +72,7 @@ class RequestDetail extends Component
         $this->requisition = $response;
         $this->dispatch('current-data', id: $this->requisition->id);
 
-        return $this->requisition;
+        return $this->requisition->refresh();
     }
 
     #[On('view-requisition')]

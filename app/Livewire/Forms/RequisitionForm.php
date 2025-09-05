@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Actions\Requisition\CreateRequestAction;
 use App\Actions\Requisition\UpdateRequestAction;
 use App\Actions\Stock\UpdateStockQuantity;
+use App\Actions\Transaction\CreateTransaction;
 use App\Models\Requisition;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Rule;
@@ -49,7 +50,7 @@ class RequisitionForm extends Form
         return $requisition;
     }
 
-    public function update(Requisition $requisition, UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity)
+    public function update(Requisition $requisition, UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
     {
         if (!$this->ris) {
             $this->validate();
@@ -59,7 +60,6 @@ class RequisitionForm extends Form
 
         if ($this->temporaryFile && file_exists($currentPath)) {
             unlink($currentPath);
-
 
             $originalName = pathinfo($this->temporaryFile->getClientOriginalName(), PATHINFO_FILENAME);
             $extension = $this->temporaryFile->getClientOriginalExtension();
@@ -78,6 +78,18 @@ class RequisitionForm extends Form
 
         $edit_request_action->handle($requisition, $this->toArray());
 
+        $requisition->refresh();
+
+        if ($requisition->completed) {
+            foreach ($requisition->items as $item) {
+                $create_transaction->handle([
+                    'requisition_id' => $requisition->id,
+                    'stock_id' => $item->stock_id,
+                    'quantity' => $item->requested_qty,
+                    'type_of_transaction' => 'RIS',
+                ]);
+            }
+        }
 
         return $requisition;
     }

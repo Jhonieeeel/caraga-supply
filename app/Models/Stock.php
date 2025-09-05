@@ -27,4 +27,9 @@ class Stock extends Model
     {
         return $this->belongsTo(RequisitionItem::class);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
