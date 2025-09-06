@@ -43,10 +43,6 @@ class GenerateRisService
         $outputFile = storage_path('app/public/' . $fileName);
         $docx->saveAs($outputFile);
 
-        logger()->info('Done Generate Word', [
-            'id' => $requisition->id,
-        ]);
-
         return $outputFile;
     }
 }

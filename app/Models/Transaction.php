@@ -14,12 +14,12 @@ class Transaction extends Model
         'type_of_transaction'
     ];
 
-    public function stocks()
+    public function stock()
     {
         return $this->belongsTo(Stock::class);
     }
 
-    public function requisitions()
+    public function requisition()
     {
         return $this->belongsTo(Requisition::class);
     }

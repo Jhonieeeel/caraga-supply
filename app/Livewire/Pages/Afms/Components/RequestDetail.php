@@ -70,15 +70,15 @@ class RequestDetail extends Component
         }
 
         $this->requisition = $response;
-        $this->dispatch('current-data', id: $this->requisition->id);
+        $this->dispatch('current-data', requisition: $response);
 
         return $this->requisition->refresh();
     }
 
     #[On('view-requisition')]
-    public function view($id)
+    public function view(Requisition $requisition)
     {
-        $this->requisition = Requisition::find($id)->load('items.stock.supply');
+        $this->requisition = $requisition->load('items.stock.supply');
         $this->requestForm->fillForm($this->requisition);
     }
 

@@ -10,8 +10,7 @@
         </p>
     </div>
 
-    <form wire:submit.prevent="getTransactions"
-        class="sm:pb-4 my-4 sm:pt-6 grid grid-cols-1 sm:grid-cols-3 sm:gap-4 gap-3">
+    <form wire:submit.prevent="submitDate" class="sm:pb-4 my-4 sm:pt-6 grid grid-cols-1 sm:grid-cols-3 sm:gap-4 gap-3">
         <div class="sm:col-span-2 col-span-1">
             <x-date range helpers wire:model="transactionDate" label="Date" hint="Select your Date of Report"
                 format="DD [of] MMMM [of] YYYY" />
@@ -27,14 +26,12 @@
                     Supplies Report — Showing All Transactions This Month
                 </h2>
                 <div class="border">
-                    @if ($transactions)
-                        <x-table :$headers :rows="$transactions->items" paginate :quantity="[2, 5, 10]" loading>
-                            @interact('column_action', $item)
-                                <x-button.circle wire:click="createRsmi({{ $item['stock_id'] }})" text="RSMI"
-                                    color="teal" loading="" icon="document" />
-                            @endinteract
-                        </x-table>
-                    @endif
+                    <x-table :headers="$headers" :rows="$this->getTransactions ?? []" paginate :quantity="[2, 5, 10]" loading>
+                        @interact('column_action', $transaction)
+                            <x-button.circle wire:click="createRsmi({{ $transaction['stock_id'] }})" text="RSMI"
+                                color="teal" loading icon="document" />
+                        @endinteract
+                    </x-table>
                 </div>
             </div>
         </div>

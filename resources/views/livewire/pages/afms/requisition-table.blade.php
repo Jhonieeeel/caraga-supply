@@ -38,6 +38,9 @@
                         <x-icon name="document" class="w-5 h-5" />
                     </x-slot:right>
                     {{-- ris --}}
+                    <div wire:loading.delay.short>
+                        <x-loading />
+                    </div>
                     <livewire:pages.afms.components.request-r-i-s />
                 </x-tab.items>
                 <x-tab.items tab="RSMI">

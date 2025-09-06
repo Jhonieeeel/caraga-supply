@@ -43,7 +43,7 @@ class RequestTable extends Component
     {
         Requisition::find($requisitionId)->delete();
 
-        $this->resetPage();
+        $this->dispatch('refresh-rows');
 
         return $this->dispatch('alert', [
             'text' => 'Requisition Deleted successfully.',
@@ -52,6 +52,7 @@ class RequestTable extends Component
         ]);
     }
 
+    #[On('refresh-rows')]
     #[Computed()]
     public function rows()
     {
@@ -70,17 +71,14 @@ class RequestTable extends Component
 
     public function view(Requisition $requisition)
     {
-
-
-
         // to Parent
         $this->dispatch('change-tab', tab: 'Detail')->to(RequisitionTable::class);
 
         // to Detail Tab
-        $this->dispatch('view-requisition', id: $requisition->id)->to(RequestDetail::class);
+        $this->dispatch('view-requisition', requisition: $requisition)->to(RequestDetail::class);
 
         // to RIS Tab
-        $this->dispatch('current-data', id: $requisition->id)->to(RequestRIS::class);
+        $this->dispatch('current-data', requisition: $requisition)->to(RequestRIS::class);
 
         $requisition = null;
     }

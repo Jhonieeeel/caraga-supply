@@ -49,7 +49,7 @@ class RequestRIS extends Component
     {
         ProcessRequisition::dispatch($this->requisition->id);
 
-        $this->dispatch('current-data', id: $this->requisition->id);
+        $this->dispatch('current-data', requisition: $this->requisition);
 
         $this->dispatch('alert', [
             'text' => 'Requisition Generated successfully.',
@@ -61,11 +61,12 @@ class RequestRIS extends Component
     }
 
     #[On('current-data')]
-    public function currentData($id): void
+    public function currentData(Requisition $requisition)
     {
         $this->step = 1;
-        $this->requisition = Requisition::find($id);
-        $this->pdfStatus = $this->requisition->pdf;
+        $this->requisition = $requisition;
+
+        return $this->requisition;
     }
 
     #[On('refresh')]

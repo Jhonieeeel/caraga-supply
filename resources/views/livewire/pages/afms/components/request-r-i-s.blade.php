@@ -1,24 +1,18 @@
 <div>
     @if ($requisition)
-        @php
-            $isApproved =
-                $requisition->requested_by &&
-                $requisition->approved_by &&
-                $requisition->issued_by &&
-                $requisition->received_by;
-
-            $pdf = $requisition->pdf;
-        @endphp
         <div>
             <x-step wire:model.live="step" panels>
                 <x-step.items step="1" title="Admin Approval" description="Your request has been processed">
                     @if (!$requisition->completed)
                         <small
-                            class="text-sm py-6 text-center">{{ $isApproved
+                            class="text-sm py-6 text-center">{{ $requisition->requested_by &&
+                            $requisition->approved_by &&
+                            $requisition->issued_by &&
+                            $requisition->received_by
                                 ? "Generate the RIS and proceed to 'Next' "
                                 : 'Please wait while the requisition is being approved by all parties.' }}</small>
                         <div class="sm:py-3">
-                            @if ($isApproved)
+                            @if ($requisition->requested_by && $requisition->approved_by && $requisition->issued_by && $requisition->received_by)
                                 <x-button wire:click="getRIS" loading="getRIS" text="Generate RIS" icon="document"
                                     position="right" color="teal" outline />
                             @endif
@@ -27,7 +21,7 @@
                         <small class="text-sm py-6 text-center">Proceed to Next to view PDF</small>
                     @endif
                     <div class="flex justify-end w-full">
-                        <x-button wire:click="$set('step', 2)" :disabled="!$pdfStatus">
+                        <x-button wire:click="$set('step', 2)" :disabled="!$requisition->pdf">
                             Next
                         </x-button>
                     </div>
@@ -36,6 +30,7 @@
                     <small class="text-sm py-6 text-center">You can now print the generated
                         RIS.</small>
                     <div class="sm:py-3 py-2 flex sm:justify-center">
+                        {{-- ris/filename.pdf --}}
                         <iframe src="{{ asset('storage/' . $requisition->pdf) }}" width="70%" height="500px"
                             frameborder="0" class="border border-gray-300 mt-4">
                         </iframe>

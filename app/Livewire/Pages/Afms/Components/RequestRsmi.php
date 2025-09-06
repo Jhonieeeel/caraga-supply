@@ -28,24 +28,36 @@ class RequestRsmi extends Component
     public function mount()
     {
         $this->headers = [
-            ['index' => 'ris', 'label' => 'RIS'],
-            ['index' => 'stock_number', 'label' => 'Stock Number'],
+            ['index' => 'stock.stock_number', 'label' => 'Stock Number'],
+            ['index' => 'stock.supply.name', 'label' => 'Stock Name'],
+            ['index' => 'action'],
         ];
     }
 
+    public function submitDate() {
+        return $this->getTransactions();
+    }
+
+    #[Computed()]
     public function getTransactions()
     {
-        $start = Carbon::parse($this->transactionDate[0])->startOfDay();
+        if($this->transactionDate) {
+            $start = Carbon::parse($this->transactionDate[0])->startOfDay();
 
-        $end = isset($this->transactionDate[1])
-            ? Carbon::parse($this->transactionDate[1])->endOfDay()
-            : $start->copy()->endOfDay();
+            $end = isset($this->transactionDate[1])
+                ? Carbon::parse($this->transactionDate[1])->endOfDay()
+                : $start->copy()->endOfDay();
 
-        $this->transactions =  Transaction::with(['requisitions', 'stocks'])->whereBetween('created_at', [$start, $end])->paginate(5)->withQueryString();
+            return Transaction::select('stock_id')
+                ->distinct()
+                ->with(['requisition', 'stock'])
+                ->whereBetween('created_at', [$start, $end])
+                ->paginate(5)
+                ->withQueryString();
 
-        // dd($this->transactions);
+        }
 
-        return $this->transactions;
+        return [];
     }
 
     // RSMI
@@ -92,13 +104,17 @@ class RequestRsmi extends Component
     {
         $end = Carbon::parse($this->transactionDate[1])->addDay();
 
-        $this->rsmi = Requisition::with('items.stock')
-            ->where('completed', true)
-            ->whereBetween('created_at', [$this->transactionDate[0], $end])
-            ->whereHas('items', function ($query) use ($stock_id) {
-                $query->where('stock_id', $stock_id);
-            })
-            ->get();
+        $this->rsmi = Transaction::whereBetween('created_at', [$this->transactionDate[0], $end])->where('stock_id', $stock_id)->get();
+
+        dd($this->rsmi);
+
+        // $this->rsmi = Requisition::with('items.stock')
+        //     ->where('completed', true)
+        //     ->whereBetween('created_at', [$this->transactionDate[0], $end])
+        //     ->whereHas('items', function ($query) use ($stock_id) {
+        //         $query->where('stock_id', $stock_id);
+        //     })
+        //     ->get();
 
         $fileName = $generate_rsmi_service->handle($this->rsmi, $this->transactionDate);
 

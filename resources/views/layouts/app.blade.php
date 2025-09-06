@@ -45,7 +45,7 @@
                         </span>
                     </div>
                 </x-slot:brand>
-                <x-side-bar.item text="ADMIN">
+                <x-side-bar.item text="Dashboard">
                     <x-side-bar.item text="Dashboard" icon="chart-bar-square" wire:navigate :current="request()->routeIs('dashboard')"
                         :href="route('dashboard')" />
                 </x-side-bar.item>
@@ -56,10 +56,15 @@
                         :href="route('requisition.index')" />
                 </x-side-bar.item>
                 <x-side-bar.item text="PMU" :visible="true">
-                    <x-side-bar.item text="Home" />
+                    <x-side-bar.item text="Home" icon="archive-box" />
                 </x-side-bar.item>
+                <x-side-bar.item text="Employees" :visible="true">
+                    <x-side-bar.item text="Users" icon="users" />
+                </x-side-bar.item>
+
             </x-side-bar>
         </x-slot:menu>
+
         <div class="max-h-screen">{{ $slot }}</div>
     </x-layout>
 

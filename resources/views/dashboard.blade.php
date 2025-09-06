@@ -11,7 +11,8 @@
                     </div>
                     <div class="mx-4 flex h-full items-center justify-center gap-4 relative">
                         <div class="grow line-clamp-2">
-                            <h2 class="text-2xl font-bold text-blue-500">Welcome Back, User!</h2>
+                            <h2 class="text-2xl font-bold text-blue-500">Welcome Back, {{ auth()->user()->name }}</h2>
+                            {{-- user office here --}}
                             <p class="py-2 text-xs text-blue-600">Administrative and Financial Management Dashboard</p>
                         </div>
                         <div class=" absolute right-0 bottom-0">
