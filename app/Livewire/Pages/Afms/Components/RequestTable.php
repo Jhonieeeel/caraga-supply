@@ -33,7 +33,6 @@ class RequestTable extends Component
         ];
     }
 
-    #[On('refresh')]
     public function render()
     {
         return view('livewire.pages.afms.components.request-table');
@@ -49,6 +48,16 @@ class RequestTable extends Component
             'text' => 'Requisition Deleted successfully.',
             'color' => 'teal',
             'title' => 'Deleted'
+        ]);
+    }
+
+    #[On('update-list')]
+    public function updateList($id = null) {
+        $this->dispatch('refresh-rows');
+        $this->dispatch('alert', [
+            'text' => 'Requisition added successfully.',
+            'color' => 'green',
+            'title' => 'Success'
         ]);
     }
 
@@ -71,15 +80,14 @@ class RequestTable extends Component
 
     public function view(Requisition $requisition)
     {
+        $currentRequisition = Requisition::find($requisition->id);
         // to Parent
         $this->dispatch('change-tab', tab: 'Detail')->to(RequisitionTable::class);
 
         // to Detail Tab
-        $this->dispatch('view-requisition', requisition: $requisition)->to(RequestDetail::class);
+        $this->dispatch('view-requisition', requisition: $currentRequisition)->to(RequestDetail::class);
 
         // to RIS Tab
-        $this->dispatch('current-data', requisition: $requisition)->to(RequestRIS::class);
-
-        $requisition = null;
+        $this->dispatch('current-data', requisition: $currentRequisition)->to(RequestRIS::class);
     }
 }

@@ -28,8 +28,8 @@
                 <div class="border">
                     <x-table :headers="$headers" :rows="$this->getTransactions ?? []" paginate :quantity="[2, 5, 10]" loading>
                         @interact('column_action', $transaction)
-                            <x-button.circle wire:click="createRsmi({{ $transaction['stock_id'] }})" text="RSMI"
-                                color="teal" loading icon="document" />
+                            <x-button.circle wire:click="createRsmi({{ $transaction->stock_id }})"
+                                text="{{ $transaction->id }}" color="teal" loading icon="document" />
                         @endinteract
                     </x-table>
                 </div>

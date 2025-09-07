@@ -36,6 +36,7 @@ class StockForm extends Form
 
         $stock = Stock::where('stock_number', $this->stock_number)->firstOrFail();
         $stock->increment('quantity', $this->quantity);
+        $stock->increment('initial_quantity', $this->quantity);
 
         $create_transaction->handle([
             'stock_id' => $stock->id,

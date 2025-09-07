@@ -9,6 +9,7 @@ use App\Jobs\ProcessRequisition;
 use App\Livewire\Forms\RequisitionForm;
 use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
+use Imtigger\LaravelJobStatus\TrackableJob;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -47,17 +48,14 @@ class RequestRIS extends Component
     // generate ris
     public function getRIS()
     {
+        // generate pdf
         ProcessRequisition::dispatch($this->requisition->id);
-
-        $this->dispatch('current-data', requisition: $this->requisition);
-
-        $this->dispatch('alert', [
+        $this->dispatch('current-data', requisition: $this->requisition->id);
+        return $this->dispatch('alert', [
             'text' => 'Requisition Generated successfully.',
             'color' => 'teal',
             'title' => 'Requisition and Issuance Slip'
         ]);
-
-        return $this->requisition->refresh();
     }
 
     #[On('current-data')]

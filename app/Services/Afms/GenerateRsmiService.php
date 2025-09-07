@@ -30,16 +30,23 @@ class GenerateRsmiService
 
         $rowStart = 13;
         foreach ($rsmi as $item) {
-            $activeSheet->setCellValue("B{$rowStart}", $item->ris);
-            $activeSheet->setCellValue("D{$rowStart}", $item->items->first()->stock->stock_number);
-            $activeSheet->setCellValue("E{$rowStart}", $item->items->first()->stock->supply->name);
-            $activeSheet->setCellValue("F{$rowStart}", $item->items->first()->stock->supply->unit);
-            $activeSheet->setCellValue("G{$rowStart}", $item->items->first()->requested_qty);
+
+            if ($item->type_of_transaction === "RIS") {
+                $activeSheet->setCellValue("B{$rowStart}", $item->requisition->ris);
+            } else {
+                continue;
+            }
+
+            // $activeSheet->setCellValue("B{$rowStart}", $item->type_of_transaction === "RIS" ? $item->requisition->ris : continue);
+            $activeSheet->setCellValue("D{$rowStart}", $item->stock->stock_number);
+            $activeSheet->setCellValue("E{$rowStart}", $item->stock->supply->name);
+            $activeSheet->setCellValue("F{$rowStart}", $item->stock->supply->unit);
+            $activeSheet->setCellValue("G{$rowStart}", $item->quantity);
             $rowStart++;
         }
 
         $firstRequisition = $rsmi->first();
-        $initialQty = optional($firstRequisition->items->first()->stock)->initial_quantity;
+        $initialQty = $firstRequisition->stock->initial_quantity;
         $activeSheet->setCellValue('D32', $initialQty);
 
         $directory = storage_path('app/public/rsmi');

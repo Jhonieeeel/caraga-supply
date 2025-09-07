@@ -76,19 +76,12 @@ class RequisitionTable extends Component
         $newRequisition = $this->requestForm->create($create_request_action);
         $this->itemForm->create($create_item_action, $newRequisition);
 
-        $this->requestForm->reset();
-        $this->itemForm->reset();
-
+        $this->dispatch('update-list');
         $this->dispatch('modal:add-request-close');
-        $this->dispatch('refresh')->to(RequestTable::class);
-        $this->dispatch('alert', [
-            'text' => 'Requisition added successfully.',
-            'color' => 'green',
-            'title' => 'Success'
-        ]);
 
         return;
     }
+
 
     #[On('change-tab')]
     public function changeTab($tab)

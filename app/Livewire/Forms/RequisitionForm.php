@@ -47,6 +47,8 @@ class RequisitionForm extends Form
             return $create_request_action->handle($this->newArray());
         }
 
+        $this->reset();
+
         return $requisition;
     }
 

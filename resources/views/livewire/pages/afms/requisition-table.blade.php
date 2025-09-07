@@ -21,9 +21,6 @@
                         <x-icon name="list-bullet" class="w-5 h-5" />
                     </x-slot:right>
                     {{-- request table --}}
-                    <div wire:loading.delay.short>
-                        <x-loading />
-                    </div>
                     <livewire:pages.afms.components.request-table />
                 </x-tab.items>
                 <x-tab.items tab="Detail">
@@ -38,9 +35,6 @@
                         <x-icon name="document" class="w-5 h-5" />
                     </x-slot:right>
                     {{-- ris --}}
-                    <div wire:loading.delay.short>
-                        <x-loading />
-                    </div>
                     <livewire:pages.afms.components.request-r-i-s />
                 </x-tab.items>
                 <x-tab.items tab="RSMI">
@@ -48,7 +42,6 @@
                         <x-icon name="cog-6-tooth" class="w-5 h-5" />
                     </x-slot:right>
                     {{-- rsmi --}}
-
                     <livewire:pages.afms.components.request-rsmi />
                 </x-tab.items>
             </x-tab>
