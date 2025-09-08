@@ -8,7 +8,6 @@ use App\Services\Afms\GenerateRisService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
-use Livewire\Livewire;
 
 class ProcessRequisition implements ShouldQueue
 {
@@ -17,16 +16,13 @@ class ProcessRequisition implements ShouldQueue
     public function __construct(
         public int $requisitionId
 
-    ) {
+    ) {}
+
+    public function handle(GenerateRisService $word, ConvertRisService $pdf): void
+    {
+        $requisition = Requisition::findOrFail($this->requisitionId);
+
+        $generatedWord = $word->handle($requisition);
+        $pdf->handle($generatedWord, $requisition);
     }
-
-public function handle(GenerateRisService $word, ConvertRisService $pdf): void
-{
-    $requisition = Requisition::findOrFail($this->requisitionId);
-
-    $generatedWord = $word->handle($requisition);
-    $pdf->handle($generatedWord, $requisition);
-
-    $requisition->refresh();
-}
 }

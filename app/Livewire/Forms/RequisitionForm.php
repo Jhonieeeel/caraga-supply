@@ -17,6 +17,9 @@ class RequisitionForm extends Form
     #[Rule(['unique:requisitions,ris', 'nullable', 'min:6'])]
     public $ris;
 
+    #[Rule('exists:users,id')]
+    public $user_id;
+
     #[Rule(['nullable', 'exists:users,id'])]
     public $requested_by;
 
@@ -105,7 +108,7 @@ class RequisitionForm extends Form
         return [
             'ris' => $this->ris,
             'user_id' => Auth::id(),
-            'requested_by' => Auth::id(),
+            'requested_by' => $this->requested_by,
             'approved_by' => $this->approved_by,
             'issued_by' => $this->issued_by,
             'received_by' => $this->received_by,

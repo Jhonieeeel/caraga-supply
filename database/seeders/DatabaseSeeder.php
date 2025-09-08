@@ -6,6 +6,7 @@ use App\Models\Supply;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +16,40 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $superRole = Role::create([
+            'name' => 'Super Admin'
         ]);
+
+        $userRole = Role::create([
+            'name' => 'User'
+        ]);
+
+        $super = User::factory()->create([
+            'name' => 'Dave Madayag',
+            'email' => 'dave@example.com',
+        ]);
+
+
+        $ray = User::factory()->create([
+            'name' => 'Ray Alingasa',
+            'email' => 'ray@example.com',
+        ]);
+
+        $super->assignRole($superRole);
+        $ray->assignRole($superRole);
+
+        $user1 = User::factory()->create([
+            'name' => 'Marvin',
+            'email' => 'marvin@example.com',
+        ]);
+
+        $user2 = User::factory()->create([
+            'name' => 'Danny',
+            'email' => 'danny@example.com',
+        ]);
+
+        $user1->assignRole($userRole);
+        $user2->assignRole($userRole);
 
         $supply = Supply::create([
             'name' => 'Alcohol, 1 Litre',

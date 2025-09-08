@@ -37,7 +37,7 @@
                     animated />
             </div>
         </div>
-        <div class="w-full bg-white p-3 rounded shadow-md sm:mt-12">
+        <div class="w-full bg-white p-3 rounded shadow-md sm:mt-12 border">
             <div class="header">
                 <div class="flex justify-start items-center gap-x-6">
                     <h4 class="text-sm">Daily Requests</h4>

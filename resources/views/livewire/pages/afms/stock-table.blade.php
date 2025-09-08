@@ -4,17 +4,19 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Stock
             </h2>
-
-            <x-button x-on:click="$modalOpen('add')" icon="cube" position="right">Add Stock</x-button>
+            @role('Super Admin')
+                <x-button x-on:click="$modalOpen('add')" icon="cube" position="right">Add Stock</x-button>
+            @endrole
         </div>
         <div class="overflow-hidden sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <x-table :$headers :rows='$this->rows' filter :quantity="[2, 5, 10]" loading paginate>
-                    @interact('column_action', $stock)
-                        {{-- <x-button.circle color="red" icon="trash" wire:click='delete({{ $stock->id }})' /> --}}
-                        <x-button.circle color="teal" icon="pencil-square" wire:click='edit({{ $stock }})' />
-                        <x-button.circle color="blue" icon="plus" wire:click="selectStock({{ $stock }})" />
-                    @endinteract
+                    @role('Super Admin')
+                        @interact('column_action', $stock)
+                            <x-button.circle color="teal" icon="pencil-square" wire:click='edit({{ $stock }})' />
+                            <x-button.circle color="blue" icon="plus" wire:click="selectStock({{ $stock }})" />
+                        @endinteract
+                    @endrole
                 </x-table>
             </div>
         </div>
@@ -66,7 +68,8 @@
                     <x-number wire:model='stockForm.price' min="1.0" label="Price *" step="0.01"
                         hint="Insert your price" />
                 </div>
-                <div class="sm:col-span-2 ms-auto">
+                <div class="sm:col-span-2 ms-auto sm:space-x-4">
+                    <x-button text="Delete" wire:click="delete({{ $stock?->id }})" color="red" outline />
                     <x-button submit text="Submit" color="primary" />
                 </div>
             </form>
@@ -93,7 +96,7 @@
                     <x-number wire:model='stockForm.price' min="1.0" label="Price *" step="0.01"
                         hint="Insert your price" />
                 </div>
-                <div class="sm:col-span-2 ms-auto">
+                <div class="sm:col-span-2 ms-auto flex">
                     <x-button submit text="Submit" color="primary" />
                 </div>
             </form>

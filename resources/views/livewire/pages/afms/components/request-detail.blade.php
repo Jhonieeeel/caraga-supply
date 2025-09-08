@@ -6,6 +6,11 @@
                 $requisition->approved_by &&
                 $requisition->issued_by &&
                 $requisition->received_by;
+
+            $status = auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin');
+
+            $disableStatus =
+                $isApproved && auth()->user()->hasRole('User') && auth()->user()->id !== $requisition->user_id;
         @endphp
         <div class="sm:flex items-center gap-x-4">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -41,7 +46,7 @@
                             class="w-full" />
                     </div>
                     <div>
-                        @if (!$isApproved)
+                        @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
                             <x-button wire:click="generateRIS" loading="generateRIS" class="w-full sm:w-auto"
                                 md>Generate
                             </x-button>
@@ -49,23 +54,23 @@
                     </div>
                 </div>
                 <div class="sm:col-span-2 col-span-4">
-                    <x-select.styled :disabled="$isApproved" wire:model="requestForm.requested_by" label="Requested by *"
+                    <x-select.styled :disabled="$disableStatus" wire:model="requestForm.requested_by" label="Requested by *"
                         hint="Select requester" :options="$this->getUsers" searchable />
                 </div>
                 <div class="sm:col-span-2 col-span-4">
-                    <x-select.styled :disabled="$isApproved" wire:model="requestForm.approved_by" label="Approved by *"
+                    <x-select.styled :disabled="$disableStatus" wire:model="requestForm.approved_by" label="Approved by *"
                         hint="Select approver" :options="$this->getUsers" searchable />
                 </div>
                 <div class="sm:col-span-2 col-span-4">
-                    <x-select.styled :disabled="$isApproved" wire:model="requestForm.issued_by" label="Issued by *"
+                    <x-select.styled :disabled="$disableStatus" wire:model="requestForm.issued_by" label="Issued by *"
                         hint="Select issuenace" :options="$this->getUsers" searchable />
                 </div>
                 <div class="sm:col-span-2 col-span-4">
-                    <x-select.styled :disabled="$isApproved" wire:model="requestForm.received_by" label="Received by *"
+                    <x-select.styled :disabled="$disableStatus" wire:model="requestForm.received_by" label="Received by *"
                         hint="Select receiver" :options="$this->getUsers" searchable />
                 </div>
                 <div class="sm:col-span-4 col-span-4 sm:ms-auto flex sm:items-center gap-x-3">
-                    @if (!$isApproved)
+                    @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
                         <x-button submit loading="update" icon="document" position="right">Update</x-button>
                     @endif
                 </div>
@@ -90,7 +95,7 @@
                                             <th scope="col"
                                                 class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                                 Requested Quantity</th>
-                                            @if (!$isApproved)
+                                            @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
                                                 <th scope="col"
                                                     class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                                     Action</th>
@@ -108,7 +113,7 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                     {{ $item->requested_qty }}
                                                 </td>
-                                                @if (!$isApproved)
+                                                @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                         <x-button.circle
                                                             wire:click="editRequestItem({{ $item }})"

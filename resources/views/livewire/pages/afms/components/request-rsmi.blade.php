@@ -5,8 +5,8 @@
     <div class="bg-teal-100 p-3 rounded my-5 sm:my-3">
         <p class="text-sm text-teal-800">
             <span class="font-semibold text-teal-600 pr-1" aria-hidden="true">Note:</span>
-            Supplies listed below are from <span class="font-semibold">completed</span>
-            requisitions only.
+            The supplies listed below are from stocks that have been <span class="font-semibold">transacted</span> or
+            processed.
         </p>
     </div>
 

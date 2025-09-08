@@ -40,7 +40,7 @@ class RequestRIS extends Component
         ]);
 
         $this->dispatch('change-tab', tab: 'List')->to(RequisitionTable::class);
-        $this->dispatch('refresh')->to(RequestTable::class);
+        $this->dispatch('update-list', id: $this->requisition->id)->to(RequestTable::class);
 
         return;
     }
@@ -49,8 +49,10 @@ class RequestRIS extends Component
     public function getRIS()
     {
         // generate pdf
-        ProcessRequisition::dispatch($this->requisition->id);
-        $this->dispatch('current-data', requisition: $this->requisition->id);
+        ProcessRequisition::dispatchSync($this->requisition->id);
+
+        $this->dispatch('update-list', id: $this->requisition->id);
+
         return $this->dispatch('alert', [
             'text' => 'Requisition Generated successfully.',
             'color' => 'teal',
@@ -58,13 +60,14 @@ class RequestRIS extends Component
         ]);
     }
 
+    #[On('update-list')]
+    public function updateList($id = null) {}
+
     #[On('current-data')]
     public function currentData(Requisition $requisition)
     {
         $this->step = 1;
         $this->requisition = $requisition;
-
-        return $this->requisition;
     }
 
     #[On('refresh')]

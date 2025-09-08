@@ -1,6 +1,10 @@
 <div>
+
     @if ($requisition)
         <div>
+            <span wire:loading.delay wire:target='getRIS'>
+                <x-loading />
+            </span>
             <x-step wire:model.live="step" panels>
                 <x-step.items step="1" title="Admin Approval" description="Your request has been processed">
                     @if (!$requisition->completed)
@@ -21,7 +25,7 @@
                         <small class="text-sm py-6 text-center">Proceed to Next to view PDF</small>
                     @endif
                     <div class="flex justify-end w-full">
-                        <x-button wire:click="$set('step', 2)">
+                        <x-button :disabled="!$requisition->pdf" wire:click="$set('step', 2)">
                             Next
                         </x-button>
                     </div>

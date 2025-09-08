@@ -4,8 +4,9 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Supply
             </h2>
-
-            <x-button x-on:click="$modalOpen('add')" icon="cube" position="right">Add Supply</x-button>
+            @role('Super Admin')
+                <x-button x-on:click="$modalOpen('add')" icon="cube" position="right">Add Supply</x-button>
+            @endrole
         </div>
         <div class="overflow-hidden sm:rounded-lg">
             <div class="p-6 text-gray-900">
@@ -16,10 +17,12 @@
                     </div>
                 @endif
                 <x-table :$headers :rows='$this->rows' :filter="['quantity' => 'quantity', 'search' => 'search']" :quantity="[2, 5, 10]" paginate loading>
-                    @interact('column_action', $supply)
-                        <x-button.circle color="red" icon="trash" wire:click="delete('{{ $supply->id }}')" />
-                        <x-button.circle color="teal" icon="pencil-square" wire:click='edit({{ $supply }})' />
-                    @endinteract
+                    @role('Super Admin')
+                        @interact('column_action', $supply)
+                            <x-button.circle color="red" icon="trash" wire:click="delete('{{ $supply->id }}')" />
+                            <x-button.circle color="teal" icon="pencil-square" wire:click='edit({{ $supply }})' />
+                        @endinteract
+                    @endrole
                 </x-table>
             </div>
         </div>

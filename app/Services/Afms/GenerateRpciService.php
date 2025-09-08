@@ -5,10 +5,11 @@ namespace App\Services\Afms;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class GenerateRpciService
 {
-    public function handle($rsmi, $stockId)
+    public function handle($rpci, $stockId)
     {
         $srcFile = public_path('templates/rpci_template.xlsx');
         $spreadsheet = IOFactory::load($srcFile);
@@ -20,7 +21,7 @@ class GenerateRpciService
         $templateRow = $sheet->getHighestRow(); // last row is the "template"
         $highestCol  = $sheet->getHighestColumn(); // e.g. "K"
 
-        foreach ($rsmi as $requisition) {
+        foreach ($rpci as $transaction) {
             $targetRow = $sheet->getHighestRow() + 1;
 
             // insert a new row
@@ -37,7 +38,7 @@ class GenerateRpciService
                 $dstCell = $sheet->getCell("{$col}{$targetRow}");
 
                 if ($srcCell->isFormula()) {
-                    $formula = $srcCell->getValue(); // e.g. "=J59+G60-H60"
+                    $formula = $srcCell->getValue();
 
                     $rowOffset = $targetRow - $templateRow;
                     $newFormula = preg_replace_callback(
@@ -57,20 +58,33 @@ class GenerateRpciService
             }
 
             // fill requisition-specific values
+            $sheet->setCellValue("E{$targetRow}", Carbon::parse($transaction->updated_at)->format('m/d/Y'));
 
-            $sheet->setCellValue("E{$targetRow}", Carbon::parse($requisition->updated_at)->format('m/d/Y'));
+            if ($transaction->type_of_transaction === "RIS") {
+                $sheet->setCellValue("F{$targetRow}", $transaction->requisition->ris);
+                $sheet->setCellValue("H{$targetRow}", $transaction->quantity);
+            } else {
+                $date = Carbon::parse($transaction->created_at)->format('Y-m-d'); // PO-202
 
-            $sheet->setCellValue("F{$targetRow}", $requisition->ris);
-            $sheet->setCellValue("H{$targetRow}", $requisition->items->first()->requested_qty);
+                $sheet->setCellValue("F{$targetRow}", $transaction->type_of_transaction . "{$date}");
+                $sheet->setCellValue("G{$targetRow}", $transaction->quantity);
+            }
 
             // keep row height
             $sheet->getRowDimension($targetRow)
                 ->setRowHeight($sheet->getRowDimension($templateRow)->getRowHeight());
         }
 
-        $newFileName = 'rsmi_' . now()->format('Y-m-d_His') . '.xls';
-        $out = storage_path('app/public/rpci/' . $newFileName);
-        IOFactory::createWriter($spreadsheet, 'Xlsx')->save($out);
+        $directory = storage_path('app/public/rpci');
+        if (!file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $newFileName = 'rpci_' . now()->format('Y-m-d_His') . '.xlsx';
+        $outputPath = $directory . DIRECTORY_SEPARATOR . $newFileName;
+
+        $writer->save($outputPath);
 
         return;
     }

@@ -37,13 +37,22 @@
                     {{-- ris --}}
                     <livewire:pages.afms.components.request-r-i-s />
                 </x-tab.items>
-                <x-tab.items tab="RSMI">
-                    <x-slot:right>
-                        <x-icon name="cog-6-tooth" class="w-5 h-5" />
-                    </x-slot:right>
-                    {{-- rsmi --}}
-                    <livewire:pages.afms.components.request-rsmi />
-                </x-tab.items>
+                @role('Super Admin')
+                    <x-tab.items tab="RSMI">
+                        <x-slot:right>
+                            <x-icon name="cog-6-tooth" class="w-5 h-5" />
+                        </x-slot:right>
+                        {{-- rsmi --}}
+                        <livewire:pages.afms.components.request-rsmi />
+                    </x-tab.items>
+                    <x-tab.items tab="RPCI">
+                        <x-slot:right>
+                            <x-icon name="document-chart-bar" class="w-5 h-5" />
+                        </x-slot:right>
+                        {{-- rpci --}}
+                        <livewire:pages.afms.components.request-rpci />
+                    </x-tab.items>
+                @endrole
             </x-tab>
         </div>
     </div>

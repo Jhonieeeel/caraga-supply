@@ -42,7 +42,7 @@ class RequestTable extends Component
     {
         Requisition::find($requisitionId)->delete();
 
-        $this->dispatch('refresh-rows');
+        $this->dispatch('update-list');
 
         return $this->dispatch('alert', [
             'text' => 'Requisition Deleted successfully.',
@@ -52,16 +52,8 @@ class RequestTable extends Component
     }
 
     #[On('update-list')]
-    public function updateList($id = null) {
-        $this->dispatch('refresh-rows');
-        $this->dispatch('alert', [
-            'text' => 'Requisition added successfully.',
-            'color' => 'green',
-            'title' => 'Success'
-        ]);
-    }
+    public function updateList($id = null) {}
 
-    #[On('refresh-rows')]
     #[Computed()]
     public function rows()
     {

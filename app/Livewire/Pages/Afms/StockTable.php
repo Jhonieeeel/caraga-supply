@@ -114,17 +114,20 @@ class StockTable extends Component
     // update
     public function update(EditStockAction $edit_stock_action)
     {
-        $this->stockForm->update($this->stock, $edit_stock_action);
+        $stock = $this->stockForm->update($this->stock, $edit_stock_action);
         $this->dispatch('modal:edit-stock-close');
-        $this->resetPage();
+        $this->dispatch('refresh', id: $stock->id);
     }
 
     // delete
     public function delete($id)
     {
         Stock::findOrFail($id)->delete();
-        $this->resetPage();
+        $this->dispatch('refresh', id: $id);
     }
+
+    #[Computed('refresh')]
+    public function updateList($id = null) {}
 
     #[Layout('layouts.app')]
     public function render()

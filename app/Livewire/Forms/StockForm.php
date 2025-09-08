@@ -64,8 +64,10 @@ class StockForm extends Form
     public function update(Stock $stock, EditStockAction $edit_stock_action)
     {
         $this->validate();
-        $edit_stock_action->handle($stock, $this->toArray());
+        $stock = $edit_stock_action->handle($stock, $this->toArray());
         $this->reset();
+
+        return $stock;
     }
 
     public function fillForm(Stock $stock): void
