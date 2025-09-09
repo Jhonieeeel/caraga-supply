@@ -9,8 +9,8 @@
 
             $status = auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin');
 
-            $disableStatus =
-                $isApproved && auth()->user()->hasRole('User') && auth()->user()->id !== $requisition->user_id;
+            $disableStatus = $isApproved || !$status;
+            $isAdmin = auth()->user()->hasRole('Super Admin');
         @endphp
         <div class="sm:flex items-center gap-x-4">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -40,9 +40,9 @@
 
         <div class="sm:py-4 py-3">
             <form wire:submit.prevent="update" class="w-full grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="col-span-4 sm:flex items-center gap-3.5">
+                <div class="col-span-4 sm:flex items-center justify-between w-full gap-3.5">
                     <div class="flex-1">
-                        <x-input :disabled="$isApproved" wire:model="requestForm.ris" label="RIS" hint="Input RIS"
+                        <x-input :disabled="$disableStatus" wire:model="requestForm.ris" label="RIS" hint="Input RIS"
                             class="w-full" />
                     </div>
                     <div>
@@ -57,14 +57,16 @@
                     <x-select.styled :disabled="$disableStatus" wire:model="requestForm.requested_by" label="Requested by *"
                         hint="Select requester" :options="$this->getUsers" searchable />
                 </div>
-                <div class="sm:col-span-2 col-span-4">
-                    <x-select.styled :disabled="$disableStatus" wire:model="requestForm.approved_by" label="Approved by *"
-                        hint="Select approver" :options="$this->getUsers" searchable />
-                </div>
-                <div class="sm:col-span-2 col-span-4">
-                    <x-select.styled :disabled="$disableStatus" wire:model="requestForm.issued_by" label="Issued by *"
-                        hint="Select issuenace" :options="$this->getUsers" searchable />
-                </div>
+                @if ($isAdmin)
+                    <div class="sm:col-span-2 col-span-4">
+                        <x-select.styled :disabled="$disableStatus" wire:model="requestForm.approved_by" label="Approved by *"
+                            hint="Select approver" :options="$this->getUsers" searchable />
+                    </div>
+                    <div class="sm:col-span-2 col-span-4">
+                        <x-select.styled :disabled="$disableStatus" wire:model="requestForm.issued_by" label="Issued by *"
+                            hint="Select issuenace" :options="$this->getUsers" searchable />
+                    </div>
+                @endif
                 <div class="sm:col-span-2 col-span-4">
                     <x-select.styled :disabled="$disableStatus" wire:model="requestForm.received_by" label="Received by *"
                         hint="Select receiver" :options="$this->getUsers" searchable />
