@@ -16,6 +16,7 @@ class Stock extends Model
         'quantity',
         'initial_quantity',
         'price',
+        'stock_location'
     ];
 
     public function supply()

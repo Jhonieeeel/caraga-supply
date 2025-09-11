@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('issued_by')->nullable()->constrained('users');
             $table->foreignId('received_by')->nullable()->constrained('users');
             $table->text('purpose')->nullable();
+            $table->string('status')->default('pending');
             $table->boolean('completed')->default(false);
             $table->string('pdf')->nullable();
             $table->timestamps();

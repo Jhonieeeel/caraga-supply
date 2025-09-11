@@ -13,7 +13,7 @@
                 @if (session('message'))
                     <div class="sm:py-4">
                         <x-alert title="{{ session('message')['title'] }}" text="{{ session('message')['text'] }}"
-                            color="{{ session('message')['color'] }}" light />
+                            color="{{ session('message')['color'] }}" />
                     </div>
                 @endif
                 <x-table :$headers :rows='$this->rows' :filter="['quantity' => 'quantity', 'search' => 'search']" :quantity="[2, 5, 10]" paginate loading>

@@ -42,6 +42,10 @@
                     <x-number wire:model='stockForm.price' min="1.0" label="Price *" step="1.0"
                         hint="Insert your price" />
                 </div>
+                <div class="sm:col-span-2">
+                    <x-input wire:model='stockForm.stock_location' label="Stock Location *"
+                        hint="Insert your stock location." />
+                </div>
                 <div class="sm:col-span-2 ms-auto">
                     <x-button submit text="Submit" color="primary" />
                 </div>
@@ -67,6 +71,10 @@
                 <div class="sm:col-span-1">
                     <x-number wire:model='stockForm.price' min="1.0" label="Price *" step="0.01"
                         hint="Insert your price" />
+                </div>
+                <div class="sm:col-span-2">
+                    <x-input wire:model='stockForm.stock_location' label="Stock Location *"
+                        hint="Insert your stock location." />
                 </div>
                 <div class="sm:col-span-2 ms-auto sm:space-x-4">
                     <x-button text="Delete" wire:click="delete({{ $stock?->id }})" color="red" outline />
@@ -95,6 +103,10 @@
                 <div class="sm:col-span-1">
                     <x-number wire:model='stockForm.price' min="1.0" label="Price *" step="0.01"
                         hint="Insert your price" />
+                </div>
+                <div class="sm:col-span-2">
+                    <x-input wire:model='stockForm.stock_location' label="Stock Location *"
+                        hint="Insert your stock location." />
                 </div>
                 <div class="sm:col-span-2 ms-auto flex">
                     <x-button submit text="Submit" color="primary" />

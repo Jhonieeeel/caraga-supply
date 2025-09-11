@@ -30,6 +30,9 @@ class StockForm extends Form
     #[Rule(['required', 'numeric'])]
     public $price;
 
+    #[Rule('required')]
+    public $stock_location;
+
     public function createPurchaseOrder(CreateTransaction $create_transaction)
     {
         $this->validate();
@@ -77,6 +80,7 @@ class StockForm extends Form
         $this->stock_number = $stock->stock_number;
         $this->quantity = $stock->quantity;
         $this->price = $stock->price;
+        $this->stock_location = $stock->stock_location;
     }
 
     public function updatePartial(Stock $stock, EditStockAction $edit_stock_action)
@@ -100,7 +104,8 @@ class StockForm extends Form
             'stock_number' => $this->stock_number,
             'quantity' => $this->quantity,
             'initial_quantity' => $this->initial_quantity,
-            'price' => $this->price
+            'price' => $this->price,
+            'stock_location' => $this->stock_location
         ];
     }
 }

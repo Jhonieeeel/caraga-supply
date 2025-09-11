@@ -23,7 +23,7 @@ class RequestRpci extends Component
         $this->headers = [
             ['index' => 'stock.stock_number', 'label' => 'Stock Number'],
             ['index' => 'stock.supply.name', 'label' => 'Stock Name'],
-            ['index' => 'action'],
+            ['index' => 'action', 'label' => 'Generate RPCI'],
         ];
     }
 

@@ -25,7 +25,6 @@ class RequestTable extends Component
     public function mount()
     {
         $this->headers = [
-            ['index' => 'id', 'label' => 'REQUI ID'],
             ['index' => 'user.name', 'label' => 'Requested By'],
             ['index' => 'items_count', 'label' => 'Total Requested Items'],
             ['index' => 'completed', 'label' => 'Status'],

@@ -4,6 +4,7 @@ use App\Livewire\Actions\Logout;
 use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Livewire\Pages\Afms\StockTable;
 use App\Livewire\Pages\Afms\SupplyTable;
+use App\Livewire\Pages\Afms\UserTable;
 use Illuminate\Support\Facades\Route;
 
 Route::view('profile', 'profile')
@@ -19,6 +20,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // logout
     Route::post('/logout', Logout::class)->name('logout');
 
+    // user management
+    Route::get('user', UserTable::class)->name('user.index');
 });
 
 require __DIR__ . '/auth.php';

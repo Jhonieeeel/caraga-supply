@@ -11,7 +11,7 @@
             @if (session('message'))
                 <div class="sm:py-4">
                     <x-alert title="{{ session('message')['title'] }}" text="{{ session('message')['text'] }}"
-                        color="{{ session('message')['color'] }}" light />
+                        color="{{ session('message')['color'] }}" />
                 </div>
             @endif
             <x-tab wire:model.live="tab">
@@ -45,11 +45,11 @@
                         {{-- rsmi --}}
                         <livewire:pages.afms.components.request-rsmi />
                     </x-tab.items>
-                    <x-tab.items tab="RPCI">
+                    <x-tab.items tab="RPCI (Stock Card)">
                         <x-slot:right>
                             <x-icon name="document-chart-bar" class="w-5 h-5" />
                         </x-slot:right>
-                        {{-- rpci --}}
+                        {{-- rpci stock card --}}
                         <livewire:pages.afms.components.request-rpci />
                     </x-tab.items>
                 @endrole

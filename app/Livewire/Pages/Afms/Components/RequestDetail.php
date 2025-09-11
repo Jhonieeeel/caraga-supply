@@ -23,12 +23,25 @@ class RequestDetail extends Component
     public RequisitionForm $requestForm;
     public ItemForm $itemForm;
 
+    public function approvedRequisition(Requisition $requisition)
+    {
+        $requisition->status = 'approved';
+        $requisition->save();
+        $this->dispatch('alert', [
+            'text' => 'Requisition Approved.',
+            'color' => 'teal',
+            'title' => 'Requisition and Issuance Slip'
+        ]);
+        $this->dispatch('current-data', requisition: $requisition);
+        return;
+    }
 
     public function editRequestItem(RequisitionItem $item)
     {
         $this->requisitionItem = $item;
         $this->itemForm->fillForm($this->requisitionItem);
         $this->dispatch('modal:edit-item-open');
+        return;
     }
 
     public function updateRequestItem(UpdateItemAction $update_item_action)

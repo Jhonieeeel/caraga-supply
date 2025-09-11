@@ -1,4 +1,9 @@
 <div>
+    @php
+        $isAdmin = auth()->user()->hasRole('Super Admin');
+        $user = auth()->user()->hasRole('User');
+        $authUser = auth()->user()->id;
+    @endphp
     <span wire:loading.delay wire:target='view'>
         <x-loading />
     </span>
@@ -12,7 +17,8 @@
         @endinteract
         @interact('column_action', $requisition)
             <x-button.circle color="teal" icon="magnifying-glass" loading="view" wire:click="view({{ $requisition->id }})" />
-            @if (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin'))
+            @if (auth()->user()->hasRole('Super Admin') ||
+                    (!$requisition->completed && auth()->user()->id === $requisition->user_id))
                 <x-button.circle color="red" loading="deleteRequisition" icon="trash"
                     wire:click="deleteRequisition({{ $requisition->id }})" />
             @endif

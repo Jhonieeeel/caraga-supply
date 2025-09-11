@@ -2,10 +2,7 @@
 
 namespace App\Livewire\Pages\Afms\Components;
 
-use App\Models\Requisition;
-use App\Models\RequisitionItem;
 use App\Models\Transaction;
-use App\Services\Afms\GenerateRpciService;
 use App\Services\Afms\GenerateRsmiService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -30,7 +27,7 @@ class RequestRsmi extends Component
         $this->headers = [
             ['index' => 'stock.stock_number', 'label' => 'Stock Number'],
             ['index' => 'stock.supply.name', 'label' => 'Stock Name'],
-            ['index' => 'action'],
+            ['index' => 'action', 'label' => 'Generate RSMI'],
         ];
     }
 

@@ -26,12 +26,14 @@ class DatabaseSeeder extends Seeder
 
         $super = User::factory()->create([
             'name' => 'Dave Madayag',
+            'office' => 'GASU',
             'email' => 'dave@example.com',
         ]);
 
 
         $ray = User::factory()->create([
             'name' => 'Ray Alingasa',
+            'office' => 'GASU',
             'email' => 'ray@example.com',
         ]);
 
@@ -40,11 +42,13 @@ class DatabaseSeeder extends Seeder
 
         $user1 = User::factory()->create([
             'name' => 'Marvin',
+            'office' => 'MSS',
             'email' => 'marvin@example.com',
         ]);
 
         $user2 = User::factory()->create([
             'name' => 'Danny',
+            'office' => 'MSS',
             'email' => 'danny@example.com',
         ]);
 
@@ -62,7 +66,8 @@ class DatabaseSeeder extends Seeder
             'price' => 200,
             'quantity' => 38,
             'stock_number' => 'Supply-2025',
-            'initial_quantity' => 38
+            'initial_quantity' => 38,
+            'stock_location' => 'Main Warehouse'
         ]);
 
         // Supply::factory(20)->create();

@@ -1,6 +1,9 @@
 <div>
 
     @if ($requisition)
+        @php
+            $isApproved = $requisition->status === 'approved';
+        @endphp
         <div>
             <span wire:loading.delay wire:target='getRIS'>
                 <x-loading />
@@ -9,14 +12,11 @@
                 <x-step.items step="1" title="Admin Approval" description="Your request has been processed">
                     @if (!$requisition->completed)
                         <small
-                            class="text-sm py-6 text-center">{{ $requisition->requested_by &&
-                            $requisition->approved_by &&
-                            $requisition->issued_by &&
-                            $requisition->received_by
+                            class="text-sm py-6 text-center">{{ $isApproved
                                 ? "Generate the RIS and proceed to 'Next' "
                                 : 'Please wait while the requisition is being approved by all parties.' }}</small>
                         <div class="sm:py-3">
-                            @if ($requisition->requested_by && $requisition->approved_by && $requisition->issued_by && $requisition->received_by)
+                            @if ($isApproved)
                                 <x-button wire:click="getRIS" loading="getRIS" text="Generate RIS" icon="document"
                                     position="right" color="teal" outline />
                             @endif

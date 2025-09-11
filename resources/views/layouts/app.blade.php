@@ -59,7 +59,8 @@
                     <x-side-bar.item text="Home" icon="archive-box" />
                 </x-side-bar.item>
                 <x-side-bar.item text="Employees" :visible="true">
-                    <x-side-bar.item text="Users" icon="users" />
+                    <x-side-bar.item text="Users" icon="users" wire:navigate :current="request()->routeIs('user.index')"
+                        :href="route('user.index')" />
                 </x-side-bar.item>
 
             </x-side-bar>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+use Illuminate\Support\Str;
 
 class RequisitionForm extends Form
 {
@@ -34,6 +35,9 @@ class RequisitionForm extends Form
 
     #[Rule('nullable')]
     public $completed;
+
+    #[Rule('nullable')]
+    public $status;
 
     #[Validate(['nullable', 'file', 'mimes:pdf'])]
     public $pdf;
@@ -65,10 +69,13 @@ class RequisitionForm extends Form
 
         if ($this->temporaryFile && file_exists($currentPath)) {
             unlink($currentPath);
-
-            $originalName = pathinfo($this->temporaryFile->getClientOriginalName(), PATHINFO_FILENAME);
             $extension = $this->temporaryFile->getClientOriginalExtension();
-            $uniqueName = $originalName . '_' . now()->format('Ymd_His') . '.' . $extension;
+
+            $date = now()->format('Ymd');
+            $userId = Auth::id();
+            $random = substr((string) Str::uuid(), 0, 8);
+
+            $uniqueName = "SIGNED_RIS_{$date}_{$userId}_{$random}.{$extension}";
 
             $storedPath = $this->temporaryFile->storeAs(
                 'ris',
@@ -77,6 +84,7 @@ class RequisitionForm extends Form
             );
 
             $this->pdf = $storedPath;
+            $this->status = 'completed';
             $this->completed = true;
             $update_stock_quantity->handle($requisition);
         }
@@ -101,10 +109,6 @@ class RequisitionForm extends Form
 
     public function toArray(): array
     {
-        $uploadedPdf = $this->temporaryFile
-            ? 'ris/' . $this->temporaryFile->getClientOriginalName()
-            : $this->pdf;
-
         return [
             'ris' => $this->ris,
             'user_id' => Auth::id(),
@@ -112,7 +116,7 @@ class RequisitionForm extends Form
             'approved_by' => $this->approved_by,
             'issued_by' => $this->issued_by,
             'received_by' => $this->received_by,
-            'pdf' => $uploadedPdf,
+            'pdf' => $this->pdf, // Use the renamed/stored file path
             'completed' => $this->completed ?? false
         ];
     }

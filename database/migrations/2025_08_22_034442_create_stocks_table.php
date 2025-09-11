@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer("quantity");
             $table->integer("initial_quantity");
             $table->decimal('price');
+            $table->string('stock_location');
             $table->timestamps();
         });
     }
