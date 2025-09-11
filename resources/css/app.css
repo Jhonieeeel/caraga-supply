@@ -1,6 +1,9 @@
-@import "tailwindcss";
-@import "../../vendor/tallstackui/tallstackui/css/v4.css";
+/* font */
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 
+/* tailwind */
+@import "../../vendor/tallstackui/tallstackui/css/v4.css";
+@import "tailwindcss";
 @plugin '@tailwindcss/forms';
 
 @source '../../vendor/tallstackui/tallstackui/**/*.php';
@@ -8,6 +11,7 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @theme {
+    --font-poppins: Poppins, "sans-serif";
     --font-sans:
         Figtree, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
         "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";

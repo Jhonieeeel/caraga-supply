@@ -18,7 +18,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased bg-gray-50">
+<body class="font-poppins antialiased bg-gray-50">
     <x-layout>
         {{-- header --}}
         <x-slot:header>
