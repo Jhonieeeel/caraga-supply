@@ -26,6 +26,9 @@ class RequestRIS extends Component
     public $temporaryFile;
     public $step = 1;
 
+    public $tab = 'RIS';
+
+
     // RIS
     public function updateRIS(UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
     {

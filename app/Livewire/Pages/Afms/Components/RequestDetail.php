@@ -8,6 +8,7 @@ use App\Actions\Stock\UpdateStockQuantity;
 use App\Actions\Transaction\CreateTransaction;
 use App\Livewire\Forms\ItemForm;
 use App\Livewire\Forms\RequisitionForm;
+use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\User;
@@ -32,7 +33,9 @@ class RequestDetail extends Component
             'color' => 'teal',
             'title' => 'Requisition and Issuance Slip'
         ]);
+        $this->dispatch('change-tab', tab: 'RIS')->to(RequisitionTable::class);
         $this->dispatch('current-data', requisition: $requisition);
+
         return;
     }
 
