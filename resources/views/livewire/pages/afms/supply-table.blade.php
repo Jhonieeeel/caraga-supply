@@ -5,7 +5,7 @@
                 Supply
             </h2>
             @role('Super Admin')
-                <x-button x-on:click="$modalOpen('add')" icon="cube" position="right">Add Supply</x-button>
+                <x-button md x-on:click="$modalOpen('add')" icon="cube" position="right">Add Supply</x-button>
             @endrole
         </div>
         <div class="overflow-hidden sm:rounded-lg">
@@ -13,7 +13,7 @@
                 @if (session('message'))
                     <div class="sm:py-4">
                         <x-alert title="{{ session('message')['title'] }}" text="{{ session('message')['text'] }}"
-                            color="{{ session('message')['color'] }}" />
+                            color="{{ session('message')['color'] }}" light />
                     </div>
                 @endif
                 <x-table :$headers :rows='$this->rows' :filter="['quantity' => 'quantity', 'search' => 'search']" :quantity="[2, 5, 10]" paginate loading>
@@ -61,7 +61,7 @@
                         ]" lazy="10" searchable />
                 </div>
                 <div class="sm:pt-2">
-                    <x-button submit icon="plus-circle" position="right">Submit</x-button>
+                    <x-button md submit icon="plus-circle" position="right">Submit</x-button>
                 </div>
             </form>
         </x-modal>
@@ -100,7 +100,7 @@
                         ]" lazy="10" searchable />
                 </div>
                 <div class="sm:pt-2">
-                    <x-button submit icon="plus-circle" position="right">Submit</x-button>
+                    <x-button md submit icon="plus-circle" position="right">Submit</x-button>
                 </div>
             </form>
         </x-modal>

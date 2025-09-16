@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Employee;
+use App\Models\Section;
 use App\Models\Supply;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -16,60 +18,42 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-        $superRole = Role::create([
+        $super = Role::create([
             'name' => 'Super Admin'
         ]);
+        $user = Role::create(['name' => 'User']);
 
-        $userRole = Role::create([
-            'name' => 'User'
-        ]);
-
-        $super = User::factory()->create([
+        $dave = User::factory()->create([
             'name' => 'Dave Madayag',
-            'office' => 'GASU',
             'email' => 'dave@example.com',
         ]);
 
+        $dave->assignRole($super);
 
-        $ray = User::factory()->create([
-            'name' => 'Ray Alingasa',
-            'office' => 'GASU',
-            'email' => 'ray@example.com',
+        $afms = Section::create([
+            'name' => 'AFMS',
+            'description' => 'Administrative and Financial Management Section',
         ]);
 
-        $super->assignRole($superRole);
-        $ray->assignRole($superRole);
-
-        $user1 = User::factory()->create([
-            'name' => 'Marvin',
-            'office' => 'MSS',
-            'email' => 'marvin@example.com',
+        $afms->units()->createMany([
+            [
+                'name' => 'GASU',
+                'description' => 'General Administrative Support Unit',
+            ],
+            [
+                'name' => 'PMU',
+                'description' => 'Procurement Management Unit',
+            ],
+            [
+                'name' => 'RMU',
+                'description' => 'Records Management Unit',
+            ]
         ]);
 
-        $user2 = User::factory()->create([
-            'name' => 'Danny',
-            'office' => 'MSS',
-            'email' => 'danny@example.com',
+        Employee::create([
+            'user_id' => $dave->id,
+            'section_id' => $afms->id,
+            'unit_id' => $afms->units()->where('name', 'GASU')->first()->id,
         ]);
-
-        $user1->assignRole($userRole);
-        $user2->assignRole($userRole);
-
-        $supply = Supply::create([
-            'name' => 'Alcohol, 1 Litre',
-            'category' => 'Supplies',
-            'unit' => 'Bottle'
-        ]);
-
-        $supply->stocks()->create([
-            'barcode' => 'test-code',
-            'price' => 200,
-            'quantity' => 38,
-            'stock_number' => 'Supply-2025',
-            'initial_quantity' => 38,
-            'stock_location' => 'Main Warehouse'
-        ]);
-
-        // Supply::factory(20)->create();
     }
 }

@@ -5,7 +5,7 @@
                 Stock
             </h2>
             @role('Super Admin')
-                <x-button x-on:click="$modalOpen('add')" icon="cube" position="right">Add Stock</x-button>
+                <x-button md x-on:click="$modalOpen('add')" icon="cube" position="right">Add Stock</x-button>
             @endrole
         </div>
         <div class="overflow-hidden sm:rounded-lg">
@@ -47,7 +47,7 @@
                         hint="Insert your stock location." />
                 </div>
                 <div class="sm:col-span-2 ms-auto">
-                    <x-button submit text="Submit" color="primary" />
+                    <x-button md submit text="Submit" color="primary" />
                 </div>
             </form>
         </x-modal>
@@ -77,8 +77,8 @@
                         hint="Insert your stock location." />
                 </div>
                 <div class="sm:col-span-2 ms-auto sm:space-x-4">
-                    <x-button text="Delete" wire:click="delete({{ $stock?->id }})" color="red" outline />
-                    <x-button submit text="Submit" color="primary" />
+                    <x-button md text="Delete" wire:click="delete({{ $stock?->id }})" color="red" outline />
+                    <x-button md submit text="Submit" color="primary" />
                 </div>
             </form>
         </x-modal>
@@ -109,7 +109,7 @@
                         hint="Insert your stock location." />
                 </div>
                 <div class="sm:col-span-2 ms-auto flex">
-                    <x-button submit text="Submit" color="primary" />
+                    <x-button md submit text="Submit" color="primary" />
                 </div>
             </form>
         </x-modal>

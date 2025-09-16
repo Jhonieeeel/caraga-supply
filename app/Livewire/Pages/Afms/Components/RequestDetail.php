@@ -57,6 +57,7 @@ class RequestDetail extends Component
     {
         $item = RequisitionItem::find($id);
         $item->delete();
+        return;
     }
 
     public function generateRIS()

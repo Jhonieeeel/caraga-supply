@@ -18,7 +18,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-poppins antialiased bg-gray-50">
+<body class="font-sans antialiased bg-gray-100">
     <x-layout>
         {{-- header --}}
         <x-slot:header>
@@ -66,7 +66,7 @@
             </x-side-bar>
         </x-slot:menu>
 
-        <div class="max-h-screen">{{ $slot }}</div>
+        <div class="min-h-screen font-poppins">{{ $slot }}</div>
     </x-layout>
 
     @livewireScripts

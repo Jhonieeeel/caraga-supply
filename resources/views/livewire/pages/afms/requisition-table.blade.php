@@ -11,7 +11,7 @@
             @if (session('message'))
                 <div class="sm:py-4">
                     <x-alert title="{{ session('message')['title'] }}" text="{{ session('message')['text'] }}"
-                        color="{{ session('message')['color'] }}" />
+                        color="{{ session('message')['color'] }}" light />
                 </div>
             @endif
             <x-tab wire:model.live="tab">

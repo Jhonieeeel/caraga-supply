@@ -76,7 +76,7 @@
                         <x-button submit loading="update" icon="document" position="right">Update</x-button>
                     @else
                         <x-button wire:click='approvedRequisition({{ $requisition }})' loading="approved"
-                            icon="check" position="right" color="teal">Approved</x-button>
+                            icon="check" position="right" color="teal">Approve</x-button>
                     @endif
                 </div>
             </form>
