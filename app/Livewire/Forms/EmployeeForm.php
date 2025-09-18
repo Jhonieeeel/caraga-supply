@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Actions\Employee\CreateEmployee;
+use App\Models\Employee;
 use App\Models\User;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -18,6 +19,14 @@ class EmployeeForm extends Form
     #[Validate('exists:users,id')]
     public ?int $user_id = null;
 
+
+      public function fillForm($unit_id, $section_id, $user_id): void
+    {
+        $this->section_id = $section_id;
+        $this->unit_id = $unit_id;
+        $this->user_id = $user_id;
+    }
+
     public function toArray()
     {
         return [
@@ -27,12 +36,12 @@ class EmployeeForm extends Form
         ];
     }
 
-    public function submit(CreateEmployee $create_employee, User $user)
+    public function submit(CreateEmployee $create_employee)
     {
-        $this->user_id = $user->id;
-
-        $this->validate();
-
         $create_employee->handle($this->toArray());
+
+        $this->reset();
+
+        return;
     }
 }

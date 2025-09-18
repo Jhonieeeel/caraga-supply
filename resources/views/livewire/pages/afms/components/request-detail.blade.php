@@ -74,7 +74,7 @@
                 <div class="sm:col-span-4 col-span-4 sm:ms-auto flex sm:items-center gap-x-3">
                     @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
                         <x-button submit loading="update" icon="document" position="right">Update</x-button>
-                    @else
+                    @elseif(auth()->user()->hasRole('Super Admin') && $isApproved)
                         <x-button wire:click='approvedRequisition({{ $requisition }})' loading="approved"
                             icon="check" position="right" color="teal">Approve</x-button>
                     @endif

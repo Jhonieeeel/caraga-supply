@@ -28,7 +28,30 @@ class DatabaseSeeder extends Seeder
             'email' => 'dave@example.com',
         ]);
 
+        $ray = User::factory()->create([
+            'name' => 'Ray',
+            'email' => 'ray@example.com'
+        ]);
+
+        $danny = User::factory()->create([
+                'name' => 'Danny',
+                'email' => 'danny@example.com'
+            ]);
+        $marvin = User::factory()->create([
+                'name' => 'Marvin',
+                'email' => 'marvin@example.com'
+            ]);
+        $jowee = User::factory()->create([
+                'name' => 'Jowee',
+                'email' => 'jowee@example.com'
+            ]);
+
         $dave->assignRole($super);
+        $ray->assignRole($super);
+
+        $danny->assignRole($user);
+        $marvin->assignRole($user);
+        $jowee->assignRole($user);
 
         $afms = Section::create([
             'name' => 'AFMS',
@@ -47,6 +70,10 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'RMU',
                 'description' => 'Records Management Unit',
+            ],
+            [
+                'name' => 'MSS',
+                'description' => 'Maintenance',
             ]
         ]);
 
@@ -55,5 +82,48 @@ class DatabaseSeeder extends Seeder
             'section_id' => $afms->id,
             'unit_id' => $afms->units()->where('name', 'GASU')->first()->id,
         ]);
+
+        Employee::create([
+                'user_id' => $ray->id,
+                'section_id' => $afms->id,
+                'unit_id' => $afms->units()->where('name', 'GASU')->first()->id,
+            ]);
+
+        Employee::create([
+            'user_id' => 3,
+            'section_id' => $afms->id,
+            'unit_id' => $afms->units()->where('name', 'MSS')->first()->id,
+            ]);
+
+        Employee::create([
+                'user_id' => 4,
+                'section_id' => $afms->id,
+                'unit_id' => $afms->units()->where('name', 'MSS')->first()->id,
+            ]);
+        Employee::create( [
+                'user_id' => 5,
+                'section_id' => $afms->id,
+                'unit_id' => $afms->units()->where('name', 'MSS')->first()->id,
+        ]);
+
+
+        // supply
+        Supply::create([
+                'name' => 'Ballpen',
+                'category' => 'Supplies',
+                'unit' => 'Pc',
+
+            ]);
+        Supply::create([
+                'name' => 'Notebook',
+                'category' => 'Supplies',
+                'unit' => 'Pc',
+
+            ]);
+        Supply::create([
+                'name' => 'Printer Paper',
+                'category' => 'Supplies',
+                'unit' => 'Pc',
+            ]);
     }
 }

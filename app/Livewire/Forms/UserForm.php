@@ -30,7 +30,7 @@ class UserForm extends Form
         // by default
         $user->assignRole('User');
 
-        $this->reset(['name', 'email', 'password', 'password_confirmation']);
+        $this->reset();
 
         return $user;
     }

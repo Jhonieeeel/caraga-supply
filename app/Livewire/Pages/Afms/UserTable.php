@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -54,8 +55,10 @@ class UserTable extends Component
     public function create(CreateUser $create_user, CreateEmployee $create_employee)
     {
         $createdUser = $this->userForm->submit($create_user);
+        $this->employeeForm->fillForm($this->unitId, $this->sectionId, $createdUser->id);
         $this->employeeForm->submit($create_employee, $createdUser);
 
+        $this->dispatch('refresh-users', id: $createdUser->id);
         return;
     }
 
@@ -71,6 +74,8 @@ class UserTable extends Component
             ->toArray();
     }
 
+   #[On('refresh-users')]
+    public function updateList($id = null) {}
 
     #[Computed()]
     public function sections()
