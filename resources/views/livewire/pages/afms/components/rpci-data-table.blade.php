@@ -1,6 +1,6 @@
 <div>
     <h2 class="font-semibold text-xl text-gray-800 leading-tight capitalize">
-        Report on the Physical count of Inventories ( Stock Card)
+        Report on the Physical count of Inventories
     </h2>
     <div class="bg-teal-100 p-3 rounded my-5 sm:my-3">
         <p class="text-sm text-teal-800">
@@ -10,10 +10,18 @@
         </p>
 
     </div>
-    <form wire:submit.prevent="submitDate" class="sm:pb-4 my-4 sm:pt-6 grid grid-cols-1 sm:grid-cols-3 sm:gap-4 gap-3">
+    <form wire:submit.prevent="submit" class="sm:pb-4 my-4 sm:pt-6 grid grid-cols-1 sm:grid-cols-3 sm:gap-4 gap-3">
         <div class="sm:col-span-2 col-span-1">
-            <x-date range helpers wire:model="transactionDate" label="Date" hint="Select your Date of Report"
-                format="DD [of] MMMM [of] YYYY" />
+            <x-date range helpers wire:model="transactionDate" label="Date"
+                hint="Select your Date of Transaction Report" format="DD [of] MMMM [of] YYYY" />
+        </div>
+        <div class="sm:col-span-2 col-span-1">
+            <x-select.styled label="Select Category" hint="You can choose 1, 2, 3 or 4" :options="[
+                ['label' => 'Non-Food Items', 'value' => 'nfi'],
+                ['label' => 'Supplies', 'value' => 'supplies'],
+                ['label' => 'Fuel', 'value' => 'fuel'],
+                ['label' => 'Others', 'value' => 'others'],
+            ]" searchable />
         </div>
         <div class="sm:col-span-2 col-span-1">
             <x-button text="Submit" submit />

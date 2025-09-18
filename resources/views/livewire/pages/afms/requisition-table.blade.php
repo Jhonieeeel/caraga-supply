@@ -45,6 +45,13 @@
                         {{-- rsmi --}}
                         <livewire:pages.afms.components.request-rsmi />
                     </x-tab.items>
+                    <x-tab.items tab="RPCI">
+                        <x-slot:right>
+                            <x-icon name="document-chart-bar" class="w-5 h-5" />
+                        </x-slot:right>
+                        {{-- rpci stock card --}}
+                        <livewire:pages.afms.components.rpci-data-table />
+                    </x-tab.items>
                     <x-tab.items tab="RPCI (Stock Card)">
                         <x-slot:right>
                             <x-icon name="document-chart-bar" class="w-5 h-5" />
