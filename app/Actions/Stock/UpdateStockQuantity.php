@@ -4,7 +4,6 @@ namespace App\Actions\Stock;
 
 use App\Models\Requisition;
 use App\Models\RequisitionItem;
-use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
 
 class UpdateStockQuantity

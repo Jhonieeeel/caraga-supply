@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(Stock::class)->nullable();
             $table->string('type_of_transaction'); // PO or RIS
             $table->integer('quantity');
+            $table->integer('initial_quantity')->nullable();
             $table->timestamps();
         });
     }

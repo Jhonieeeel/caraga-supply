@@ -43,7 +43,7 @@ class UserTable extends Component
             ['index' => 'user.name', 'label' => 'Name'],
             ['index' => 'section', 'label' => 'Office Designation'],
             ['index' => 'user.roles', 'label' => 'Roles'],
-            ['index' => 'action']
+            ['index' => 'action', 'label' => 'Action']
         ];
     }
 
@@ -74,7 +74,7 @@ class UserTable extends Component
             ->toArray();
     }
 
-   #[On('refresh-users')]
+    #[On('refresh-users')]
     public function updateList($id = null) {}
 
     #[Computed()]

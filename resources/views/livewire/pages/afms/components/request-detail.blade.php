@@ -72,11 +72,13 @@
                         hint="Select receiver" :options="$this->getUsers" searchable />
                 </div>
                 <div class="sm:col-span-4 col-span-4 sm:ms-auto flex sm:items-center gap-x-3">
-                    @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
-                        <x-button submit loading="update" icon="document" position="right">Update</x-button>
-                    @elseif(auth()->user()->hasRole('Super Admin') && $isApproved)
-                        <x-button wire:click='approvedRequisition({{ $requisition }})' loading="approved"
-                            icon="check" position="right" color="teal">Approve</x-button>
+                    @if (!$requisition->completed)
+                        @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
+                            <x-button submit loading="update" icon="document" position="right">Update</x-button>
+                        @elseif(auth()->user()->hasRole('Super Admin') && $isApproved)
+                            <x-button wire:click='approvedRequisition({{ $requisition }})' loading="approved"
+                                icon="check" position="right" color="teal">Approve</x-button>
+                        @endif
                     @endif
                 </div>
             </form>
@@ -111,7 +113,7 @@
                                         @foreach ($requisition->items as $item)
                                             <tr>
                                                 <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 capitalize">
                                                     {{ $item->stock->stock_number }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                     {{ $item->stock->supply->name }}</td>

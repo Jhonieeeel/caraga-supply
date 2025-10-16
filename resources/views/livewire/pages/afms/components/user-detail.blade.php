@@ -51,7 +51,11 @@
             </div>
         </div>
     @else
-        <div class="text-center text-sm italic">Select to View a User</div>
+        <div class="max-w-7xl mx-auto sm:px-3 sm:py-4 lg:px-8 bg-white border shadow rounded">
+            <p class="text-center text-xs text-gray-500">
+                Select a user to view details.
+            </p>
+        </div>
     @endif
 </div>
 
