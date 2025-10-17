@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Actions\Logout;
+use App\Livewire\Pages\Afms\Procurement;
 use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Livewire\Pages\Afms\StockTable;
 use App\Livewire\Pages\Afms\SupplyTable;
@@ -19,6 +20,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // logout
     Route::post('/logout', Logout::class)->name('logout');
+
+    // pmu
+    Route::get('pmu', Procurement::class)->name('pmu.index');
 
     // user management
     Route::get('user', UserTable::class)->name('user.index');

@@ -11,6 +11,9 @@ use Livewire\Component;
 
 class RequestRpci extends Component
 {
+
+    // RPCI STOCK CARD
+
     public array $headers = [];
     public int $quantity = 5;
 
@@ -23,7 +26,7 @@ class RequestRpci extends Component
         $this->headers = [
             ['index' => 'stock.stock_number', 'label' => 'Stock Number'],
             ['index' => 'stock.supply.name', 'label' => 'Stock Name'],
-            ['index' => 'action', 'label' => 'Generate RPCI'],
+            ['index' => 'action', 'label' => 'Generate RSMI'],
         ];
     }
 

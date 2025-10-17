@@ -1,10 +1,11 @@
 <div class="max-w-7xl mx-auto sm:px-3 sm:py-4 lg:px-6 bg-white border shadow rounded">
-    <div class="flex items-center justify-between sm:pb-4">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+    <div class="flex items-center justify-between sm:pb-4 sm:p-6 p-3">
+        <h2 class="font-semibold sm:text-xl text-md text-gray-800 leading-tight ">
             Requisition
         </h2>
 
-        <x-button x-on:click="$modalOpen('add-request')" icon="cube" position="right">Add Request</x-button>
+        <x-button x-on:click="$modalOpen('add-request')" icon="cube" position="left">Add
+            Request</x-button>
     </div>
     <div class="overflow-hidden sm:rounded-lg">
         <div class="sm:p-3 text-gray-900">

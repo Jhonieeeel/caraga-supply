@@ -12,6 +12,9 @@ class ReadRpciService
         $spreadsheet = IOFactory::load(public_path('templates/rpci_template.xlsx'));
         $sheet = $spreadsheet->getActiveSheet();
 
+
+        $rpciData = [];
+
         foreach ($sheet->getRowIterator(17) as $row) {
             $rowIndex = $row->getRowIndex();
 
@@ -43,7 +46,10 @@ class ReadRpciService
                     $data[] = $val;
                 }
 
-                Log::info('Row found for stock number ' . $stockNumber, $data);
+                $rpciData[] = $data;
+
+                Log::info('Row found for stock number ' . $stockNumber, $rpciData);
+
 
                 return $data;
             }

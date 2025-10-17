@@ -56,7 +56,8 @@
                         :href="route('requisition.index')" />
                 </x-side-bar.item>
                 <x-side-bar.item text="PMU" :visible="true">
-                    <x-side-bar.item text="Home" icon="archive-box" />
+                    <x-side-bar.item text="Archives" icon="archive-box" wire:navigate :current="request()->routeIs('pmu.index')"
+                        :href="route('pmu.index')" />
                 </x-side-bar.item>
                 <x-side-bar.item text="Employees" :visible="true">
                     <x-side-bar.item text="Users" icon="users" wire:navigate :current="request()->routeIs('user.index')"

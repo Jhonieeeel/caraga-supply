@@ -3,6 +3,7 @@
 namespace App\Services\Afms;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -14,12 +15,14 @@ class GenerateRpciService
         $srcFile = public_path('templates/rpci_template.xlsx');
         $spreadsheet = IOFactory::load($srcFile);
 
-        // ✅ pick sheet by name (if sheet names are stock IDs)
+        //  pick sheet by name (if sheet names are stock IDs)
         $sheet = $spreadsheet->getSheetByName((string) $stockId);
         // or by index: $sheet = $spreadsheet->getSheet((int) $stockId);
 
         $templateRow = $sheet->getHighestRow(); // last row is the "template"
         $highestCol  = $sheet->getHighestColumn(); // e.g. "K"
+
+        Log::info("Highestt Row:" . $sheet->getHighestRow());
 
         foreach ($rpci as $transaction) {
             $targetRow = $sheet->getHighestRow() + 1;
