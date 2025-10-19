@@ -1,0 +1,49 @@
+Procurement
+    code = string
+    project_title = string
+    mode_of_procurement = string
+    contract_signing = string
+    source_of_funds = string
+    estimated_budget_total = decimal
+    estimated_budget_mooe = decimal
+    estimated_budget_co = decimal
+    pmo_end_user = string
+    early_activity = string
+    mode_of_procurement = string
+    advertisement_posting = string
+    submission_bids = string
+    app_year = date/string
+    remarks = string
+
+
+Request
+    closing_date = date
+    input_date = date
+    app_spp_pdf_file = string
+    app_spp_pdf_title = string
+    philgeps_pdf_file = string
+    philgeps_pdf_title = string
+    pr_number = date
+    abc_based_app = estimated_budget_total ( decimal )
+    abc = decimal
+    email_posting = string ( pdf file )
+    date_posted = date
+    select_year = app_year = date/string
+
+Order
+    noa = date
+    variance = decimal
+    po_number = date
+    date_posted ( from pr ) = date
+    po_date = date
+    delivery_date = date
+    ntp = date
+    supplier = string
+    contact_price = decimal
+    email_link = string
+    resolution_number = date
+    abc_based_app = estimated_budget_total
+    abc ( from pr ) = decimal
+
+
+

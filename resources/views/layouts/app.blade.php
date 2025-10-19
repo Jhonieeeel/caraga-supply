@@ -71,6 +71,7 @@
     </x-layout>
 
     @livewireScripts
+
 </body>
 
 </html>

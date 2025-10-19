@@ -5,8 +5,16 @@
                 Procurement
             </h2>
 
-            <x-button x-on:click="$modalOpen('add-request')" icon="cube" position="right">Upload CSV</x-button>
+            {{-- x-on:click="$modalOpen('add-request')" --}}
+            <x-button wire:click="procurement"  icon="cube" position="right">Upload CSV</x-button>
         </div>
+
+        @if (session('message'))
+            <div class="sm:py-4">
+                <x-alert title="{{ session('message')['title'] }}" text="{{ session('message')['text'] }}"
+                    color="{{ session('message')['color'] }}" light />
+            </div>
+        @endif
 
         <div class="overflow-hidden sm:rounded-lg">
             <div class="sm:p-3 text-gray-900">

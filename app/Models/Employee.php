@@ -27,4 +27,8 @@ class Employee extends Model
     {
         return $this->belongsTo(Unit::class);
     }
+
+    public function procurement() {
+        return $this->hasMany(Procurement::class);
+    }
 }
