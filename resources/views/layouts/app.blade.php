@@ -59,8 +59,10 @@
                     <x-side-bar.item text="Archives" icon="archive-box" wire:navigate :current="request()->routeIs('pmu.index')"
                         :href="route('pmu.index')" />
                 </x-side-bar.item>
-                <x-side-bar.item text="Employees" :visible="true">
+                <x-side-bar.item text="HRMU" :visible="true">
                     <x-side-bar.item text="Users" icon="users" wire:navigate :current="request()->routeIs('user.index')"
+                        :href="route('user.index')" />
+                    <x-side-bar.item text="DTR" icon="clock" wire:navigate :current="request()->routeIs('user.index')"
                         :href="route('user.index')" />
                 </x-side-bar.item>
 

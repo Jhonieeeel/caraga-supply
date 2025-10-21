@@ -2,13 +2,10 @@
 
 namespace App\Actions\Procurement;
 
-use App\Models\Procurement;
+use App\Models\PurchaseRequest;
 
 class CreateRequest {
-    public function handle(Procurement $procurement, array $data): Procurement
-    {
-        $procurement->update($data);
-
-        return $procurement;
+    public function handle(array $data): PurchaseRequest {
+        return PurchaseRequest::create($data);
     }
 }

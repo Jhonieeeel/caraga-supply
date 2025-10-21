@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class PurchaseRequest extends Model
 {
+
+    protected $cast = [
+        'closing_date' => 'date'
+    ];
+
     protected $fillable = [
         'closing_date',
         'input_date',

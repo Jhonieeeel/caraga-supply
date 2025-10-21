@@ -22,27 +22,32 @@
         </div>
 
         <form class="grid grid-cols-2 gap-4 w-full" enctype="multipart/form-data">
-            <x-input label="Code (PAP) *" />
-            <x-input label="Closing Date *" />
-            <div class="col-span-2">
-                <x-textarea label="Project Title *" />
-            </div>
-            <x-input label="Purchase Request Number *" />
-            <x-input label="ABC (Based on APP) *" />
-            <x-input label="ABC *" />
-            <x-input label="Date Posted *" />
-            <x-input label="Input Date *" />
-            <x-input label="Estimated Budget (Total) *" />
-            {{-- FileInput  APP/SPP/(PDF) --}}
-            {{-- <x-upload label="APP/SPP(PDF)" tip="Drag and drop your pdf file here" /> --}}
-            <x-input label="Document Label (Filename)" />
-            {{-- FileInput PhilGeps Posting PDF --}}
-            <x-input accept="application/pdf" label="PhilGeps Posting Label *" />
+            {{-- dependent Drropdown --}}
+            <x-select.styled wire:model.live='requestForm.procurement_id' label="Code (PAP) *" :options="$this->getAnnuals"
+                searchable />
 
-            <x-input label="Email Posting *" />
-            <x-select.native label="Select One Option" :options="[1, 2, 3]" />
+            <x-input label="Closing Date *" wire:model="requestForm.closing_date" />
+            <x-input label="Purchase Request Number *" wire:model="requestForm.pr_number" />
+            {{-- dependent Dropdown --}}
+            <x-input label="ABC (Based on APP) *" wire:model="requestForm.abc_based_app" />
+
+            <x-input label="ABC *" wire:model="requestForm.abc" />
+            <x-input label="Date Posted *" wire:model="requestForm.date_posted" />
+            <x-input label="Input Date *" wire:model="requestForm.input_date" />
+            <x-upload accept="application/pdf" wire:model="requestForm.app_spp_pdf_file" label="APP/SPP (PDF)"
+                hint="Please upload RIS document." tip="Upload our Signed RIS here" />
+            <x-input label="APP/SPP (PDF) (Filename)" wire:model="requestForm.app_spp_pdf_filename" />
+            {{-- pdfs --}}
+            <x-upload accept="application/pdf" wire:model="requestForm.philgeps_pdf_file" label="Philgeps Posting (PDF)"
+                hint="Please upload RIS document." tip="Upload our Signed RIS here" />
+            <x-input label="Philgeps Posting (Filename)" wire:model="requestForm.philgeps_pdf_filename" />
+
+            <x-input label="Email Posting *" wire:model="requestForm.email_posting" />
+
+            {{-- dependent Dropdown --}}
+            <x-select.native label="Select APP Year" :options="[1, 2, 3]" />
+
             <div class="col-span-2">
-                <x-textarea label="Remarks *" />
             </div>
             <div class="col-span-2 ml-auto">
                 <x-button x-on:click="$modalOpen('add-entry')" icon="cube" position="right">Submit</x-button>

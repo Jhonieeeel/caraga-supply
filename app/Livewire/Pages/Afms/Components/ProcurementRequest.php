@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Pages\Afms\Components;
 
+use App\Actions\Procurement\CreateRequest;
+use App\Livewire\Forms\RequestForm;
 use App\Models\Procurement;
 use App\Models\PurchaseRequest;
 use Livewire\Attributes\Computed;
@@ -15,8 +17,11 @@ class ProcurementRequest extends Component
 {
     public $tab = 'Requests';
 
+    public RequestForm $requestForm;
+
     public ?string $search = null;
     public int $quantity = 5;
+
 
     public array $headers = [];
 
@@ -47,9 +52,32 @@ class ProcurementRequest extends Component
             ->withQueryString();
     }
 
-    public function submitToOrder(PurchaseRequest $request) {
-       $request->purchaseOrder()->associate($request->id);
-       $request->
+    public function onSubmit(CreateRequest $createRequest) {
+        $this->requestForm->submit($createRequest);
+    }
+
+    public function submitToOrder(Procurement $procurement) {
+
+        $request = PurchaseRequest::where('procurement_id', $procurement->id)->first();
+
+        if (!$request) {
+            return $procurement->purchaseRequest()->create([
+                'procurement_id' => $procurement->id,
+                'abc_based_app' => $procurement->id,
+                'app_year' => $procurement->id
+            ]);
+        }
+        return;
+    }
+
+    #[Computed()]
+    public function getAnnuals()
+    {
+        return Procurement::all(['id', 'code'])
+            ->map(fn($procurement) => [
+                'label' => $procurement->code,
+                'value' => $procurement->id,
+            ]);
     }
 
     public function render()
