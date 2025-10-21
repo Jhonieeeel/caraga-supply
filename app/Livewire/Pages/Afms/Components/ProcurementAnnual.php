@@ -7,12 +7,12 @@ use App\Actions\Procurement\UpdateAnnual;
 use App\Livewire\Forms\AnnualForm;
 use App\Livewire\Pages\Afms\Procurement as AfmsProcurement;
 use App\Models\Procurement;
+use App\Models\PurchaseRequest;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class ProcurementAnnual extends Component
 {
-
     public AnnualForm $annualForm;
 
     public Procurement $procurement;
@@ -57,8 +57,12 @@ class ProcurementAnnual extends Component
         ];
     }
 
-    public function submitToRequest(Procurement $procurement) {
-
+    public function submitToRequest(Procurement $procurement): PurchaseRequest {
+        return $procurement->purchaseRequest()->create([
+            'procurement_id' => $procurement->id,
+            'abc_based_app' => $procurement->id,
+            'app_year' => $procurement->id,
+        ]);
     }
 
     public function onUpdate(UpdateAnnual $updateAnnual, Procurement $procurement)

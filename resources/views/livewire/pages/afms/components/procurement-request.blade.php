@@ -5,6 +5,17 @@
             Entry</x-button>
     </div>
 
+    <div>
+        <x-table :$headers :rows='$this->rows' filter :quantity="[2, 5, 10]">
+            @interact('column_action', $request)
+                <div class="sm:flex items-center gap-2">
+                    <x-button.circle color="teal" icon="magnifying-glass" />
+                    <x-button.circle color="teal" icon="receipt-percent" wire:click="submitToOrder({{ $request }})" />
+                </div>
+            @endinteract
+        </x-table>
+    </div>
+
     <x-modal title="Purchase Requests" id="add-request" size="4xl">
         <div class="sm:py-4 py-2">
             <p class="text-sm text-gray-500">Purchase Requests.</p>

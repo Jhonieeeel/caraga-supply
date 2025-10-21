@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Procurement;
+use App\Models\PurchaseRequest;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,11 +15,13 @@ return new class extends Migration
     {
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(PurchaseRequest::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Procurement::class)->constrained()->cascadeOnDelete();
             $table->string('order_number')->nullable();
             $table->date('noa')->nullable();
             $table->decimal('variance')->nullable();
-            $table->date('po_number')->nullable();
-            $table->foreignId('date_posted')->nullable()->constrained('procurements')->cascadeOnDelete();
+            $table->string('po_number')->nullable();
+            $table->foreignId('date_posted')->nullable()->constrained('purchase_requests')->cascadeOnDelete();
             $table->date('po_date')->nullable();
             $table->date('delivery_date')->nullable();
             $table->date('ntp')->nullable();

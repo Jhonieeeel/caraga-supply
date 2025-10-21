@@ -26,4 +26,12 @@ class PurchaseOrder extends Model
     public function purchaseRequest() {
         return $this->belongsTo(PurchaseRequest::class);
     }
+
+    public function datePosted() {
+        return $this->belongsTo(PurchaseRequest::class, 'date_posted');
+    }
+
+    public function abc() {
+        return $this->belongsTo(PurchaseRequest::class, 'abc');
+    }
 }

@@ -21,9 +21,9 @@ return new class extends Migration
             $table->string('app_spp_pdf_filename')->nullable();
             $table->string('philgeps_pdf_file')->nullable();
             $table->string('philgeps_pdf_filename')->nullable();
-            $table->date('pr_number')->nullable();
+            $table->string('pr_number')->nullable();
             $table->foreignId('abc_based_app')->nullable()->constrained('procurements');
-            $table->decimal('abc', 15, 2);
+            $table->decimal('abc', 15, 2)->nullable();
             $table->string('email_posting')->nullable();
             $table->date('date_posted')->nullable();
             $table->foreignId('app_year')->nullable()->constrained('procurements');

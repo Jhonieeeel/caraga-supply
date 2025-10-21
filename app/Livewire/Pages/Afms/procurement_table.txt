@@ -33,7 +33,7 @@ Request
 Order
     noa = date
     variance = decimal
-    po_number = date
+    po_number = string
     date_posted ( from pr ) = date
     po_date = date
     delivery_date = date
@@ -42,7 +42,7 @@ Order
     contact_price = decimal
     email_link = string
     resolution_number = date
-    abc_based_app = estimated_budget_total
+    abc_based_app = estimated_budget_total ( from app )
     abc ( from pr ) = decimal
 
 

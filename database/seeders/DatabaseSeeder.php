@@ -146,7 +146,7 @@ class DatabaseSeeder extends Seeder
                 'remarks' => 'Urgent procurement needed.',
             ]);
 
-        $annual->purchaseRequest()->create([
+        $request = $annual->purchaseRequest()->create([
             'procurement_id' => $annual->id,
             'closing_date' => '2024-06-15',
             'input_date' => '2024-06-15',
@@ -161,5 +161,14 @@ class DatabaseSeeder extends Seeder
             'date_posted' => '2024-06-15',
             'app_year' => $annual->id,
         ]);
+
+        $request->purchaseOrder()->create([
+            'procurement_id' => $annual->id,
+            'purchase_request_id' => $request->id,
+            'date_posted' => $request->id,
+            'abc' => $request->id,
+        ]);
+
+
     }
 }
