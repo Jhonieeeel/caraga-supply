@@ -17,10 +17,6 @@ class Procurement extends Component
         return view('livewire.pages.afms.procurement');
     }
 
-    public function procurement(Procurement $annual) {
-        $existingAnnual = PurchaseRequest::findOrFail($annual->id);
-
-    }
 
     #[On('alert')]
     public function alert($session)

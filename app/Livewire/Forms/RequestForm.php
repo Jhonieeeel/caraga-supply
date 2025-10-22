@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Actions\Procurement\CreateRequest;
+use App\Actions\Procurement\UpdateRequest;
 use App\Models\PurchaseRequest;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
@@ -54,6 +55,11 @@ class RequestForm extends Form
             'app_year' => 'nullable',
             'abc_based_app' => 'nullable'
        ];
+    }
+
+    public function update(UpdateRequest $updateRequest, PurchaseRequest $purchaseRequest) {
+        $this->validate();
+        return $updateRequest->handle($purchaseRequest, $this->toArray());
     }
 
     public function submit(CreateRequest $createRequest) {

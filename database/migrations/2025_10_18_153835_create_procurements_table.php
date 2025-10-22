@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('mode_of_procurement');
             $table->string('advertisement_posting');
             $table->string('submission_bids');
-            $table->decimal('app_year');
+            $table->integer('app_year');
             $table->text('remarks')->nullable();
             $table->foreignId('end_user')->nullable()->constrained('employees');
             $table->timestamps();

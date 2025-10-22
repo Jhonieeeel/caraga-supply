@@ -9,7 +9,8 @@
         <x-table :$headers :rows='$this->rows' filter :quantity="[2, 5, 10]">
             @interact('column_action', $request)
                 <div class="sm:flex items-center gap-2">
-                    <x-button.circle color="teal" icon="magnifying-glass" />
+                    <x-button.circle color="teal" icon="magnifying-glass"
+                        wire:click="viewDetails({{ $request->procurement }})" />
                     <x-button.circle color="teal" icon="receipt-percent" wire:click="submitToOrder({{ $request }})" />
                 </div>
             @endinteract

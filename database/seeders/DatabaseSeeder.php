@@ -127,6 +127,7 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'Pc',
             ]);
 
+            // app
         $annual = Procurement::create([
                 'code' => 'PR-001',
                 'project_title' => 'Procurement of 3-in-1 printer with ink for the conduct of Emergency Operations Center (EOC) Training Course Batch 1
@@ -146,28 +147,28 @@ class DatabaseSeeder extends Seeder
                 'remarks' => 'Urgent procurement needed.',
             ]);
 
-        $request = $annual->purchaseRequest()->create([
-            'procurement_id' => $annual->id,
-            'closing_date' => '2024-06-15',
-            'input_date' => '2024-06-15',
-            'app_spp_pdf_file' => 'APP_SPP_2024.pdf',
-            'app_spp_pdf_filename' => 'APP_SPP_2024',
-            'philgeps_pdf_file' => 'Philgeps_2024.pdf',
-            'philgeps_pdf_filename' => 'Philgeps_2024',
-            'pr_number' => '2024-06-15',
-            'abc_based_app' => $annual->id,
-            'abc' => 25000.00,
-            'email_posting' => 'test.gmail.com',
-            'date_posted' => '2024-06-15',
-            'app_year' => $annual->id,
-        ]);
+        // $request = $annual->purchaseRequest()->create([
+        //     'procurement_id' => $annual->id,
+        //     'closing_date' => '2024-06-15',
+        //     'input_date' => '2024-06-15',
+        //     'app_spp_pdf_file' => 'APP_SPP_2024.pdf',
+        //     'app_spp_pdf_filename' => 'APP_SPP_2024',
+        //     'philgeps_pdf_file' => 'Philgeps_2024.pdf',
+        //     'philgeps_pdf_filename' => 'Philgeps_2024',
+        //     'pr_number' => '2024-06-15',
+        //     'abc_based_app' => $annual->id,
+        //     'abc' => 25000.00,
+        //     'email_posting' => 'test.gmail.com',
+        //     'date_posted' => '2024-06-15',
+        //     'app_year' => $annual->id,
+        // ]);
 
-        $request->purchaseOrder()->create([
-            'procurement_id' => $annual->id,
-            'purchase_request_id' => $request->id,
-            'date_posted' => $request->id,
-            'abc' => $request->id,
-        ]);
+        // $request->purchaseOrder()->create([
+        //     'procurement_id' => $annual->id,
+        //     'purchase_request_id' => $request->id,
+        //     'date_posted' => $request->id,
+        //     'abc' => $request->id,
+        // ]);
 
 
     }

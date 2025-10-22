@@ -12,6 +12,8 @@ class PurchaseRequest extends Model
     ];
 
     protected $fillable = [
+        'procurement_id',
+        'pr_code',
         'closing_date',
         'input_date',
         'app_spp_pdf_file',

@@ -3,6 +3,7 @@
 use App\Livewire\Actions\Logout;
 use App\Livewire\Pages\Afms\Procurement;
 use App\Livewire\Pages\Afms\RequisitionTable;
+use App\Livewire\Pages\Afms\ShowData;
 use App\Livewire\Pages\Afms\StockTable;
 use App\Livewire\Pages\Afms\SupplyTable;
 use App\Livewire\Pages\Afms\UserTable;
@@ -26,6 +27,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // user management
     Route::get('user', UserTable::class)->name('user.index');
+
+
+    // show data ( PMU )
+    Route::get('pmu/{id}', ShowData::class)->name('pmu.show');
 });
+
+
 
 require __DIR__ . '/auth.php';

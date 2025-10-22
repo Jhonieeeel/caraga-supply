@@ -26,9 +26,29 @@ class ProcurementAnnual extends Component
 
     public array $headers = [];
 
-    public function onSubmit(CreateAnnual $createAnnual) {
-        $this->annualForm->onCreate($createAnnual);
-        return;
+    public function onSubmit(CreateAnnual $createAnnual, PurchaseRequest $purchaseRequest) {
+
+        $existingRequest = PurchaseRequest::where('procurement_id', $purchaseRequest->procurement_id)->first();
+
+        if (!$existingRequest) {
+            $this->annualForm->onCreate($createAnnual);
+
+            $this->tab = 'Request';
+
+            $this->dispatch('alert', [
+                'text' => 'Data Successfully Added to Request',
+                'color' => 'teal',
+                'title' => 'Success'
+            ])->to(AfmsProcurement::class);
+
+            return redirect()->route('pmu.index');
+        }
+
+        return $this->dispatch('alert', [
+            'text' => 'Data already added to Purchase Request',
+            'color' => 'yellow',
+            'title' => 'Failed'
+        ])->to(AfmsProcurement::class);
     }
 
     public function mount()
@@ -57,12 +77,23 @@ class ProcurementAnnual extends Component
         ];
     }
 
-    public function submitToRequest(Procurement $procurement): PurchaseRequest {
-        return $procurement->purchaseRequest()->create([
-            'procurement_id' => $procurement->id,
-            'abc_based_app' => $procurement->id,
-            'app_year' => $procurement->id,
-        ]);
+    public function submitToRequest(Procurement $procurement) {
+        $existingRequest = PurchaseRequest::where('procurement_id', $procurement->id)->first();
+        if (!$existingRequest) {
+            $procurement->purchaseRequest()->create([
+                'procurement_id' => $procurement->id,
+                'abc_based_app' => $procurement->id,
+                'app_year' => $procurement->id,
+            ]);
+            $this->tab = "Request";
+            return redirect()->route('pmu.index');
+        }
+        return $this->dispatch('alert', [
+            'text' => 'Data already added to Purchase Request',
+            'color' => 'yellow',
+            'title' => 'Failed'
+        ])->to(AfmsProcurement::class);
+
     }
 
     public function onUpdate(UpdateAnnual $updateAnnual, Procurement $procurement)

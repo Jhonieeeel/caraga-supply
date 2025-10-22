@@ -8,6 +8,8 @@ class PurchaseOrder extends Model
 {
 
     protected $fillable = [
+        'procurement_id',
+        'purchase_request_id',
         'noa',
         'variance',
         'po_number',
@@ -22,6 +24,9 @@ class PurchaseOrder extends Model
         'abc_based_app',
         'abc',
     ];
+    public function procurement() {
+        return $this->belongsTo(Procurement::class);
+    }
 
     public function purchaseRequest() {
         return $this->belongsTo(PurchaseRequest::class);

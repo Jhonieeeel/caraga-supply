@@ -2,12 +2,16 @@
 
 namespace App\Livewire\Pages\Afms\Components;
 
+use App\Models\PurchaseOrder;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class ProcurementOrder extends Component
 {
     public $tab = 'Orders';
+
+    public ?string $search = '';
+    public ?int $quantity = 5;
 
     public array $headers = [];
 
@@ -23,11 +27,25 @@ class ProcurementOrder extends Component
         ];
     }
 
+    // search =  po_number, title, supplier,
+
     #[Computed()]
-    public function rows() {
-        // Implement the logic to fetch procurement order rows
-        return []; // Placeholder return
+    public function rows()
+    {
+        return PurchaseOrder::query()
+            ->when($this->search, function ($query) {
+                $query->where(function ($order) {
+                    $order->where('po_number', 'like', '%' . $this->search . '%')
+                    ->orWhere('supplier', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('procurement', function ($procurement) {
+                        $procurement->where('project_title', 'like', '%' . $this->search . '%');
+                    });
+                });
+            })
+            ->paginate($this->quantity)
+            ->withQueryString();
     }
+
 
     public function render()
     {
