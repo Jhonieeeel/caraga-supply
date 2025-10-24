@@ -27,29 +27,36 @@ class AnnualForm extends Form
     public int $app_year = 0;
     public string $remarks = '';
 
-   protected function rules() {
-    return [
-        'code' => [
-            'required', 'string',
-            Rule::unique('procurements', 'code')
-                ->ignore($this->procurement->id ?? null), // Use ID and handle null
-        ],
-        'notice_of_award' => 'required|string',
-        'contract_signing' => 'required|string',
-        'project_title' => 'required|string',
-        'source_of_funds' => 'required|string',
-        'estimated_budget_total' => 'required|numeric',
-        'estimated_budget_co' => 'required|numeric',
-        'estimated_budget_mooe' => 'required|numeric',
-        'pmo_end_user' => 'required|string',
-        'early_activity' => 'required|string',
-        'mode_of_procurement' => 'required|string',
-        'advertisement_posting' => 'required|string',
-        'submission_bids' => 'required|string',
-        'app_year' => 'required|integer',
-        'remarks' => 'required|string',
-    ];
+
+    protected function rules(): array
+    {
+        return [
+            // Unique Code — ignore current record if updating
+            'code' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('procurements', 'code')->ignore($this->procurement->id ?? null),
+            ],
+
+            // Core fields
+            'notice_of_award'       => ['required', 'string', 'max:255'],
+            'contract_signing'      => ['required', 'string', 'max:255'],
+            'project_title'         => ['required', 'string', 'max:255'],
+            'source_of_funds'       => ['required', 'string', 'max:255'],
+            'estimated_budget_total'=> ['required', 'numeric', 'min:0'],
+            'estimated_budget_co'   => ['required', 'numeric', 'min:0'],
+            'estimated_budget_mooe' => ['required', 'numeric', 'min:0'],
+            'pmo_end_user'          => ['required', 'string', 'max:255'],
+            'early_activity'        => ['required', 'string', 'max:255'],
+            'mode_of_procurement'   => ['required', 'string', 'max:255'],
+            'advertisement_posting' => ['required', 'string', 'max:255'],
+            'submission_bids'       => ['required', 'string', 'max:255'],
+            'app_year'              => ['required', 'integer', 'digits:4'],
+            'remarks'               => ['required', 'string'],
+        ];
     }
+
 
     public function update(Procurement $procurement, UpdateAnnual $updateAnnual): Procurement
     {

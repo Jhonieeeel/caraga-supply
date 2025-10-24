@@ -17,18 +17,18 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(PurchaseRequest::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Procurement::class)->constrained()->cascadeOnDelete();
-            $table->string('order_number')->nullable();
             $table->date('noa')->nullable();
             $table->decimal('variance')->nullable();
-            $table->string('po_number')->nullable();
+            $table->string('po_number')->nullable(); // year-month-series
             $table->foreignId('date_posted')->nullable()->constrained('purchase_requests')->cascadeOnDelete();
             $table->date('po_date')->nullable();
             $table->date('delivery_date')->nullable();
             $table->date('ntp')->nullable();
-            $table->date('resolution_number')->nullable();
+            $table->string('resolution_number')->nullable(); // year-month-series same sa po
             $table->string('supplier')->nullable();
             $table->decimal('contact_price')->nullable();
             $table->string('email_link')->nullable();
+            $table->string('po_document')->nullable();
             $table->foreignId('abc_based_app')->nullable()->constrained('procurements')->cascadeOnDelete();
             $table->foreignId('abc')->nullable()->constrained('purchase_requests')->cascadeOnDelete();
             $table->timestamps();

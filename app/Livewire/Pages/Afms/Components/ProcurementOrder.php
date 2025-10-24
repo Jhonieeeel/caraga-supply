@@ -2,32 +2,49 @@
 
 namespace App\Livewire\Pages\Afms\Components;
 
+use App\Actions\Procurement\CreateOrder;
+use App\Livewire\Forms\OrderForm;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseRequest;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ProcurementOrder extends Component
 {
     public $tab = 'Orders';
 
+    public OrderForm $orderForm;
+
     public ?string $search = '';
     public ?int $quantity = 5;
 
     public array $headers = [];
 
+    public ?int $purchase_order_id = null;
+
     public function mount()
     {
         $this->headers = [
-            ['index' => 'procurement.code' ,'label'=> 'Code PAP'],
-            ['index' => 'procurement.project_title' ,'label'=> 'Project Title'],
             ['index' => 'po_number' ,'label'=> 'PO Number'],
-            ['index' => 'supplier' ,'label'=> 'Supplier'],
-            ['index' => 'procurement.mode_of_procurement' ,'label'=> 'Mode of Procurement'],
-            ['index' => 'action' ,'label'=> 'Action'],
+            ['index' => 'procurement.project_title' ,'label'=> 'Project Title'],
+            ['index' => 'ntp' ,'label'=> 'Ntp'],
+            ['index' => 'noa' ,'label'=> 'Noa'],
+            ['index' => 'resolution_number' ,'label'=> 'Resolution Number'],
+    ['index' => 'action' ,'label'=> 'Action'],
         ];
     }
 
+    #[On('procurement-order-refresh')]
+    public function updateComponent() {
+    }
+
     // search =  po_number, title, supplier,
+
+    public function onSubmit(CreateOrder $createOrder) {
+        return $this->orderForm->submit($createOrder);
+    }
+
 
     #[Computed()]
     public function rows()
@@ -46,6 +63,14 @@ class ProcurementOrder extends Component
             ->withQueryString();
     }
 
+    #[Computed()]
+    public function getPr() {
+        return PurchaseRequest::all(['id', 'pr_number'])
+            ->map(fn($request) => [
+                'label' => $request->pr_number ?? 'No PR yet',
+                'value' => $request->id,
+            ]);
+    }
 
     public function render()
     {

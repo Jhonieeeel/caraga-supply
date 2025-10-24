@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class PurchaseOrder extends Model
 {
 
+    protected $casts = [
+        'noa' => 'date',
+        'po_date' => 'date',
+        'delivery_date' => 'date',
+        'ntp' => 'date',
+    ];
+
+
     protected $fillable = [
         'procurement_id',
         'purchase_request_id',
@@ -23,6 +31,7 @@ class PurchaseOrder extends Model
         'resolution_number',
         'abc_based_app',
         'abc',
+        'po_document2'
     ];
     public function procurement() {
         return $this->belongsTo(Procurement::class);
@@ -38,5 +47,9 @@ class PurchaseOrder extends Model
 
     public function abc() {
         return $this->belongsTo(PurchaseRequest::class, 'abc');
+    }
+
+    public function abcBasedApp() {
+        return $this->belongsTo(Procurement::class, 'abc_based_app');
     }
 }

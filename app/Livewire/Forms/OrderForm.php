@@ -5,7 +5,6 @@ namespace App\Livewire\Forms;
 use App\Actions\Procurement\CreateOrder;
 use App\Models\PurchaseOrder;
 use Carbon\Carbon;
-use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class OrderForm extends Form
@@ -20,7 +19,7 @@ class OrderForm extends Form
     public ?Carbon $po_date = null;
     public ?Carbon $delivery_date = null;
     public ?Carbon $ntp = null;
-    public ?Carbon $resolution_number = null;
+    public ?string $resolution_number = null;
     public ?string $supplier = '';
     public ?float $contact_price = null;
     public ?string $email_link = '';
@@ -28,26 +27,32 @@ class OrderForm extends Form
     public ?int $abc = null;
 
 
-    protected function rules(): array  {
+  protected function rules(): array
+    {
         return [
-            'procurement_id' => 'required',
-            'purchase_request_id' => 'required',
-            'order_number' => 'nullable',
-            'noa' => 'nullable',
-            'variance' => 'nullable',
-            'po_number' => 'nullable',
-            'date_posted' => 'nullable',
-            'po_date' => 'nullable',
-            'delivery_date' => 'nullable',
-            'ntp' => 'nullable',
-            'resolution_number' => 'nullable',
-            'supplier' => 'nullable',
-            'contact_price' => 'nullable',
-            'email_link' => 'nullable',
-            'abc_based_app' => 'nullable',
-            'abc' => 'nullable'
+            // Foreign keys
+            'procurement_id'       => ['required', 'exists:procurements,id'],
+            'purchase_request_id'  => ['required', 'exists:purchase_requests,id'],
+            'date_posted'          => ['nullable', 'exists:purchase_requests,id'],
+            'abc_based_app'        => ['nullable', 'exists:procurements,id'],
+            'abc'                  => ['nullable', 'exists:purchase_requests,id'],
+
+            // Basic fields
+            'noa'                  => ['nullable', 'date'],
+            'variance'             => ['nullable', 'numeric'],
+            'po_number'            => ['nullable', 'string'],
+            'ntp'                  => ['nullable', 'date'],
+            'resolution_number'    => ['nullable', 'string'],
+            'supplier'             => ['nullable', 'string'],
+            'contact_price'        => ['nullable', 'numeric'],
+            'email_link'           => ['nullable', 'url'],
+
+            // Date fields
+            'po_date'              => ['nullable', 'date'],
+            'delivery_date'        => ['nullable', 'date', 'after_or_equal:po_date'], // optional: delivery must be same or after PO date
         ];
     }
+
 
     public function submit(CreateOrder $createOrder): PurchaseOrder {
         $this->validate();
@@ -57,27 +62,25 @@ class OrderForm extends Form
     public function fillform(PurchaseOrder $order) {
         $this->procurement_id = $order->procurement_id;
         $this->purchase_request_id = $order->purchase_request_id;
-        $this->order_number = $order->order_number;
         $this->noa = $order->noa;
         $this->variance = $order->variance;
         $this->po_number = $order->po_number;
-        $this->date_posted = $order->date_posted;
-        $this->po_date = $order->date_posted;
+        $this->date_posted = $order->purchase_request_id;
+        $this->po_date = $order->po_date;
         $this->delivery_date = $order->delivery_date;
         $this->ntp = $order->ntp;
         $this->resolution_number = $order->resolution_number;
         $this->supplier = $order->supplier;
         $this->contact_price = $order->contact_price;
         $this->email_link = $order->email_link;
-        $this->abc_based_app = $order->abc_based_app;
-        $this->abc = $order->abc?->id;
+        $this->abc_based_app = $order->procurement_id;
+        $this->abc = $order->purchase_request_id;
     }
 
     public function toArray() {
         return [
             'procurement_id' => $this->procurement_id,
             'purchase_request_id' => $this->purchase_request_id,
-            'order_number' => $this->order_number,
             'noa' => $this->noa,
             'variance' => $this->variance,
             'po_number' => $this->po_number,

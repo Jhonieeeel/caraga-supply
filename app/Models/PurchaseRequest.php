@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class PurchaseRequest extends Model
 {
 
-    protected $cast = [
-        'closing_date' => 'date'
+    protected $casts = [
+        'closing_date' => 'date',
+        'input_date' => 'date',
+        'date_posted' => 'date',
     ];
 
     protected $fillable = [
@@ -25,7 +27,7 @@ class PurchaseRequest extends Model
         'abc',
         'email_posting',
         'date_posted',
-        'select_year',
+        'app_year',
     ];
 
     public function procurement() {

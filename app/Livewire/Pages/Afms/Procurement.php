@@ -17,6 +17,10 @@ class Procurement extends Component
         return view('livewire.pages.afms.procurement');
     }
 
+    #[On('procurement-tab')]
+    public function changeTab($tab) {
+        $this->tab = $tab;
+    }
 
     #[On('alert')]
     public function alert($session)

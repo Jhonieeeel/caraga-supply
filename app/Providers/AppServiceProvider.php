@@ -40,12 +40,12 @@ class AppServiceProvider extends ServiceProvider
 
         Model::automaticallyEagerLoadRelationships();
 
-        $storage = Storage::disk('local');
-        foreach ($storage->allFiles('livewire-tmp') as $file) {
-            $yesterday = now()->subDay()->timestamp;
-            if ($yesterday > $storage->lastModified($file)) {
-                $storage->delete($file);
-            }
-        }
+        // $storage = Storage::disk('local');
+        // foreach ($storage->allFiles('livewire-tmp') as $file) {
+        //     $yesterday = now()->subDay()->timestamp;
+        //     if ($yesterday > $storage->lastModified($file)) {
+        //         $storage->delete($file);
+        //     }
+        // }
     }
 }
