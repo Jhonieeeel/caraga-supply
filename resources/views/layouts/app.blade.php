@@ -62,8 +62,8 @@
                 <x-side-bar.item text="HRMU" :visible="true">
                     <x-side-bar.item text="Users" icon="users" wire:navigate :current="request()->routeIs('user.index')"
                         :href="route('user.index')" />
-                    <x-side-bar.item text="DTR" icon="clock" wire:navigate :current="request()->routeIs('user.index')"
-                        :href="route('user.index')" />
+                    <x-side-bar.item text="Dtr" icon="clock" wire:navigate :current="request()->routeIs('Dtr')"
+                        :href="route('Dtr')" />
                 </x-side-bar.item>
 
             </x-side-bar>

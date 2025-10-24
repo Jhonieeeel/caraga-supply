@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Actions\Logout;
+use App\Livewire\DTR;
 use App\Livewire\Pages\Afms\Procurement;
 use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Livewire\Pages\Afms\StockTable;
@@ -26,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // user management
     Route::get('user', UserTable::class)->name('user.index');
+    Route::get('/Dtr', DTR::class)->name('Dtr');
 });
 
 require __DIR__ . '/auth.php';
