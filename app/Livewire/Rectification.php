@@ -8,7 +8,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class DTR extends Component
+class Rectification extends Component
 {    public $headers = [];
 
     public ?int $quantity = 5;
@@ -54,6 +54,6 @@ class DTR extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        return view('livewire.Dtr');
+        return view('livewire.Rectification');
     }
 }

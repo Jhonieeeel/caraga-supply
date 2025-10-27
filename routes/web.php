@@ -7,6 +7,7 @@ use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Livewire\Pages\Afms\StockTable;
 use App\Livewire\Pages\Afms\SupplyTable;
 use App\Livewire\Pages\Afms\UserTable;
+use App\Livewire\Rectification;
 use Illuminate\Support\Facades\Route;
 
 Route::view('profile', 'profile')
@@ -27,7 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // user management
     Route::get('user', UserTable::class)->name('user.index');
-    Route::get('/Dtr', DTR::class)->name('Dtr');
+    Route::get('/Rectification', Rectification::class)->name('Rectification');
 });
 
 require __DIR__ . '/auth.php';
