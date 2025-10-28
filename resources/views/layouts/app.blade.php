@@ -64,6 +64,8 @@
                         :href="route('user.index')" />
                     <x-side-bar.item text="Rectification" icon="clock" wire:navigate :current="request()->routeIs('Rectification')"
                         :href="route('Rectification')" />
+                        <x-side-bar.item text="Manage DTR" icon="clock" wire:navigate :current="request()->routeIs('Managedtr')"
+                        :href="route('Managedtr')" />
                 </x-side-bar.item>
 
             </x-side-bar>

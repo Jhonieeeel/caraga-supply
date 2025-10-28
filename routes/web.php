@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // user management
     Route::get('user', UserTable::class)->name('user.index');
     Route::get('/Rectification', Rectification::class)->name('Rectification');
+    Route::get('/Managedtr', Rectification::class)->name('Managedtr');
 });
 
 require __DIR__ . '/auth.php';
