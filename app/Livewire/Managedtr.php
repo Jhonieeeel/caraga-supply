@@ -10,7 +10,6 @@ class Managedtr extends Component
 {   
     public $headers = [];
     public $rows = []; 
-    public $pageTitle = 'DTR Management';
 
     // Bind inputs
     public $newHoliday = '';
@@ -77,11 +76,5 @@ class Managedtr extends Component
         $this->rows = array_values($this->rows); // reindex array
     }
 
-    #[Layout('layouts.app')]
-    public function render()
-    {
-        return view('livewire.managedtr', [
-            'pageTitle' => $this->pageTitle,
-        ]);
-    }
+
 }
