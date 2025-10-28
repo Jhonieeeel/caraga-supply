@@ -5,7 +5,7 @@
             ['label' => 'TALL', 'value' => 1],
             ['label' => 'LIVT', 'value' => 2],
             ]" searchable icon="name"/>
-            <x-input label="DTR Number:" icon="cog" />
+            <x-input label="DTR Number:" icon="magnifying-glass" />
         </div>
         <form wire:submit.prevent="submitDate">
             <div class="grid grid-cols-2 gap-4 p-2">
@@ -187,7 +187,35 @@
                 <br>
                 <br>
                 <x-button text="Save" color="green" icon="archive-box-arrow-down" />
-                
+                <div class="mt-5 bg-gray-200 p-4">
+                    <table class="min-w-full border">
+                        <thead>
+                            <tr>
+                                @foreach($headers as $header)
+                                    <th class="border px-4 py-2">{{ $header['label'] }}</th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($rows as $row)
+                                <tr>
+                                    <td class="border px-4 py-2">{{ $row->created_at }}</td>
+                                    <td class="border px-4 py-2">{{ $row->in_out }}</td>
+                                    <td class="border px-4 py-2">
+                                        <button 
+                                            wire:click="deleteUser({{ $row->id }})"
+                                            onclick="return confirm('Are you sure?')"
+                                            class="bg-red-500 text-white px-3 py-1 rounded"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
             </form>
         </x-modal>
     </div>
