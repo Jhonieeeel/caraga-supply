@@ -50,6 +50,8 @@ class ShowData extends Component
     #[Layout('layouts.app')]
     public function render()
     {
+        // $test = PurchaseRequest::find(1);
+        // dd($test);
         return view('livewire.pages.afms.show-data');
     }
 }

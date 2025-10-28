@@ -6,96 +6,97 @@ use App\Actions\Procurement\CreateRequest;
 use App\Actions\Procurement\UpdateRequest;
 use App\Models\PurchaseRequest;
 use Carbon\Carbon;
+use Livewire\Attributes\Validate;
 use Livewire\Form;
-use Livewire\WithFileUploads;
 
 class RequestForm extends Form
 {
-    use WithFileUploads;
-    public ?Carbon $closing_date = null;
-    public ?Carbon $input_date = null;
+
+    #[Validate(['nullable', 'date'])]
+    public $closing_date;
+
+    #[Validate(rule: ['nullable', 'date'])]
+    public $input_date;
+
+    #[Validate(['nullable', 'file', 'mimes:pdf'])]
     public $app_spp_pdf_file;
-    public ?string $app_spp_pdf_filename = "";
+
+    #[Validate(['nullable', 'string', 'max:255'])]
+    public $app_spp_pdf_filename;
+
+    #[Validate(['nullable', 'file', 'mimes:pdf'])]
     public $philgeps_pdf_file;
-    public ?string $philgeps_pdf_filename = "";
-    public ?string $pr_number = "";
-    public ?float $abc = 0;
-    public ?string $email_posting = "";
-    public ?Carbon $date_posted = null;
+
+    #[Validate(['nullable', 'string', 'max:255'])]
+    public $philgeps_pdf_filename;
+
+    #[Validate(['nullable', 'string', 'max:100'])]
+    public $pr_number;
+
+    #[Validate(['nullable', 'numeric', 'min:0'])]
+    public $abc;
+
+    #[Validate(['nullable', 'email'])]
+    public $email_posting;
+
+    #[Validate(['nullable', 'date'])]
+    public $date_posted;
 
     // fks
-    public ?int $procurement_id = null;
-    public ?int $app_year = null;
-    public ?int $abc_based_app = null;
+    #[Validate(['required', 'exists:procurements,id'])]
+    public $procurement_id;
+
+    #[Validate(['nullable', 'exists:procurements,id'])]
+    public $app_year;
+
+    #[Validate(['nullable', 'exists:procurements,id'])]
+    public $abc_based_app;
 
 
-    // files
-    public ?string $currentAppFile = null;
-    public ?string $currentPhilGepsFile = null;
+    // for storing
+    public $new_app_spp_pdf_file;
+    public $new_philgeps_pdf_file;
 
-    protected function rules(): array
-    {
-        return [
-            // Foreign key
-            'procurement_id'       => ['required', 'exists:procurements,id'],
-
-            // Dates
-            'closing_date'         => ['nullable', 'date'],
-            'input_date'           => ['nullable', 'date'],
-            'date_posted'          => ['nullable', 'date'],
-
-            // Files and filenames
-            'app_spp_pdf_file'     => ['nullable', 'file', 'mimes:pdf'],
-            'app_spp_pdf_filename' => ['nullable', 'string', 'max:255'],
-            'philgeps_pdf_file'    => ['nullable', 'file', 'mimes:pdf'],
-            'philgeps_pdf_filename'=> ['nullable', 'string', 'max:255'],
-
-            // Basic details
-            'pr_number'            => ['nullable', 'string', 'max:100'],
-            'abc'                  => ['nullable', 'numeric', 'min:0'],
-            'abc_based_app'        => ['nullable', 'exists:procurements,id'],
-            'app_year'             => ['nullable', 'exists:procurements,id'],
-
-            // Other fields
-            'email_posting'        => ['nullable', 'email'],
-        ];
-    }
-
-
+    // file update
+    public $currentAppFile;
+    public $currentPhilGepsFile;
 
     public function update(UpdateRequest $updateRequest, PurchaseRequest $purchaseRequest) {
         $this->validate();
         return $updateRequest->handle($purchaseRequest, $this->toArray());
     }
 
-    public function submit(CreateRequest $createRequest, $procurement_id) {
+    public function submit(CreateRequest $createRequest, $procurement_id)
+    {
         $this->procurement_id = $procurement_id;
         $this->abc_based_app = $procurement_id;
         $this->app_year = $procurement_id;
 
         $this->validate();
 
-        $this->currentAppFile = $this->app_spp_pdf_file->store('pr-records', 'public');
-        $this->currentPhilGepsFile = $this->philgeps_pdf_file->store('pr-records', 'public');
+        if ($this->app_spp_pdf_file) {
+            $this->new_app_spp_pdf_file = $this->app_spp_pdf_file->store('pr-records', 'public');
+        }
 
-        info($this->currentAppFile);
+        if ($this->philgeps_pdf_file) {
+            $this->new_philgeps_pdf_file = $this->philgeps_pdf_file->store('pr-records', 'public');
+        }
 
         $request = $createRequest->handle($this->toArray());
 
         return $request;
     }
 
+
     public function toArray(): array
     {
-        $appFile = $this->app_spp_pdf_file ?: $this->currentAppFile;
-        $philFile = $this->philgeps_pdf_file ?: $this->currentPhilGepsFile;
 
         return [
             'closing_date' => $this->closing_date,
             'input_date' => $this->input_date,
-            'app_spp_pdf_file' => $appFile,
+            'app_spp_pdf_file' => $this->new_app_spp_pdf_file,
             'app_spp_pdf_filename' => $this->app_spp_pdf_filename,
-            'philgeps_pdf_file' => $philFile,
+            'philgeps_pdf_file' => $this->new_philgeps_pdf_file,
             'philgeps_pdf_filename' => $this->philgeps_pdf_filename,
             'pr_number' => $this->pr_number,
             'abc' => $this->abc,
@@ -112,14 +113,16 @@ class RequestForm extends Form
         $this->closing_date = $request->closing_date;
         $this->input_date = $request->input_date;
 
-        // uploads start empty
-        $this->app_spp_pdf_file = null;
-        $this->philgeps_pdf_file = null;
+        // Reset NEW file uploads (these should always be TemporaryUploadedFile or null)
+        $this->new_app_spp_pdf_file = null;
+        $this->new_philgeps_pdf_file = null;
 
-        // store existing file paths separately
+        // Store existing file paths in database fields
+        $this->app_spp_pdf_file = $request->app_spp_pdf_file;
         $this->currentAppFile = $request->app_spp_pdf_file;
         $this->app_spp_pdf_filename = $request->app_spp_pdf_filename;
 
+        $this->philgeps_pdf_file = $request->philgeps_pdf_file;
         $this->currentPhilGepsFile = $request->philgeps_pdf_file;
         $this->philgeps_pdf_filename = $request->philgeps_pdf_filename;
 

@@ -4,6 +4,7 @@ use App\Livewire\Actions\Logout;
 use App\Livewire\DTR;
 use App\Livewire\Pages\Afms\Procurement;
 use App\Livewire\Pages\Afms\RequisitionTable;
+use App\Livewire\Pages\Afms\ShowData;
 use App\Livewire\Pages\Afms\StockTable;
 use App\Livewire\Pages\Afms\SupplyTable;
 use App\Livewire\Pages\Afms\UserTable;
@@ -25,6 +26,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // pmu
     Route::get('pmu', Procurement::class)->name('pmu.index');
+    Route::get('pmu/{id}', ShowData::class)->name('pmu.show');
+
+
+
 
     // user management
     Route::get('user', UserTable::class)->name('user.index');

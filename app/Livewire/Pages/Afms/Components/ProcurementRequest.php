@@ -10,7 +10,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Livewire\WithFileUploads;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 class ProcurementRequest extends Component
 {

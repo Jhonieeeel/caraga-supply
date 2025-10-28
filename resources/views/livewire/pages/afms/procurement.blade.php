@@ -6,7 +6,7 @@
             </h2>
 
             {{-- x-on:click="$modalOpen('add-request')" --}}
-            <x-button wire:click="procurement"  icon="cube" position="right">Upload CSV</x-button>
+            <x-button wire:click="procurement" icon="cube" position="right">Upload CSV</x-button>
         </div>
 
         @if (session('message'))

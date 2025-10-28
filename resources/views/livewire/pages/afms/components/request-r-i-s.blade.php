@@ -54,7 +54,7 @@
                         <form wire:submit.prevent="updateRIS" enctype="multipart/form-data">
                             <div class="sm:py-4 py-2">
                                 <x-upload accept="application/pdf" wire:model="temporaryFile" label="RIS Document"
-                                    hint="Please upload RIS document." tip="Upload our Signed RIS here" />
+                                    hint="Please upload RIS document." tip="Upload your Signed RIS here" />
                             </div>
                             <div class="sm:pt-4 pt-3 flex justify-between w-full">
                                 <x-button wire:click="$set('step', 2)">
