@@ -11,6 +11,7 @@ use Livewire\Component;
 class Rectification extends Component
 {    public $headers = [];
     public $rows;
+    public $pageTitle = 'DTR Management';
 
     public ?int $quantity = 5;
 
@@ -20,6 +21,9 @@ class Rectification extends Component
     public array $thisMonth = [];
 
     public ?string $search = '';
+
+    // manage DTR variables
+    public $signatories = [];
 
     public function submitDate() {
 
