@@ -10,6 +10,7 @@ use Livewire\Component;
 
 class Rectification extends Component
 {    public $headers = [];
+    public $rows;
 
     public ?int $quantity = 5;
 
@@ -50,6 +51,25 @@ class Rectification extends Component
     #[On('refresh')]
     public function refresh() {
     }
+
+    public function mount()
+    {
+        $this->headers = [
+            ['index' => 'Time', 'label' => 'Time'],
+            ['index' => 'IN/OUT', 'label' => 'In/Out'],
+            ['index' => 'Action', 'label' => 'Action'],
+        ];
+
+        $this->rows = User::all();
+    }
+
+    public function deleteUser($id)
+    {
+        User::find($id)?->delete();
+        $this->rows = User::all(); // Refresh rows
+    }
+
+
 
     #[Layout('layouts.app')]
     public function render()

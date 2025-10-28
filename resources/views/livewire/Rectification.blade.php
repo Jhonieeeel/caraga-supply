@@ -5,7 +5,7 @@
             ['label' => 'TALL', 'value' => 1],
             ['label' => 'LIVT', 'value' => 2],
             ]" searchable icon="name"/>
-            <x-input label="DTR Number:" icon="cog" />
+            <x-input label="DTR Number:" icon="magnifying-glass" />
         </div>
         <form wire:submit.prevent="submitDate">
             <div class="grid grid-cols-2 gap-4 p-2">
@@ -174,20 +174,108 @@
                 <label for="MdName" class="font-semibold">Name:</label>
                 <p id="MdName" class="inline-block"></p>
                 <x-select.native label="Select Day:" :options="[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]"/>
-                <div class="flex flex-col sm:flex-row items-end gap-10 mt-3">
-                    <x-number min="0" max="24" label="Hour:" class="w-full sm:w-24" />
-                    <x-number min="0" max="59" label="Minutes:" class="w-full sm:w-24" />
-                    <x-select.native label="Action:" :options="['In', 'Out', 'OB','OT','Duty Staff In', 'Duty Staff Out', 'On Leave', 'Day Off']" class="w-full sm:w-40" />
-                </div>
-                <x-button  outline icon="plus" class="mt-3"/>
-                <x-button  outline icon="arrow-path-rounded-square" />
+                <div 
+                    x-data="{ 
+                        rows: [{ hour: '', minutes: '', action: '' }], 
+                        addRow() { 
+                            this.rows.push({ hour: '', minutes: '', action: '' }) 
+                        },
+                        removeRow(index) { 
+                            this.rows.splice(index, 1) 
+                        },
+                        resetRows() { 
+                            this.rows = [{ hour: '', minutes: '', action: '' }] 
+                        } 
+                    }" 
+                    class="space-y-4"
+                >
+                    <template x-for="(row, index) in rows" :key="index">
+                        <div class="flex flex-col sm:flex-row items-end gap-4 mt-3">
+                            <x-number 
+                                min="0" max="24" 
+                                label="Hour:" 
+                                class="w-full sm:w-24" 
+                                x-model="row.hour"
+                            />
+                            <x-number 
+                                min="0" max="59" 
+                                label="Minutes:" 
+                                class="w-full sm:w-24"
+                                x-model="row.minutes"
+                            />
+                            <x-select.native 
+                                label="Action:" 
+                                :options="['In', 'Out', 'OB', 'OT', 'Duty Staff In', 'Duty Staff Out', 'On Leave', 'Day Off']" 
+                                class="w-full sm:w-40"
+                                x-model="row.action"
+                            />
+                            
+                            <x-button 
+                                outline 
+                                icon="minus" 
+                                red 
+                                x-show="rows.length > 1" 
+                                x-on:click="removeRow(index)"
+                            color="red">
+                            </x-button>
+                        </div>
+                    </template>
+
+                    <div class="flex gap-3 mt-3">
+                        <x-button  
+                            outline 
+                            icon="plus" 
+                            x-on:click="addRow()"
+                        >
+                        </x-button>
+
+                        <x-button  
+                            outline 
+                            icon="arrow-path-rounded-square"
+                            x-on:click="resetRows()"
+                        >
+                        </x-button>
+                    </div>
+                </div>                
                 <br>
                 <br>
                 <br>
                 <br>
                 <br>
                 <x-button text="Save" color="green" icon="archive-box-arrow-down" />
-                
+                <div class="mt-5 bg-white">
+                    <div class="overflow-hidden rounded-lg border border-gray-300">
+                        <table class="min-w-full border-collapse">
+                            <thead class="bg-gray-300">
+                                <tr>
+                                    @foreach($headers as $header)
+                                        <th class="border-b border-gray-300 px-4 py-2 text-left">
+                                            {{ $header['label'] }}
+                                        </th>
+                                    @endforeach
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($rows as $index => $row)
+                                    <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-100' }} hover:bg-gray-200">
+                                        <td class="border-b border-gray-200 px-4 py-2">{{ $row->created_at }}</td>
+                                        <td class="border-b border-gray-200 px-4 py-2">{{ $row->in_out }}</td>
+                                        <td class="border-b border-gray-200 px-4 py-2">
+                                            <button 
+                                                wire:click="deleteUser({{ $row->id }})"
+                                                onclick="return confirm('Are you sure?')"
+                                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </form>
         </x-modal>
     </div>
