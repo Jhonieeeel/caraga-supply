@@ -2,6 +2,7 @@
 
 use App\Livewire\Actions\Logout;
 use App\Livewire\DTR;
+use App\Livewire\Managedtr;
 use App\Livewire\Pages\Afms\Procurement;
 use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Livewire\Pages\Afms\StockTable;
@@ -29,7 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // user management
     Route::get('user', UserTable::class)->name('user.index');
     Route::get('/Rectification', Rectification::class)->name('Rectification');
-    Route::get('/Managedtr', Rectification::class)->name('Managedtr');
+    Route::get('/Managedtr', Managedtr::class)->name('Managedtr');
 });
 
 require __DIR__ . '/auth.php';
