@@ -152,39 +152,39 @@ class DatabaseSeeder extends Seeder
                 'remarks' => 'Urgent procurement needed.',
             ]);
 
-        // $request = PurchaseRequest::create([
-        //     'procurement_id' => $annual->id,
-        //     'closing_date' => $date,
-        //     'input_date' => $date,
-        //     'app_spp_pdf_file' => 'app_test_.pdf',
-        //     'app_spp_pdf_filename' => 'app_file',
-        //     'philgeps_pdf_file' => 'philgeps_test.pdf',
-        //     'philgeps_pdf_filename' => 'philgeps_test',
-        //     'pr_number' => 'PR-001',
-        //     'abc_based_app' => $annual->id,
-        //     'abc' => 45000.00,
-        //     'email_posting' => 'testlink@gmail.com',
-        //     'date_posted' => $date,
-        //     'app_year' => $annual->id,
-        // ]);
+        $request = PurchaseRequest::create([
+            'procurement_id' => $annual->id,
+            'closing_date' => $date,
+            'input_date' => $date,
+            'app_spp_pdf_file' => 'app_test_.pdf',
+            'app_spp_pdf_filename' => 'app_file',
+            'philgeps_pdf_file' => 'philgeps_test.pdf',
+            'philgeps_pdf_filename' => 'philgeps_test',
+            'pr_number' => 'PR-001',
+            'abc_based_app' => $annual->id,
+            'abc' => 45000.00,
+            'email_posting' => 'testlink@gmail.com',
+            'date_posted' => $date,
+            'app_year' => $annual->id,
+        ]);
 
-        // PurchaseOrder::create([
-        //     'purchase_request_id' => $request->id,
-        //     'procurement_id' => $annual->id,
-        //     'noa' => $date,
-        //     'variance' => 123123,
-        //     'po_number' => 'PO-001',
-        //     'date_posted' => $request->id,
-        //     'po_date' => $date,
-        //     'delivery_date' => $date,
-        //     'ntp' => $date,
-        //     'resolution_number' => '2024-07-001',
-        //     'supplier' => 'Test Supplier',
-        //     'contact_price' => 15000,
-        //     'email_link' => 'testpo@gmail.com',
-        //     'abc_based_app' => $annual->id,
-        //     'abc' => $request->id,
-        // ]);
+        PurchaseOrder::create([
+            'purchase_request_id' => $request->id,
+            'procurement_id' => $annual->id,
+            'noa' => $date,
+            'variance' => 123123,
+            'po_number' => 'PO-001',
+            'date_posted' => $request->id,
+            'po_date' => $date,
+            'delivery_date' => $date,
+            'ntp' => $date,
+            'resolution_number' => '2024-07-001',
+            'supplier' => 'Test Supplier',
+            'contact_price' => 15000,
+            'email_link' => 'testpo@gmail.com',
+            'abc_based_app' => $annual->id,
+            'abc' => $request->id,
+        ]);
 
     }
 }

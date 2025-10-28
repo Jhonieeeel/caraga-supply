@@ -52,8 +52,8 @@
 
                     <p class="text-gray-500 font-medium text-sm space-x-6">APP/SPP (PDF):
                         @if ($procurement->purchaseRequest?->app_spp_pdf_file)
-                            <a class="text-blue-600 underline font-semibold px-3"
-                                href="{{ Storage::url($procurement->purchaseRequest?->app_spp_pdf_file) }}">
+                            <a href="{{ asset('storage/pr-records/' . $procurement->purchaseRequest->app_spp_pdf_file) }}"
+                                class="text-blue-600 underline font-semibold px-3" target="_blank">
                                 {{ $procurement->purchaseRequest?->app_spp_pdf_filename }}.pdf
                             </a>
                         @else
@@ -61,7 +61,6 @@
                                 'N/A'
                             </span>
                         @endif
-
                     </p>
 
                     <p class="text-gray-500 font-medium text-sm space-x-6">PhilGeps (PDF): <span

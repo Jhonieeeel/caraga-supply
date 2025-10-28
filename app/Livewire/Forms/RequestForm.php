@@ -6,9 +6,6 @@ use App\Actions\Procurement\CreateRequest;
 use App\Actions\Procurement\UpdateRequest;
 use App\Models\PurchaseRequest;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\Form;
 use Livewire\WithFileUploads;
 
@@ -78,13 +75,10 @@ class RequestForm extends Form
 
         $this->validate();
 
-        Log::info('data',);
+        $this->currentAppFile = $this->app_spp_pdf_file->store('pr-records', 'public');
+        $this->currentPhilGepsFile = $this->philgeps_pdf_file->store('pr-records', 'public');
 
-        $appPath = Storage::put($this->app_spp_pdf_file, file_get_contents($this->app_spp_pdf_file));
-        $philPath = Storage::put($this->philgeps_pdf_file, file_get_contents($this->philgeps_pdf_file));
-
-
-        Log::info('data',$appPath);
+        info($this->currentAppFile);
 
         $request = $createRequest->handle($this->toArray());
 

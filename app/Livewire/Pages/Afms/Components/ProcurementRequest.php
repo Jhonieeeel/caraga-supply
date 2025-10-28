@@ -81,6 +81,7 @@ class ProcurementRequest extends Component
         return redirect()->route('pmu.show', $procurement->id);
     }
 
+    // from form
     public function onSubmit(CreateRequest $createRequest) {
 
         $existingRequest = PurchaseRequest::where('procurement_id', $this->procurement_id)->first();
@@ -101,6 +102,7 @@ class ProcurementRequest extends Component
         return $this->requestForm->submit($createRequest, $this->procurement_id);
     }
 
+    // button to PO
    public function submitToOrder(PurchaseRequest $purchaseRequest) {
 
     $existingOrder = PurchaseOrder::where('purchase_request_id' , $purchaseRequest->id)->first();
