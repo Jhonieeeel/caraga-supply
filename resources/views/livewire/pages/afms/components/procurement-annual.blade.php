@@ -7,6 +7,8 @@
 
     <div>
         <x-table :$headers id="procurement" :rows='$this->rows' filter :quantity="[2, 5, 10]">
+            @interact('column')
+            @endinteract
             @interact('column_remarks', $procurement)
                 <span class="whitespace-nowrap">{{ $procurement->remarks }}</span>
             @endinteract

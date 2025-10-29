@@ -3,31 +3,50 @@
 namespace App\Livewire\Forms;
 
 use App\Actions\Procurement\CreateOrder;
+use App\Actions\Procurement\UpdateOrder;
 use App\Models\PurchaseOrder;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Form;
 
 class OrderForm extends Form
 {
-    public ?int $procurement_id = null;
-    public ?int $purchase_request_id = null;
-    public ?string $order_number = '';
-    public ?Carbon $noa = null;
-    public ?float $variance = null;
-    public ?string $po_number = '';
-    public ?int $date_posted = null;
-    public ?Carbon $po_date = null;
-    public ?Carbon $delivery_date = null;
-    public ?Carbon $ntp = null;
-    public ?string $resolution_number = null;
-    public ?string $supplier = '';
-    public ?float $contact_price = null;
-    public ?string $email_link = '';
-    public ?int $abc_based_app = null;
-    public ?int $abc = null;
+    public $procurement_id;
+    public $purchase_request_id;
+    public $order_number;
+    public $noa;
+    public $variance;
+    public $po_number;
+    public $date_posted;
+    public $po_date;
+    public $delivery_date;
+    public $ntp;
+    public $resolution_number;
+    public $supplier;
+    public $contract_price;
+    public $email_link;
+    public $abc_based_app;
+    public $abc;
+
+    // upload file
+    public $ntp_pdf_file;
+    public $noa_pdf_file;
+    public $po_pdf_file;
+    public $reso_pdf_file;
+
+    // store files
+    public $new_ntp_pdf_file;
+    public $new_noa_pdf_file;
+    public $new_po_pdf_file;
+    public $new_reso_pdf_file;
 
 
-  protected function rules(): array
+    // update
+    public $currentNtpFile;
+    public $currentNoaFile;
+    public $currentPoFile;
+    public $currentResoFile;
+
+    protected function rules(): array
     {
         return [
             // Foreign keys
@@ -44,19 +63,81 @@ class OrderForm extends Form
             'ntp'                  => ['nullable', 'date'],
             'resolution_number'    => ['nullable', 'string'],
             'supplier'             => ['nullable', 'string'],
-            'contact_price'        => ['nullable', 'numeric'],
-            'email_link'           => ['nullable', 'url'],
+            'contract_price'       => ['nullable', 'numeric'],
+            'email_link'           => ['nullable', 'email'],
 
             // Date fields
             'po_date'              => ['nullable', 'date'],
-            'delivery_date'        => ['nullable', 'date', 'after_or_equal:po_date'], // optional: delivery must be same or after PO date
+            'delivery_date'        => ['nullable', 'date'], // optional: delivery must be same or after PO date
+
+            // files
+            'ntp_pdf_file'         => ['nullable',  'file', 'mimes:pdf'],
+            'noa_pdf_file'         => ['nullable',  'file', 'mimes:pdf'],
+            'po_pdf_file'          => ['nullable',  'file', 'mimes:pdf'],
+            'reso_pdf_file'        => ['nullable',  'file', 'mimes:pdf'],
         ];
     }
 
-
     public function submit(CreateOrder $createOrder): PurchaseOrder {
         $this->validate();
+
+        if ($this->ntp_pdf_file) {
+            Storage::disk('public')->delete($this->currentNtpFile);
+            $this->new_ntp_pdf_file = $this->ntp_pdf_file->store('po-records', 'public');
+        }
+
+        if ($this->noa_pdf_file) {
+            Storage::disk('public')->delete($this->currentNoaFile);
+            $this->new_noa_pdf_file = $this->noa_pdf_file->store('po-records', 'public');
+        }
+
+        if ($this->po_pdf_file) {
+            Storage::disk('public')->delete($this->currentPoFile);
+            $this->new_po_pdf_file = $this->po_pdf_file->store('po-records', 'public');
+        }
+
+        if ($this->reso_pdf_file) {
+            Storage::disk('public')->delete($this->currentResoFile);
+            $this->new_reso_pdf_file = $this->reso_pdf_file->store('po-records', 'public');
+        }
+
+
         return $createOrder->handle($this->toArray());
+    }
+
+    public function update(UpdateOrder $updateOrder, PurchaseOrder $purchaseOrder): PurchaseOrder {
+
+        $this->validate();
+
+        if ($this->ntp_pdf_file) {
+            Storage::disk('public')->delete($this->currentNtpFile);
+            $this->new_ntp_pdf_file = $this->ntp_pdf_file->store('po-records', 'public');
+        }else {
+            $this->new_ntp_pdf_file = $this->currentNtpFile;
+        }
+
+        if ($this->noa_pdf_file) {
+            Storage::disk('public')->delete($this->currentNoaFile);
+            $this->new_noa_pdf_file = $this->noa_pdf_file->store('po-records', 'public');
+        }else {
+            $this->new_noa_pdf_file = $this->currentNoaFile;
+        }
+
+        if ($this->po_pdf_file) {
+            Storage::disk('public')->delete($this->currentPoFile);
+            $this->new_po_pdf_file = $this->po_pdf_file->store('po-records', 'public');
+        }else {
+            $this->new_po_pdf_file = $this->currentPoFile;
+        }
+
+        if ($this->reso_pdf_file) {
+            Storage::disk('public')->delete($this->currentResoFile);
+            $this->new_reso_pdf_file = $this->reso_pdf_file->store('po-records', 'public');
+        }else {
+            $this->new_reso_pdf_file = $this->currentResoFile;
+        }
+
+        return $updateOrder->handle($purchaseOrder, $this->toArray());
     }
 
     public function fillform(PurchaseOrder $order) {
@@ -71,10 +152,24 @@ class OrderForm extends Form
         $this->ntp = $order->ntp;
         $this->resolution_number = $order->resolution_number;
         $this->supplier = $order->supplier;
-        $this->contact_price = $order->contact_price;
+        $this->contract_price = $order->contract_price;
         $this->email_link = $order->email_link;
         $this->abc_based_app = $order->procurement_id;
         $this->abc = $order->purchase_request_id;
+
+
+        // for temp
+        $this->currentNtpFile = $order->ntp_pdf_file;
+        $this->currentNoaFile = $order->noa_pdf_file;
+        $this->currentPoFile = $order->po_pdf_file;
+        $this->currentResoFile = $order->reso_pdf_file;
+
+        // file
+        $this->ntp_pdf_file = null;
+        $this->noa_pdf_file = null;
+        $this->po_pdf_file = null;
+        $this->reso_pdf_file = null;
+
     }
 
     public function toArray() {
@@ -90,10 +185,14 @@ class OrderForm extends Form
             'ntp' => $this->ntp,
             'resolution_number' => $this->resolution_number,
             'supplier' => $this->supplier,
-            'contact_price' => $this->contact_price,
+            'contract_price' => $this->contract_price,
             'email_link' => $this->email_link,
             'abc_based_app' => $this->abc_based_app,
-            'abc' => $this->abc
+            'abc' => $this->abc,
+            'ntp_pdf_file' => $this->new_ntp_pdf_file,
+            'noa_pdf_file' => $this->new_noa_pdf_file,
+            'reso_pdf_file' => $this->new_reso_pdf_file,
+            'po_pdf_file' => $this->new_po_pdf_file
         ];
     }
 

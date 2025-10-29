@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Pages\Afms;
 
+use App\Actions\Procurement\UpdateOrder;
+use App\Actions\Procurement\UpdateRequest;
 use App\Livewire\Forms\OrderForm;
 use App\Livewire\Forms\RequestForm;
 use App\Models\Procurement;
@@ -21,6 +23,18 @@ class ShowData extends Component
     public PurchaseOrder $purchaseOrder;
     public PurchaseRequest $purchaseRequest;
 
+
+    // new file PR
+    public  $updateAppFile;
+    public $updatePhilFile;
+
+    // new file PO
+    public $updateNtpFile;
+    public $updateNoaFile;
+    public $updatePoFile;
+    public $updateResoiFile;
+
+
     public function mount($id) {
         $this->procurement = Procurement::with(['purchaseRequest', 'purchaseOrder'])->find( $id );
     }
@@ -30,15 +44,49 @@ class ShowData extends Component
     }
 
     public function editOrder(PurchaseOrder $purchaseOrder) {
+        $this->dispatch('modal:update-order-open');
         $this->purchaseOrder = $purchaseOrder;
         $this->orderForm->fillform($this->purchaseOrder);
-        $this->dispatch('modal:update-order-open');
     }
 
     public function editRequest(PurchaseRequest $purchaseRequest) {
         $this->purchaseRequest = $purchaseRequest;
         $this->requestForm->fillform($this->purchaseRequest);
         $this->dispatch('modal:update-request-open');
+    }
+
+    public function submitEditOrder(UpdateOrder $updateOrder, PurchaseOrder $purchaseOrder) {
+        if ($this->updateNtpFile) {
+            $this->orderForm->ntp_pdf_file = $this->updateNtpFile;
+        }
+
+        if ($this->updateNoaFile) {
+            $this->orderForm->noa_pdf_file = $this->updateNoaFile;
+        }
+
+        if ($this->updatePoFile) {
+            $this->orderForm->po_pdf_file = $this->updatePoFile;
+        }
+
+        if ($this->updateResoFile) {
+            $this->orderForm->reso_pdf_file = $this->updateResoFile;
+        }
+
+        $this->orderForm->update($updateOrder, $purchaseOrder);
+    }
+    public function submitEditRequest(UpdateRequest $updateRequest) {
+
+        if ($this->updateAppFile) {
+            $this->requestForm->app_spp_pdf_file = $this->updateAppFile;
+        }
+
+        if ($this->updatePhilFile) {
+            $this->requestForm->philgeps_pdf_file = $this->updatePhilFile;
+        }
+
+        $this->dispatch('modal:update-request-close');
+
+        return $this->requestForm->update($updateRequest, $this->purchaseRequest);
     }
 
 

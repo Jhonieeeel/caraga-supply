@@ -9,6 +9,6 @@ class UpdateRequest
     public function handle(PurchaseRequest $purchaseRequest, array $data) {
         $purchaseRequest->update($data);
 
-        return $purchaseRequest
+        return $purchaseRequest;
     }
 }

@@ -2,28 +2,14 @@
 
 namespace App\Livewire;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-use Livewire\Component;
-
-class Managedtr extends Component
-{
-    public function render()
-    {
-        return view('livewire.manage-dtr');
-    }
-}
-=======
-=======
->>>>>>> 694fd663cd32485ddea5fe9c9d3e5398541cb59b
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use App\Models\User;
 
 class Managedtr extends Component
-{   
+{
     public $headers = [];
-    public $rows = []; 
+    public $rows = [];
 
     // Bind inputs
     public $newHoliday = '';
@@ -49,7 +35,7 @@ class Managedtr extends Component
     {
         $this->validate([
             'newHoliday' => 'required|string|max:255',
-            'newDate' => 'required|string', 
+            'newDate' => 'required|string',
         ]);
 
 
@@ -91,9 +77,4 @@ class Managedtr extends Component
     }
 
 
-<<<<<<< HEAD
 }
->>>>>>> 694fd663cd32485ddea5fe9c9d3e5398541cb59b
-=======
-}
->>>>>>> 694fd663cd32485ddea5fe9c9d3e5398541cb59b

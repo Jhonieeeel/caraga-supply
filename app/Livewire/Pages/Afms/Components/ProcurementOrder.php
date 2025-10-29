@@ -4,17 +4,22 @@ namespace App\Livewire\Pages\Afms\Components;
 
 use App\Actions\Procurement\CreateOrder;
 use App\Livewire\Forms\OrderForm;
+use App\Models\Procurement;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class ProcurementOrder extends Component
 {
+    use WithFileUploads;
     public $tab = 'Orders';
 
     public OrderForm $orderForm;
+
+    public ?PurchaseRequest $purchaseRequest;
 
     public ?string $search = '';
     public ?int $quantity = 5;
@@ -22,6 +27,11 @@ class ProcurementOrder extends Component
     public array $headers = [];
 
     public ?int $purchase_order_id = null;
+
+    public $varianceResult;
+
+    public $po_pdf_file;
+
 
     public function mount()
     {
@@ -31,7 +41,7 @@ class ProcurementOrder extends Component
             ['index' => 'ntp' ,'label'=> 'Ntp'],
             ['index' => 'noa' ,'label'=> 'Noa'],
             ['index' => 'resolution_number' ,'label'=> 'Resolution Number'],
-    ['index' => 'action' ,'label'=> 'Action'],
+            ['index' => 'action' ,'label'=> 'Action'],
         ];
     }
 
@@ -39,9 +49,17 @@ class ProcurementOrder extends Component
     public function updateComponent() {
     }
 
-    // search =  po_number, title, supplier,
+    public function viewDetails(Procurement $procurement) {
+        return redirect()->route('pmu.show', $procurement->id);
+    }
 
     public function onSubmit(CreateOrder $createOrder) {
+        $this->orderForm->variance = $this->varianceResult;
+        $this->orderForm->po_pdf_file = $this->po_pdf_file;
+        $this->orderForm->procurement_id = $this->purchaseRequest->procurement_id;
+        $this->orderForm->abc_based_app = $this->purchaseRequest->procurement_id;
+        $this->orderForm->abc = $this->purchaseRequest->id;
+        $this->orderForm->date_posted = $this->purchaseRequest->id;
         return $this->orderForm->submit($createOrder);
     }
 
@@ -70,6 +88,18 @@ class ProcurementOrder extends Component
                 'label' => $request->pr_number ?? 'No PR yet',
                 'value' => $request->id,
             ]);
+    }
+
+    #[Computed()]
+    public function variance()
+    {
+        $this->purchaseRequest = PurchaseRequest::find($this->orderForm->purchase_request_id);
+        if ($this->purchaseRequest) {
+            $this->varianceResult = $this->purchaseRequest->abc - $this->orderForm->contract_price;
+            return $this->varianceResult;
+        }
+
+        return null;
     }
 
     public function render()

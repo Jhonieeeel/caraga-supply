@@ -26,11 +26,16 @@ return new class extends Migration
             $table->date('ntp')->nullable();
             $table->string('resolution_number')->nullable(); // year-month-series same sa po
             $table->string('supplier')->nullable();
-            $table->decimal('contact_price')->nullable();
+            $table->decimal('contract_price')->nullable();
             $table->string('email_link')->nullable();
-            $table->string('po_document')->nullable();
             $table->foreignId('abc_based_app')->nullable()->constrained('procurements')->cascadeOnDelete();
             $table->foreignId('abc')->nullable()->constrained('purchase_requests')->cascadeOnDelete();
+
+            // pdfs
+            $table->string('ntp_pdf_file')->nullable();
+            $table->string('noa_pdf_file')->nullable();
+            $table->string('reso_pdf_file')->nullable();
+            $table->string('po_pdf_file')->nullable();
             $table->timestamps();
         });
     }

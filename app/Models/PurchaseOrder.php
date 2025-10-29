@@ -26,12 +26,15 @@ class PurchaseOrder extends Model
         'delivery_date',
         'ntp',
         'supplier',
-        'contact_price',
+        'contract_price',
         'email_link',
         'resolution_number',
         'abc_based_app',
         'abc',
-        'po_document2'
+        'po_document',
+        'ntp_pdf_file',
+        'reso_pdf_file',
+        'noa_pdf_file'
     ];
     public function procurement() {
         return $this->belongsTo(Procurement::class);

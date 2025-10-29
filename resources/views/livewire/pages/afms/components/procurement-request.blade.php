@@ -7,11 +7,22 @@
 
     <div>
         <x-table :$headers :rows='$this->rows' filter :quantity="[2, 5, 10]" blank>
+            @interact('column_procurement.code', $request)
+                <span class="text-nowrap">
+                    {{ $request->procurement->code }}
+                </span>
+            @endinteract
+            @interact('column_date_posted', $request)
+                <span>
+                    {{ $request->date_posted->format('Y-m-d') }}
+                </span>
+            @endinteract
             @interact('column_action', $request)
                 <div class="sm:flex items-center gap-2">
                     <x-button.circle color="teal" icon="magnifying-glass"
                         wire:click="viewDetails({{ $request->procurement }})" />
-                    <x-button.circle color="teal" icon="receipt-percent" wire:click="submitToOrder({{ $request }})" />
+                    <x-button.circle color="teal" icon="receipt-percent"
+                        wire:click="submitToOrder({{ $request }})" />
                 </div>
             @endinteract
         </x-table>
@@ -25,17 +36,16 @@
         <form wire:submit.prevent="onSubmit" class="grid grid-cols-2 gap-4 w-full" enctype="multipart/form-data">
             {{-- dependent Drropdown --}}
             <x-select.styled wire:model.live='procurement_id' label="Code (PAP) *" :options="$this->getAnnuals" searchable />
-            <x-date label="Closing Date *" wire:model="requestForm.closing_date" format="YYYY-MM-DD" />
             <x-input label="Purchase Request Number *" wire:model="requestForm.pr_number" />
-            <x-input label="ABC *" wire:model="requestForm.abc" />
-            <x-date label="Date Posted *" wire:model="requestForm.date_posted" format="YYYY-MM-DD" />
             <x-date label="Input Date *" wire:model="requestForm.input_date" format="YYYY-MM-DD" />
-            <x-upload accept="application/pdf" wire:model="requestForm.app_spp_pdf_file" label="APP/SPP (PDF) *"
+            <x-date label="Date Posted *" wire:model="requestForm.date_posted" format="YYYY-MM-DD" />
+            <x-date label="Closing Date *" wire:model="requestForm.closing_date" format="YYYY-MM-DD" />
+            <x-input label="ABC *" wire:model="requestForm.abc" />
+            <x-upload accept="application/pdf" wire:model="app_spp_pdf_file" label="APP/SPP (PDF) *"
                 hint="Please upload APP/SPP document." />
             <x-input label="APP/SPP (PDF) (Filename) *" wire:model="requestForm.app_spp_pdf_filename" />
-            <x-upload accept="application/pdf" wire:model="requestForm.philgeps_pdf_file"
-                label="Philgeps Posting (PDF) *" hint="Please upload PhilGeps document."
-                tip="Upload our Signed RIS here" />
+            <x-upload accept="application/pdf" wire:model="philgeps_pdf_file" label="Philgeps Posting (PDF) *"
+                hint="Please upload PhilGeps document." tip="Upload our Signed RIS here" />
             <x-input label="Philgeps Posting (Filename) *" wire:model="requestForm.philgeps_pdf_filename" />
             <x-input label="Email Posting *" wire:model="requestForm.email_posting" />
             <div class="col-span-2">

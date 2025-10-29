@@ -27,8 +27,15 @@ class ProcurementRequest extends Component
     public ?int $procurement_id = null;
     public array $headers = [];
 
+    // requestForm
+    public $philgeps_pdf_file;
+    public $app_spp_pdf_file;
+
     public function mount()
     {
+
+
+
         $this->headers = [
             ['index' => 'pr_number', 'label' => 'PR Number'],
             ['index' => 'procurement.code', 'label' => 'Code PAP'],
@@ -37,6 +44,7 @@ class ProcurementRequest extends Component
             ['index' => 'date_posted', 'label' => 'Date Posted'],
             ['index' => 'action', 'label' => 'Action'],
         ];
+
     }
 
 
@@ -94,11 +102,16 @@ class ProcurementRequest extends Component
             ])->to(\App\Livewire\Pages\Afms\Procurement::class);
         }
         $this->dispatch('modal:add-request-close');
+
         $this->dispatch('alert', [
                 'text' => 'Request Added Successfully',
                 'color' => 'teal',
                 'title' => 'Success'
             ])->to(\App\Livewire\Pages\Afms\Procurement::class);
+
+        $this->requestForm->philgeps_pdf_file = $this->philgeps_pdf_file;
+        $this->requestForm->app_spp_pdf_file = $this->app_spp_pdf_file;
+        $this->dispatch('procurement-order-refresh')->to(ProcurementOrder::class);
         return $this->requestForm->submit($createRequest, $this->procurement_id);
     }
 
@@ -108,14 +121,14 @@ class ProcurementRequest extends Component
     $existingOrder = PurchaseOrder::where('purchase_request_id' , $purchaseRequest->id)->first();
 
     if (!$existingOrder) {
-    // create here
-    PurchaseOrder::create([
-        'procurement_id' => $purchaseRequest->procurement->id, // app
-        'purchase_request_id' => $purchaseRequest->id, // pr
-        'abc_based_app' => $purchaseRequest->procurement->id, // app
-        'abc' => $purchaseRequest->procurement->id, // pr
-        'date_posted' => $purchaseRequest->id // pr
-    ]);
+        // create here
+        $order = PurchaseOrder::create([
+            'procurement_id' => $purchaseRequest->procurement->id, // app
+            'purchase_request_id' => $purchaseRequest->id, // pr
+            'abc_based_app' => $purchaseRequest->procurement->id, // app
+            'abc' => $purchaseRequest->procurement->id, // pr
+            'date_posted' => $purchaseRequest->id // pr
+        ]);
 
         $this->dispatch('procurement-tab', tab: 'Orders');
         $this->dispatch('alert', [
@@ -124,15 +137,17 @@ class ProcurementRequest extends Component
             'title' => 'Success'
         ])->to(\App\Livewire\Pages\Afms\Procurement::class);
 
-        return $this->dispatch('procurement-order-refresh')->to(ProcurementOrder::class);
+        $this->dispatch('procurement-order-refresh')->to(ProcurementOrder::class);
+
+        return $order;
 
     }
 
-    return $this->dispatch('alert', [
-        'text' => 'Data Already Added to Order',
-        'color' => 'yellow',
-        'title' => 'Failed'
-    ])->to(\App\Livewire\Pages\Afms\Procurement::class);
+        return $this->dispatch('alert', [
+            'text' => 'Data Already Added to Order',
+            'color' => 'yellow',
+            'title' => 'Failed'
+        ])->to(\App\Livewire\Pages\Afms\Procurement::class);
    }
 
     #[Computed()]
