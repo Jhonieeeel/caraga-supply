@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 use Livewire\Component;
 
 class Managedtr extends Component
@@ -13,6 +14,8 @@ class Managedtr extends Component
     }
 }
 =======
+=======
+>>>>>>> 694fd663cd32485ddea5fe9c9d3e5398541cb59b
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use App\Models\User;
@@ -88,5 +91,9 @@ class Managedtr extends Component
     }
 
 
+<<<<<<< HEAD
+}
+>>>>>>> 694fd663cd32485ddea5fe9c9d3e5398541cb59b
+=======
 }
 >>>>>>> 694fd663cd32485ddea5fe9c9d3e5398541cb59b
