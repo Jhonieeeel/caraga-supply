@@ -11,7 +11,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    
+
     <!-- Scripts -->
     <tallstackui:script />
     @livewireStyles
@@ -64,8 +64,7 @@
                         :href="route('user.index')" />
                     <x-side-bar.item text="Rectification" icon="clock" wire:navigate :current="request()->routeIs('Rectification')"
                         :href="route('Rectification')" />
-                        <x-side-bar.item text="Manage DTR" icon="clock" wire:navigate :current="request()->routeIs('Managedtr')"
-                        :href="route('Managedtr')" />
+
                 </x-side-bar.item>
 
             </x-side-bar>
