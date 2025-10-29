@@ -1,8 +1,11 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <div>
     {{-- Because she competes with no one, no one can compete with her. --}}
 </div>
 =======
+=======
+>>>>>>> 694fd663cd32485ddea5fe9c9d3e5398541cb59b
 <div class="bg-white shadow-md shadow-gray-200 rounded-lg p-6">
     <x-tab selected="Manage Holiday">
         <!-- MANAGE DTR CLASS -->
@@ -19,4 +22,7 @@
     </x-tab>
 </div>
 
+<<<<<<< HEAD
+>>>>>>> 694fd663cd32485ddea5fe9c9d3e5398541cb59b
+=======
 >>>>>>> 694fd663cd32485ddea5fe9c9d3e5398541cb59b
