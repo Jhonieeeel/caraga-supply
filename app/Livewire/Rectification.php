@@ -7,9 +7,12 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Rectification extends Component
-{    public $headers = [];
+{   
+    use WithFileUploads;  
+    public $headers = [];
     public $rows;
     public $pageTitle = 'DTR Management';
 
@@ -50,6 +53,18 @@ class Rectification extends Component
 
         $this->dispatch('refresh');
        
+    }
+     public $dtrFile;
+
+    public function uploadDTR()
+    {
+        $this->validate([
+            'dtrFile' => 'required|file|max:10240', // max 10MB
+        ]);
+
+        $path = $this->dtrFile->store('dtr');
+
+        session()->flash('message', 'DTR uploaded successfully!');
     }
     
     #[On('refresh')]

@@ -35,7 +35,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // user management
     Route::get('user', UserTable::class)->name('user.index');
     Route::get('/Rectification', Rectification::class)->name('Rectification');
+<<<<<<< HEAD
     Route::get('/Managedtr', Managedtr::class)->name('Managedtr');
+=======
+>>>>>>> branch-hrmu
 });
 
 require __DIR__ . '/auth.php';

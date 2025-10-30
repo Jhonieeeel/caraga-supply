@@ -11,16 +11,8 @@ class Managedtr extends Component
     public $headers = [];
     public $rows = [];
 
-    // Bind inputs
-    public $newHoliday = '';
-    public $newDate = '';
-    public $showUploadModal = false;
-    public $showSignatoryModal = false;
-
     public $dtrFile;
-    public $signatoryName = '';
-    public $signatoryPosition = '';
-    public $signatories = [];
+
     public function mount()
     {
         $this->headers = [
@@ -31,6 +23,7 @@ class Managedtr extends Component
     }
 
 
+<<<<<<< HEAD
     public function addHoliday()
     {
         $this->validate([
@@ -69,6 +62,10 @@ class Managedtr extends Component
         $this->signatories = array_values($this->signatories);
     }
 
+=======
+    
+    
+>>>>>>> branch-hrmu
     #[Layout('layouts.app')]
     public function remove($index)
     {

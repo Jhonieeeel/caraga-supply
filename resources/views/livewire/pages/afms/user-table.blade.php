@@ -33,6 +33,7 @@
                     <div class="sm:col-span-2 space-y-3">
                         <x-input wire:model='userForm.name' label="Name *" />
                         <x-input wire:model='userForm.email' label="Email *" />
+                        <x-input wire:model='userForm.Dtrnum' label="Dtr Number *" />
                     </div>
                     <x-select.styled label="Section" wire:model.live="sectionId" :options="$this->sections" searchable />
                     <x-select.styled label="Unit" wire:model.live="unitId" :options="$this->units" searchable />
