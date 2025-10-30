@@ -23,7 +23,6 @@ class Managedtr extends Component
     }
 
 
-<<<<<<< HEAD
     public function addHoliday()
     {
         $this->validate([
@@ -37,8 +36,8 @@ class Managedtr extends Component
             'date' => $this->newDate,
         ];
 
-        $this->newHoliday = '';
-        $this->newDate = '';
+        // $this->newHoliday = '';
+        // $this->newDate = '';
     }
     public function AddSignatory()
     {
@@ -62,10 +61,6 @@ class Managedtr extends Component
         $this->signatories = array_values($this->signatories);
     }
 
-=======
-    
-    
->>>>>>> branch-hrmu
     #[Layout('layouts.app')]
     public function remove($index)
     {
