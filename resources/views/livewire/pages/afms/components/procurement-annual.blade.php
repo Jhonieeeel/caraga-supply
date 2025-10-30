@@ -6,8 +6,9 @@
     </div>
 
     <div>
-        <x-table :$headers id="procurement" :rows='$this->rows' filter :quantity="[2, 5, 10]">
-            @interact('column')
+        <x-table :$headers id="procurement" :rows='$this->rows' loading filter paginate :quantity="[2, 5, 10]">
+            @interact('column_code', $procurement)
+                <span class="text-nowrap">{{ $procurement->code }}</span>
             @endinteract
             @interact('column_remarks', $procurement)
                 <span class="whitespace-nowrap">{{ $procurement->remarks }}</span>
@@ -23,7 +24,7 @@
     </div>
 
     {{-- edit --}}
-    <x-modal title="Annual Procurment Plan" id="edit-entry" size="4xl">
+    <x-modal title="Annual Procurment Plan" id="edit-entry" size="4xl" scrollable>
         <div class="sm:py-4 py-2">
             <p class="text-sm text-gray-500">Annual Procurement Plan Edit Form</p>
         </div>
@@ -67,7 +68,7 @@
     </x-modal>
 
     {{-- add --}}
-    <x-modal title="Annual Procurment Plan" id="add-entry" size="4xl">
+    <x-modal title="Annual Procurment Plan" id="add-entry" size="4xl" scrollable>
 
         <div class="sm:py-4 py-2">
             <p class="text-sm text-gray-500">Annual Procurement Plan Form</p>

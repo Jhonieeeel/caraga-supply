@@ -14,7 +14,7 @@
             @endinteract
             @interact('column_date_posted', $request)
                 <span>
-                    {{ $request->date_posted->format('Y-m-d') }}
+                    {{ $request->date_posted?->format('Y-m-d') }}
                 </span>
             @endinteract
             @interact('column_action', $request)

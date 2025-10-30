@@ -96,7 +96,7 @@ class ProcurementRequest extends Component
         if ($existingRequest) {
             $this->dispatch('modal:add-request-close');
             return $this->dispatch('alert', [
-                'text' => 'Request Already Added',
+                'text' => 'Purchase Request Already Added',
                 'color' => 'red',
                 'title' => 'Failed'
             ])->to(\App\Livewire\Pages\Afms\Procurement::class);

@@ -9,7 +9,11 @@ use App\Livewire\Pages\Afms\Procurement as AfmsProcurement;
 use App\Models\Procurement;
 use App\Models\PurchaseRequest;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
+
+// csv
+
 
 class ProcurementAnnual extends Component
 {
@@ -26,29 +30,32 @@ class ProcurementAnnual extends Component
 
     public array $headers = [];
 
-    public function onSubmit(CreateAnnual $createAnnual, PurchaseRequest $purchaseRequest) {
 
-        $existingRequest = PurchaseRequest::where('procurement_id', $purchaseRequest->procurement_id)->first();
 
-        if (!$existingRequest) {
-            $this->annualForm->onCreate($createAnnual);
+    public function onSubmit(CreateAnnual $createAnnual)
+    {
+        $annual = $this->annualForm->onCreate($createAnnual);
 
-            $this->tab = 'Request';
-
-            $this->dispatch('alert', [
-                'text' => 'Data Successfully Added to Request',
-                'color' => 'teal',
-                'title' => 'Success'
+        if (!$annual->wasRecentlyCreated) {
+            return $this->dispatch('alert', [
+                'text' => 'Data Already Exists',
+                'color' => 'red',
+                'title' => 'Duplicate Entry'
             ])->to(AfmsProcurement::class);
-
-            return redirect()->route('pmu.index');
         }
 
-        return $this->dispatch('alert', [
-            'text' => 'Data already added to Purchase Request',
-            'color' => 'yellow',
-            'title' => 'Failed'
+        $this->dispatch('alert', [
+            'text' => 'New Annual Procurement Plan Added',
+            'color' => 'teal',
+            'title' => 'Success'
         ])->to(AfmsProcurement::class);
+
+        return $this->dispatch('refresh-app');
+    }
+
+    #[On('refresh-app')]
+    public function updateList() {
+
     }
 
     public function mount()
@@ -96,7 +103,7 @@ class ProcurementAnnual extends Component
 
     }
 
-    public function onUpdate(UpdateAnnual $updateAnnual, Procurement $procurement)
+    public function onUpdate(UpdateAnnual $updateAnnual)
     {
         $this->annualForm->update($this->procurement, $updateAnnual);
         $this->dispatch('modal:edit-entry-close');

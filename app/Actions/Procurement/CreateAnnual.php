@@ -6,7 +6,7 @@ use App\Models\Procurement;
 
 class CreateAnnual {
     public function handle(array $data): Procurement {
-        return Procurement::create($data);
+        return Procurement::firstOrCreate($data);
     }
 
 }

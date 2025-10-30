@@ -11,22 +11,21 @@ class AnnualForm extends Form
 {
     public ?Procurement $procurement = null;
 
-    public string $code = '';
-    public string $notice_of_award = '';
-    public string $contract_signing = '';
-    public string $project_title = '';
-    public string $source_of_funds = '';
-    public int $estimated_budget_total = 0;
-    public int $estimated_budget_co = 0;
-    public int $estimated_budget_mooe = 0;
-    public string $pmo_end_user = '';
-    public string $early_activity = '';
-    public string $mode_of_procurement = '';
-    public string $advertisement_posting = '';
-    public string $submission_bids = '';
-    public int $app_year = 0;
-    public string $remarks = '';
-
+    public $code;
+    public $notice_of_award;
+    public $contract_signing;
+    public $project_title;
+    public $source_of_funds;
+    public $estimated_budget_total;
+    public $estimated_budget_co;
+    public $estimated_budget_mooe;
+    public $pmo_end_user;
+    public $early_activity;
+    public $mode_of_procurement;
+    public $advertisement_posting;
+    public $submission_bids;
+    public $app_year;
+    public $remarks;
 
     protected function rules(): array
     {
@@ -40,20 +39,20 @@ class AnnualForm extends Form
             ],
 
             // Core fields
-            'notice_of_award'       => ['required', 'string', 'max:255'],
-            'contract_signing'      => ['required', 'string', 'max:255'],
-            'project_title'         => ['required', 'string', 'max:255'],
-            'source_of_funds'       => ['required', 'string', 'max:255'],
-            'estimated_budget_total'=> ['required', 'numeric', 'min:0'],
-            'estimated_budget_co'   => ['required', 'numeric', 'min:0'],
-            'estimated_budget_mooe' => ['required', 'numeric', 'min:0'],
-            'pmo_end_user'          => ['required', 'string', 'max:255'],
-            'early_activity'        => ['required', 'string', 'max:255'],
-            'mode_of_procurement'   => ['required', 'string', 'max:255'],
-            'advertisement_posting' => ['required', 'string', 'max:255'],
-            'submission_bids'       => ['required', 'string', 'max:255'],
-            'app_year'              => ['required', 'integer', 'digits:4'],
-            'remarks'               => ['required', 'string'],
+            'notice_of_award'       => ['nullable', 'string', 'max:255'],
+            'contract_signing'      => ['nullable', 'string', 'max:255'],
+            'project_title'         => ['nullable', 'string', 'max:255'],
+            'source_of_funds'       => ['nullable', 'string', 'max:255'],
+            'estimated_budget_total'=> ['nullable', 'numeric', 'min:0'],
+            'estimated_budget_co'   => ['nullable', 'numeric', 'min:0'],
+            'estimated_budget_mooe' => ['nullable', 'numeric', 'min:0'],
+            'pmo_end_user'          => ['nullable', 'string', 'max:255'],
+            'early_activity'        => ['nullable', 'string', 'max:255'],
+            'mode_of_procurement'   => ['nullable', 'string', 'max:255'],
+            'advertisement_posting' => ['nullable', 'string', 'max:255'],
+            'submission_bids'       => ['nullable', 'string', 'max:255'],
+            'app_year'              => ['nullable', 'integer', 'digits:4'],
+            'remarks'               => ['nullable', 'string'],
         ];
     }
 
@@ -113,4 +112,8 @@ class AnnualForm extends Form
         $this->validate();
         return $createAnnual->handle($this->toArray());
     }
+
+    // csv
+
+
 }

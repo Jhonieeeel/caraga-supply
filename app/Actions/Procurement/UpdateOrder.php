@@ -7,8 +7,8 @@ use App\Models\PurchaseOrder;
 class UpdateOrder
 {
     public function handle(PurchaseOrder $purchaseOrder, array $data) {
-        $purchaseOrder->update($data);
+         $purchaseOrder->update($data);
 
-        return $purchaseOrder;
+         return $purchaseOrder;
     }
 }

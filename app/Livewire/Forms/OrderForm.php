@@ -5,6 +5,8 @@ namespace App\Livewire\Forms;
 use App\Actions\Procurement\CreateOrder;
 use App\Actions\Procurement\UpdateOrder;
 use App\Models\PurchaseOrder;
+use Illuminate\Support\Facades\Log;
+
 use Illuminate\Support\Facades\Storage;
 use Livewire\Form;
 
@@ -57,10 +59,8 @@ class OrderForm extends Form
             'abc'                  => ['nullable', 'exists:purchase_requests,id'],
 
             // Basic fields
-            'noa'                  => ['nullable', 'date'],
             'variance'             => ['nullable', 'numeric'],
             'po_number'            => ['nullable', 'string'],
-            'ntp'                  => ['nullable', 'date'],
             'resolution_number'    => ['nullable', 'string'],
             'supplier'             => ['nullable', 'string'],
             'contract_price'       => ['nullable', 'numeric'],
@@ -68,7 +68,10 @@ class OrderForm extends Form
 
             // Date fields
             'po_date'              => ['nullable', 'date'],
-            'delivery_date'        => ['nullable', 'date'], // optional: delivery must be same or after PO date
+            'delivery_date'        => ['nullable', 'date'],
+            'ntp'                  => ['nullable', 'date'],
+            'noa'                  => ['nullable', 'date'],
+
 
             // files
             'ntp_pdf_file'         => ['nullable',  'file', 'mimes:pdf'],
@@ -79,28 +82,12 @@ class OrderForm extends Form
     }
 
     public function submit(CreateOrder $createOrder): PurchaseOrder {
+
         $this->validate();
 
-        if ($this->ntp_pdf_file) {
-            Storage::disk('public')->delete($this->currentNtpFile);
-            $this->new_ntp_pdf_file = $this->ntp_pdf_file->store('po-records', 'public');
-        }
-
-        if ($this->noa_pdf_file) {
-            Storage::disk('public')->delete($this->currentNoaFile);
-            $this->new_noa_pdf_file = $this->noa_pdf_file->store('po-records', 'public');
-        }
-
         if ($this->po_pdf_file) {
-            Storage::disk('public')->delete($this->currentPoFile);
             $this->new_po_pdf_file = $this->po_pdf_file->store('po-records', 'public');
         }
-
-        if ($this->reso_pdf_file) {
-            Storage::disk('public')->delete($this->currentResoFile);
-            $this->new_reso_pdf_file = $this->reso_pdf_file->store('po-records', 'public');
-        }
-
 
         return $createOrder->handle($this->toArray());
     }
@@ -109,35 +96,16 @@ class OrderForm extends Form
 
         $this->validate();
 
-        if ($this->ntp_pdf_file) {
-            Storage::disk('public')->delete($this->currentNtpFile);
-            $this->new_ntp_pdf_file = $this->ntp_pdf_file->store('po-records', 'public');
-        }else {
-            $this->new_ntp_pdf_file = $this->currentNtpFile;
-        }
+        $this->new_ntp_pdf_file = $this->ntp_pdf_file ? $this->ntp_pdf_file->store('po-records', 'public') : $this->currentNtpFile;
 
-        if ($this->noa_pdf_file) {
-            Storage::disk('public')->delete($this->currentNoaFile);
-            $this->new_noa_pdf_file = $this->noa_pdf_file->store('po-records', 'public');
-        }else {
-            $this->new_noa_pdf_file = $this->currentNoaFile;
-        }
+        $this->new_po_pdf_file = $this->po_pdf_file ? $this->po_pdf_file->store('po-records', 'public') : $this->currentPoFile;
 
-        if ($this->po_pdf_file) {
-            Storage::disk('public')->delete($this->currentPoFile);
-            $this->new_po_pdf_file = $this->po_pdf_file->store('po-records', 'public');
-        }else {
-            $this->new_po_pdf_file = $this->currentPoFile;
-        }
+        $this->new_noa_pdf_file = $this->noa_pdf_file ? $this->noa_pdf_file->store('po-records', 'public') : $this->currentNoaFile;
 
-        if ($this->reso_pdf_file) {
-            Storage::disk('public')->delete($this->currentResoFile);
-            $this->new_reso_pdf_file = $this->reso_pdf_file->store('po-records', 'public');
-        }else {
-            $this->new_reso_pdf_file = $this->currentResoFile;
-        }
+        $this->new_reso_pdf_file = $this->reso_pdf_file ? $this->reso_pdf_file->store('po-records', 'public') : $this->currentResoFile;
 
         return $updateOrder->handle($purchaseOrder, $this->toArray());
+
     }
 
     public function fillform(PurchaseOrder $order) {
@@ -156,13 +124,6 @@ class OrderForm extends Form
         $this->email_link = $order->email_link;
         $this->abc_based_app = $order->procurement_id;
         $this->abc = $order->purchase_request_id;
-
-
-        // for temp
-        $this->currentNtpFile = $order->ntp_pdf_file;
-        $this->currentNoaFile = $order->noa_pdf_file;
-        $this->currentPoFile = $order->po_pdf_file;
-        $this->currentResoFile = $order->reso_pdf_file;
 
         // file
         $this->ntp_pdf_file = null;

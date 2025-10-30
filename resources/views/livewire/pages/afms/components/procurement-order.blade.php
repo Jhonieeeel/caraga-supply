@@ -8,12 +8,12 @@
     <x-table :$headers :rows='$this->rows' filter :quantity="[2, 5, 10]">
         @interact('column_ntp', $order)
             <span class="text-nowrap">
-                {{ $order->ntp->format('Y-m-d') }}
+                {{ $order->ntp?->format('Y-m-d') }}
             </span>
         @endinteract
         @interact('column_noa', $order)
             <span class="text-nowrap">
-                {{ $order->noa->format('Y-m-d') }}
+                {{ $order->noa?->format('Y-m-d') }}
             </span>
         @endinteract
         @interact('column_resolution_number', $order)

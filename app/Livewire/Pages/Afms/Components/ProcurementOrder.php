@@ -95,7 +95,7 @@ class ProcurementOrder extends Component
     {
         $this->purchaseRequest = PurchaseRequest::find($this->orderForm->purchase_request_id);
         if ($this->purchaseRequest) {
-            $this->varianceResult = $this->purchaseRequest->abc - $this->orderForm->contract_price;
+            $this->varianceResult = (float) $this->purchaseRequest->abc - (float) $this->orderForm->contract_price;
             return $this->varianceResult;
         }
 

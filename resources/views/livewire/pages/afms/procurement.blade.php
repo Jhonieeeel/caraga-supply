@@ -6,7 +6,8 @@
             </h2>
 
             {{-- x-on:click="$modalOpen('add-request')" --}}
-            <x-button wire:click="procurement" icon="cube" position="right">Upload CSV</x-button>
+            <x-button x-on:click="$modalOpen('upload')" icon="document" position="left">Upload CSV</x-button>
+
         </div>
 
         @if (session('message'))
@@ -41,5 +42,18 @@
             </div>
         </div>
     </div>
+    <x-loading loading="readCSV" />
+
+    <x-modal id="upload" title="Upload APP CSV">
+        <div>
+            <form wire:submit.prevent="readCSV" class="space-y-4" enctype="multipart/form-data">
+                <x-upload accept="application/csv" wire:model="app_csv" label="APP/SPP (CSV) *"
+                    hint="Please upload APP/SPP CSV." />
+                <div class="flex justify-end">
+                    <x-button submit icon="arrow-up-on-square" position="left">Upload CSV</x-button>
+                </div>
+            </form>
+        </div>
+    </x-modal>
 </div>
 

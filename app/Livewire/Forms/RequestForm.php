@@ -6,6 +6,7 @@ use App\Actions\Procurement\CreateRequest;
 use App\Actions\Procurement\UpdateRequest;
 use App\Models\PurchaseRequest;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -67,14 +68,12 @@ class RequestForm extends Form
         $this->validate();
 
         if ($this->app_spp_pdf_file) {
-            Storage::disk('public')->delete($this->currentAppFile);
             $this->new_app_spp_pdf_file = $this->app_spp_pdf_file->store('pr-records', 'public');
         } else {
             $this->new_app_spp_pdf_file = $this->currentAppFile;
         }
 
         if ($this->philgeps_pdf_file) {
-            Storage::disk('public')->delete($this->currentPhilGepsFile);
             $this->new_philgeps_pdf_file = $this->philgeps_pdf_file->store('pr-records', 'public');
         } else {
             $this->new_philgeps_pdf_file = $this->currentPhilGepsFile;
@@ -127,10 +126,6 @@ class RequestForm extends Form
 
     public function fillform(PurchaseRequest $request): void
     {
-        // if update CURRENT
-        $this->currentAppFile = $request->app_spp_pdf_file;
-        $this->currentPhilGepsFile = $request->philgeps_pdf_file;
-
         // file
         $this->app_spp_pdf_file = null;
         $this->philgeps_pdf_file = null;
@@ -142,7 +137,7 @@ class RequestForm extends Form
 
         // text
         $this->app_spp_pdf_filename = $request->app_spp_pdf_filename;
-        $this->philgeps_pdf_filename = $request->app_spp_pdf_filename;
+        $this->philgeps_pdf_filename = $request->philgeps_pdf_filename;
         $this->pr_number = $request->pr_number;
         $this->abc = $request->abc;
         $this->email_posting = $request->email_posting;
@@ -150,7 +145,7 @@ class RequestForm extends Form
         // fks
         $this->procurement_id = $request->procurement_id;
         $this->app_year = $request->app_year;
-        $this->abc_based_app = $request->app_based_app;
+        $this->abc_based_app = $request->abc_based_app;
     }
 
 }

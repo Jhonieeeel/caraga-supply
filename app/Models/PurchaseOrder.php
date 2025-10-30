@@ -31,7 +31,7 @@ class PurchaseOrder extends Model
         'resolution_number',
         'abc_based_app',
         'abc',
-        'po_document',
+        'po_pdf_file',
         'ntp_pdf_file',
         'reso_pdf_file',
         'noa_pdf_file'
