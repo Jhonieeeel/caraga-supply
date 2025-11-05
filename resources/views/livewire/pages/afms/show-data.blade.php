@@ -1,268 +1,283 @@
 <div class="space-y-6">
     <div class="max-w-7xl mx-auto sm:px-3 sm:py-4 lg:px-8 bg-white border shadow rounded">
-        <div class="flex items-center justify-between sm:pb-4">
-            <h2 class="font-semibold sm:text-lg text-sm text-gray-800 leading-tight">
+        <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+            <h2 class="text-lg font-semibold text-gray-800 tracking-tight flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c1.657 0 3-1.343 3-3S13.657 2 12 2 9 3.343 9 5s1.343 3 3 3zM5.121 17.804A8.966 8.966 0 0112 15c1.657 0 3.18.45 4.508 1.234M12 22a10 10 0 10-7.071-2.929A9.993 9.993 0 0012 22z" />
+                </svg>
                 Procurement Project Description
             </h2>
-
-            {{-- x-on:click="$modalOpen('add-request')" --}}
         </div>
 
         <div class="details space-y-6 sm:py-6 p-3.5">
-
             @if ($procurement)
-                <div class="annual-plan hover:shadow p-4">
-                    <h5 class="text-sm uppercase text-primary-600 mb-3 font-semibold">Annual Procurement Plan</h5>
-                    <div class="overflow-hidden sm:rounded-lg space-y-2 p-4">
+                <div
+                    class="bg-white shadow-sm hover:shadow-md transition-shadow duration-300 rounded-lg p-6 border border-gray-100">
+                    <h5 class="text-sm uppercase text-primary-600 mb-4 tracking-wider font-semibold">
+                        Annual Procurement Plan
+                    </h5>
 
-                        <div class="flex text-sm">
-                            <span class="w-56 text-gray-500 font-medium">Code PAP:</span>
-                            <span class="text-gray-600 font-semibold">{{ $procurement->code }}</span>
+                    <div class="divide-y divide-gray-100">
+                        <div class="py-3 flex items-start text-sm">
+                            <span class="w-48 text-gray-500 font-medium">Code PAP:</span>
+                            <span class="text-gray-800 font-semibold">{{ $procurement->code }}</span>
                         </div>
 
-                        <div class="flex text-sm">
-                            <span class="w-56 text-gray-500 font-medium">Project Title:</span>
-                            <span class="text-gray-600 font-semibold">{{ $procurement->project_title }}</span>
+                        <div class="py-3 flex items-start text-sm">
+                            <span class="w-48 text-gray-500 font-medium">Project Title:</span>
+                            <span class="text-gray-800 font-semibold">{{ $procurement->project_title }}</span>
                         </div>
 
-                        <div class="flex text-sm">
-                            <span class="w-56 text-gray-500 font-medium">Estimated Budget Total:</span>
-                            <span class="text-gray-600 font-semibold">{{ $procurement->estimated_budget_total }}</span>
+                        <div class="py-3 flex items-start text-sm">
+                            <span class="w-48 text-gray-500 font-medium">Estimated Budget Total:</span>
+                            <span class="text-gray-800 font-semibold">₱
+                                {{ $procurement->estimated_budget_total }}</span>
                         </div>
 
-                        <div class="flex text-sm">
-                            <span class="w-56 text-gray-500 font-medium">Mode of Procurement:</span>
-                            <span class="text-gray-600 font-semibold">{{ $procurement->mode_of_procurement }}</span>
+                        <div class="py-3 flex items-start text-sm">
+                            <span class="w-48 text-gray-500 font-medium">Mode of Procurement:</span>
+                            <span class="text-gray-800 font-semibold">{{ $procurement->mode_of_procurement }}</span>
                         </div>
-
                     </div>
                 </div>
             @endif
             <hr>
             @if ($procurement->purchaseRequest)
-                <div class="purchase-request hover:shadow p-4">
-                    <div class="flex items-center justify-between">
-                        <h5 class="text-sm uppercase text-primary-600 mb-3 font-semibold">Purchase Request</h5>
-                        <div class="sm:flex gap-x-3">
-                            <x-button icon="printer" color="teal" position="left" wire:click="printRequest"
-                                flat>Print</x-button>
+                <div
+                    class="purchase-request bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <!-- Header -->
+                    <div class="flex flex-wrap items-center justify-between mb-4">
+                        <h5 class="text-sm uppercase text-primary-600 font-semibold tracking-wider">Purchase Request
+                        </h5>
+
+                        <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
+                            <x-button icon="printer" color="teal" disabled position="left" wire:click="printRequest"
+                                flat>
+                                Print
+                            </x-button>
                             <x-button icon="pencil" wire:click="editRequest({{ $procurement->purchaseRequest }})"
-                                color="cyan" position="left" flat>Edit</x-button>
+                                color="cyan" position="left" flat>
+                                Edit
+                            </x-button>
                         </div>
                     </div>
 
-                    <div class="overflow-hidden sm:rounded-lg space-y-2 p-4">
+                    <!-- Content -->
+                    <div class="divide-y divide-gray-100">
+                        @php
+                            $pr = $procurement->purchaseRequest;
+                        @endphp
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">Purchase Request Number:</span>
-                            <span
-                                class="text-gray-600 font-semibold">{{ $procurement->purchaseRequest?->pr_number ?? 'N/A' }}</span>
+                            <span class="text-gray-800 font-semibold">{{ $pr?->pr_number ?? 'N/A' }}</span>
                         </div>
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">Input Date:</span>
                             <span
-                                class="text-gray-600 font-semibold">{{ $procurement->purchaseRequest?->input_date?->format('Y-m-d') ?? 'N/A' }}</span>
+                                class="text-gray-800 font-semibold">{{ $pr?->input_date?->format('Y-m-d') ?? 'N/A' }}</span>
                         </div>
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">Date Posted:</span>
                             <span
-                                class="text-gray-600 font-semibold">{{ $procurement->purchaseRequest?->date_posted?->format('Y-m-d') ?? 'N/A' }}</span>
+                                class="text-gray-800 font-semibold">{{ $pr?->date_posted?->format('Y-m-d') ?? 'N/A' }}</span>
                         </div>
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">Closing Date:</span>
                             <span
-                                class="text-gray-600 font-semibold">{{ $procurement->purchaseRequest?->closing_date?->format('Y-m-d') ?? 'N/A' }}</span>
+                                class="text-gray-800 font-semibold">{{ $pr?->closing_date?->format('Y-m-d') ?? 'N/A' }}</span>
                         </div>
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">APP/SPP (PDF):</span>
-                            @if ($procurement->purchaseRequest?->app_spp_pdf_file)
-                                <a href="{{ asset('storage/' . $procurement->purchaseRequest->app_spp_pdf_file) }}"
-                                    class="text-blue-600 underline font-semibold" target="_blank">
-                                    {{ $procurement->purchaseRequest?->app_spp_pdf_filename }}.pdf
+                            @if ($pr?->app_spp_pdf_file)
+                                <a href="{{ asset('storage/' . $pr->app_spp_pdf_file) }}"
+                                    class="text-blue-600 hover:text-blue-800 underline font-semibold" target="_blank">
+                                    {{ $pr?->app_spp_pdf_filename ?? 'NO_NAME' }}.pdf
                                 </a>
                             @else
-                                <span class="text-gray-600 font-semibold">N/A</span>
+                                <span class="text-gray-800 font-semibold">N/A</span>
                             @endif
                         </div>
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">PhilGEPS (PDF):</span>
-                            @if ($procurement->purchaseRequest?->philgeps_pdf_file)
-                                <a href="{{ asset('storage/' . $procurement->purchaseRequest->philgeps_pdf_file) }}"
-                                    class="text-blue-600 underline font-semibold" target="_blank">
-                                    {{ $procurement->purchaseRequest?->philgeps_pdf_filename }}.pdf
+                            @if ($pr?->philgeps_pdf_file)
+                                <a href="{{ asset('storage/' . $pr->philgeps_pdf_file) }}"
+                                    class="text-blue-600 hover:text-blue-800 underline font-semibold" target="_blank">
+                                    {{ $pr?->philgeps_pdf_filename ?? 'NO_NAME' }}.pdf
                                 </a>
                             @else
-                                <span class="text-gray-600 font-semibold">N/A</span>
+                                <span class="text-gray-800 font-semibold">N/A</span>
                             @endif
                         </div>
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">ABC Based on (APP):</span>
-                            <span
-                                class="text-gray-600 font-semibold">{{ $procurement->purchaseRequest->AbcBasedApp->estimated_budget_total ?? 'N/A' }}</span>
+                            <span class="text-gray-800 font-semibold">₱
+                                {{ $pr?->AbcBasedApp->estimated_budget_total ?? 'N/A' }}
+                            </span>
                         </div>
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">ABC:</span>
-                            <span
-                                class="text-gray-600 font-semibold">{{ $procurement->purchaseRequest->abc ?? 'N/A' }}</span>
+                            <span class="text-gray-800 font-semibold">₱ {{ $pr?->abc ?? 'N/A' }}</span>
                         </div>
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">Email Posting:</span>
-                            <span
-                                class="text-gray-600 font-semibold">{{ $procurement->purchaseRequest->email_posting ?? 'N/A' }}</span>
+                            <span class="text-gray-800 font-semibold">{{ $pr?->email_posting ?? 'N/A' }}</span>
                         </div>
 
-                        <div class="flex text-sm">
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
                             <span class="w-56 text-gray-500 font-medium">APP Year:</span>
-                            <span
-                                class="text-gray-600 font-semibold">{{ $procurement->purchaseRequest?->AppYear->app_year ?? 'N/A' }}</span>
+                            <span class="text-gray-800 font-semibold">{{ $pr?->AppYear->app_year ?? 'N/A' }}</span>
                         </div>
-
                     </div>
                 </div>
             @endif
             @if ($procurement->purchaseOrder)
-                <div class="purchase-order hover:shadow p-4">
-                    {{-- buttons --}}
-                    <div class="flex items-center justify-between">
-                        <h5 class="text-sm uppercase text-primary-600 mb-3 font-semibold">Purchase Order</h5>
-                        <div class="sm:flex gap-x-3">
-                            <x-button icon="printer" color="teal" position="left" wire:click="printOrder"
-                                flat>Print</x-button>
+                <div
+                    class="purchase-order bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="flex flex-wrap items-center justify-between mb-4">
+                        <h5 class="text-sm uppercase text-primary-600 font-semibold tracking-wider">Purchase Order</h5>
+
+                        <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
+                            <x-button icon="printer" color="teal" disabled position="left" wire:click="printOrder"
+                                flat>
+                                Print
+                            </x-button>
                             <x-button icon="pencil" color="cyan" position="left"
-                                wire:click="editOrder({{ $procurement->purchaseOrder }})" flat>Edit</x-button>
+                                wire:click="editOrder({{ $procurement->purchaseOrder }})" flat>
+                                Edit
+                            </x-button>
                         </div>
                     </div>
-                    <div class="sm:flex gap-x-6 items-start">
-                        <div class="overflow-hidden sm:rounded-lg space-y-2 p-4">
-                            {{-- po numberr --}}
-                            <div class="flex text-sm">
+
+                    <div class="sm:flex sm:gap-x-8">
+                        <div class="flex-1 divide-y divide-gray-100">
+                            @php $po = $procurement->purchaseOrder; @endphp
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Purchase Order Number:</span>
-                                <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->po_number ?? 'N/A' }}</span>
+                                <span class="text-gray-800 font-semibold">{{ $po?->po_number ?? 'N/A' }}</span>
                             </div>
-                            {{-- po date --}}
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Purchase Order Date:</span>
                                 <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->po_date?->format('Y-m-d') ?? 'N/A' }}</span>
+                                    class="text-gray-800 font-semibold">{{ $po?->po_date?->format('Y-m-d') ?? 'N/A' }}</span>
                             </div>
-                            {{-- noa --}}
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">NOA:</span>
                                 <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->noa?->format('Y-m-d') ?? 'N/A' }}</span>
+                                    class="text-gray-800 font-semibold">{{ $po?->noa?->format('Y-m-d') ?? 'N/A' }}</span>
                             </div>
-                            {{-- ntp --}}
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">NTP:</span>
                                 <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->ntp?->format('Y-m-d') ?? 'N/A' }}</span>
+                                    class="text-gray-800 font-semibold">{{ $po?->ntp?->format('Y-m-d') ?? 'N/A' }}</span>
                             </div>
-                            {{-- reso number --}}
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Resolution Number:</span>
                                 <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->resolution_number ?? 'N/A' }}</span>
+                                    class="text-gray-800 font-semibold">{{ $po?->resolution_number ?? 'N/A' }}</span>
                             </div>
-                            {{-- delivery date --}}
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Delivery Date:</span>
                                 <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->delivery_date?->format('Y-m-d') ?? 'N/A' }}</span>
+                                    class="text-gray-800 font-semibold">{{ $po?->delivery_date?->format('Y-m-d') ?? 'N/A' }}</span>
                             </div>
-                            {{-- supplier --}}
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Supplier:</span>
-                                <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->supplier ?? 'N/A' }}</span>
+                                <span class="text-gray-800 font-semibold">{{ $po?->supplier ?? 'N/A' }}</span>
                             </div>
-                            {{-- contract price --}}
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Contract Price:</span>
-                                <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->contract_price ?? 'N/A' }}</span>
+                                <span class="text-gray-800 font-semibold">{{ $po?->contract_price ?? 'N/A' }}</span>
                             </div>
-                            {{-- variance --}}
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Variance:</span>
-                                <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->variance ?? 'N/A' }}</span>
+                                <span class="text-gray-800 font-semibold">{{ $po?->variance ?? 'N/A' }}</span>
                             </div>
-                            {{-- email --}}
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Email Link:</span>
-                                <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->email_link ?? 'N/A' }}</span>
+                                <span class="text-gray-800 font-semibold">{{ $po?->email_link ?? 'N/A' }}</span>
                             </div>
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Date Posted (PR):</span>
                                 <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->datePosted?->date_posted?->format('Y-m-d') ?? 'N/A' }}</span>
+                                    class="text-gray-800 font-semibold">{{ $po?->datePosted?->date_posted?->format('Y-m-d') ?? 'N/A' }}</span>
                             </div>
 
-                            <div class="flex text-sm">
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">ABC Based (APP):</span>
-                                <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->abcBasedApp->estimated_budget_total ?? 'N/A' }}</span>
+                                <span class="text-gray-800 font-semibold">₱
+                                    {{ $po?->abcBasedApp->estimated_budget_total ?? 'N/A' }}</span>
                             </div>
 
-                            <div class="flex text-sm">
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">ABC Based (PR):</span>
-                                <span
-                                    class="text-gray-600 font-semibold">{{ $procurement->purchaseOrder?->purchaseRequest->abc ?? 'N/A' }}</span>
+                                <span class="text-gray-800 font-semibold">₱
+                                    {{ $po?->purchaseRequest->abc ?? 'N/A' }}</span>
                             </div>
                         </div>
-                        <div class="overflow-hidden sm:rounded-lg space-y-2 p-4">
-                            <div class="flex text-sm">
+                        <div class="flex-1 divide-y divide-gray-100 mt-6 sm:mt-0">
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">NTP (PDF):</span>
-                                @if ($procurement->purchaseOrder?->ntp_pdf_file)
-                                    <a href="{{ asset('storage/' . $procurement->purchaseOrder?->ntp_pdf_file) }}"
-                                        class="text-blue-600 underline font-semibold" target="_blank">
-                                        NTP FILE.pdf
-                                    </a>
+                                @if ($po?->ntp_pdf_file)
+                                    <a href="{{ asset('storage/' . $po->ntp_pdf_file) }}"
+                                        class="text-blue-600 hover:text-blue-800 underline font-semibold"
+                                        target="_blank">NTP FILE.pdf</a>
                                 @else
-                                    <span class="text-gray-600 font-semibold">N/A</span>
+                                    <span class="text-gray-800 font-semibold">N/A</span>
                                 @endif
                             </div>
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">NOA (PDF):</span>
-                                @if ($procurement->purchaseOrder?->noa_pdf_file)
-                                    <a href="{{ asset('storage/' . $procurement->purchaseOrder?->noa_pdf_file) }}"
-                                        class="text-blue-600 underline font-semibold" target="_blank">
-                                        NOA FILE.pdf
-                                    </a>
+                                @if ($po?->noa_pdf_file)
+                                    <a href="{{ asset('storage/' . $po->noa_pdf_file) }}"
+                                        class="text-blue-600 hover:text-blue-800 underline font-semibold"
+                                        target="_blank">NOA FILE.pdf</a>
                                 @else
-                                    <span class="text-gray-600 font-semibold">N/A</span>
+                                    <span class="text-gray-800 font-semibold">N/A</span>
                                 @endif
                             </div>
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">PO (PDF):</span>
-                                @if ($procurement->purchaseOrder?->po_pdf_file)
-                                    <a href="{{ asset('storage/' . $procurement->purchaseOrder?->po_pdf_file) }}"
-                                        class="text-blue-600 underline font-semibold" target="_blank">
-                                        PO FILE.pdf
-                                    </a>
+                                @if ($po?->po_pdf_file)
+                                    <a href="{{ asset('storage/' . $po->po_pdf_file) }}"
+                                        class="text-blue-600 hover:text-blue-800 underline font-semibold"
+                                        target="_blank">PO FILE.pdf</a>
                                 @else
-                                    <span class="text-gray-600 font-semibold">N/A</span>
+                                    <span class="text-gray-800 font-semibold">N/A</span>
                                 @endif
                             </div>
-                            <div class="flex text-sm">
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">RESO (PDF):</span>
-                                @if ($procurement->purchaseOrder?->reso_pdf_file)
-                                    <a href="{{ asset('storage/' . $procurement->purchaseOrder?->reso_pdf_file) }}"
-                                        class="text-blue-600 underline font-semibold" target="_blank">
-                                        PO FILE.pdf
-                                    </a>
+                                @if ($po?->reso_pdf_file)
+                                    <a href="{{ asset('storage/' . $po->reso_pdf_file) }}"
+                                        class="text-blue-600 hover:text-blue-800 underline font-semibold"
+                                        target="_blank">RESO FILE.pdf</a>
                                 @else
-                                    <span class="text-gray-600 font-semibold">N/A</span>
+                                    <span class="text-gray-800 font-semibold">N/A</span>
                                 @endif
                             </div>
                         </div>
@@ -272,7 +287,6 @@
         </div>
     </div>
 
-    {{-- edit request --}}
     <x-modal title="Purchase Requests" id="update-request" size="4xl">
         <div class="sm:py-4 py-2">
             <p class="text-sm text-gray-500">Purchase Requests</p>
@@ -304,7 +318,6 @@
         </form>
     </x-modal>
 
-    {{-- edit order --}}
     <x-modal title="Purchase Order" id="update-order" size="4xl">
         <div class="sm:py-4 py-2">
             <p class="text-sm text-gray-500">Purchase Order</p>

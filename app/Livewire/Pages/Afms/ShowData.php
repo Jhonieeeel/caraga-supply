@@ -61,7 +61,7 @@ class ShowData extends Component
     }
 
     public function printRequest() {
-        dd($this->procurement->purchaseRequest);
+$this->updateAppFile();
     }
 
     public function editOrder(PurchaseOrder $purchaseOrder) {
@@ -146,8 +146,6 @@ class ShowData extends Component
         return $this->requestForm->update($updateRequest, $this->purchaseRequest);
     }
 
-
-
     public function printOrder() {
         dd($this->procurement->purchaseOrder);
     }
@@ -155,7 +153,6 @@ class ShowData extends Component
     #[Layout('layouts.app')]
     public function render()
     {
-        // dd(PurchaseOrder::find(1));
         return view('livewire.pages.afms.show-data');
     }
 }

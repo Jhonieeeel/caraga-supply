@@ -35,12 +35,12 @@
                         <x-input wire:model='userForm.email' label="Email *" />
                         <x-input wire:model='userForm.Dtrnum' label="Dtr Number *" />
                     </div>
-                    <x-select.styled label="Section" wire:model.live="sectionId" :options="$this->sections" searchable />
-                    <x-select.styled label="Unit" wire:model.live="unitId" :options="$this->units" searchable />
-                    <x-password wire:model="userForm.password" label="Password" typing-only />
-                    <x-password wire:model="userForm.password_confirmation" label="Confirm Password" />
+                    <x-select.styled label="Section *" wire:model.live="sectionId" :options="$this->sections" searchable />
+                    <x-select.styled label="Unit *" wire:model.live="unitId" :options="$this->units" searchable />
+                    <x-password wire:model="userForm.password" label="Password *" typing-only />
+                    <x-password wire:model="userForm.password_confirmation" label="Confirm Password *" />
                 </div>
-                <div class="sm:py-4">
+                <div class="sm:py-4 ">
                     <x-button submit icon="plus-circle" position="right">Submit</x-button>
                 </div>
             </form>

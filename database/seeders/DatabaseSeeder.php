@@ -75,39 +75,39 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Records Management Unit',
             ],
             [
-                'name' => 'MSS',
-                'description' => 'Maintenance',
-            ]
+                'name' => 'HRMU',
+                'description' => 'Human Resource Management Unit',
+            ],
         ]);
 
-        Employee::create([
-            'user_id' => $dave->id,
-            'section_id' => $afms->id,
-            'unit_id' => $afms->units()->where('name', 'GASU')->first()->id,
-        ]);
+        // Employee::create([
+        //     'user_id' => $dave->id,
+        //     'section_id' => $afms->id,
+        //     'unit_id' => $afms->units()->where('name', 'GASU')->first()->id,
+        // ]);
 
-        Employee::create([
-                'user_id' => $ray->id,
-                'section_id' => $afms->id,
-                'unit_id' => $afms->units()->where('name', 'GASU')->first()->id,
-            ]);
+        // Employee::create([
+        //         'user_id' => $ray->id,
+        //         'section_id' => $afms->id,
+        //         'unit_id' => $afms->units()->where('name', 'GASU')->first()->id,
+        //     ]);
 
-        Employee::create([
-            'user_id' => 3,
-            'section_id' => $afms->id,
-            'unit_id' => $afms->units()->where('name', 'MSS')->first()->id,
-            ]);
+        // Employee::create([
+        //     'user_id' => 3,
+        //     'section_id' => $afms->id,
+        //     'unit_id' => $afms->units()->where('name', 'MSS')->first()->id,
+        //     ]);
 
-        Employee::create([
-                'user_id' => 4,
-                'section_id' => $afms->id,
-                'unit_id' => $afms->units()->where('name', 'MSS')->first()->id,
-            ]);
-        Employee::create( [
-                'user_id' => 5,
-                'section_id' => $afms->id,
-                'unit_id' => $afms->units()->where('name', 'MSS')->first()->id,
-        ]);
+        // Employee::create([
+        //         'user_id' => 4,
+        //         'section_id' => $afms->id,
+        //         'unit_id' => $afms->units()->where('name', 'MSS')->first()->id,
+        //     ]);
+        // Employee::create( [
+        //         'user_id' => 5,
+        //         'section_id' => $afms->id,
+        //         'unit_id' => $afms->units()->where('name', 'MSS')->first()->id,
+        // ]);
 
 
         // supply
