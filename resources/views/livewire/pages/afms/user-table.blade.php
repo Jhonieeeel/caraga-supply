@@ -13,7 +13,7 @@
             <x-table :$headers :rows="$this->rows" filter :quantity="[2, 5, 10]" paginate loading>
                 @interact('column_user.roles', $row)
                     @foreach ($row->user->roles as $role)
-                        <x-badge text="{{ $role->name }}" color="blue" />
+                        <x-badge text="{{ $role->name }}" color="{{ $role->name === 'Super Admin' ? 'blue' : 'gray' }}" />
                     @endforeach
                 @endinteract
                 @interact('column_section', $row)

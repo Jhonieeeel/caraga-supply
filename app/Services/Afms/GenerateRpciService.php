@@ -22,8 +22,6 @@ class GenerateRpciService
         $templateRow = $sheet->getHighestRow(); // last row is the "template"
         $highestCol  = $sheet->getHighestColumn(); // e.g. "K"
 
-        Log::info("Highestt Row:" . $sheet->getHighestRow());
-
         foreach ($rpci as $transaction) {
             $targetRow = $sheet->getHighestRow() + 1;
 

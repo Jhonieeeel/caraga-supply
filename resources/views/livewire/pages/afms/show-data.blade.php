@@ -53,8 +53,7 @@
                         </h5>
 
                         <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
-                            <x-button icon="printer" color="teal" disabled position="left" wire:click="printRequest"
-                                flat>
+                            <x-button icon="printer" color="teal" wire:click="redirectRequest" position="left" flat>
                                 Print
                             </x-button>
                             <x-button icon="pencil" wire:click="editRequest({{ $procurement->purchaseRequest }})"

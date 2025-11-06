@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services\Afms;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -14,8 +13,6 @@ class RequestService {
 
         $sheet = IOFactory::load($template);
         $activeSheet = $sheet->getActiveSheet();
-
-
 
     }
 }

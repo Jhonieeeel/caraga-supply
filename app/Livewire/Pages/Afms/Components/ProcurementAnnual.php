@@ -44,6 +44,8 @@ class ProcurementAnnual extends Component
             ])->to(AfmsProcurement::class);
         }
 
+        $this->dispatch('modal:add-entry-close');
+
         $this->dispatch('alert', [
             'text' => 'New Annual Procurement Plan Added',
             'color' => 'teal',

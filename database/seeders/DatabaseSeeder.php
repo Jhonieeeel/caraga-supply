@@ -80,11 +80,11 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // Employee::create([
-        //     'user_id' => $dave->id,
-        //     'section_id' => $afms->id,
-        //     'unit_id' => $afms->units()->where('name', 'GASU')->first()->id,
-        // ]);
+        Employee::create([
+            'user_id' => $dave->id,
+            'section_id' => $afms->id,
+            'unit_id' => $afms->units()->where('name', 'GASU')->first()->id,
+        ]);
 
         // Employee::create([
         //         'user_id' => $ray->id,

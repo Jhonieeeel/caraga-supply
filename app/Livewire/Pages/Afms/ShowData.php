@@ -47,6 +47,12 @@ class ShowData extends Component
             : null;
     }
 
+    public function redirectRequest() {
+        $request = $this->procurement->purchaseRequest;
+        return redirect()->route('print-pr', ['request' => $request]); // or just $request if model binding
+    }
+
+
 
     #[Computed()]
     public function variance()
@@ -60,9 +66,6 @@ class ShowData extends Component
         return null;
     }
 
-    public function printRequest() {
-$this->updateAppFile();
-    }
 
     public function editOrder(PurchaseOrder $purchaseOrder) {
         $this->purchaseOrder = $purchaseOrder;

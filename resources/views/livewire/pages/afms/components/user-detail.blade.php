@@ -9,7 +9,8 @@
                     <p class="text-xs text-gray-500">{{ $user->email }}</p>
                     <span class="inline-flex flex-wrap">
                         @foreach ($user->roles as $role)
-                            <x-badge text="{{ $role->name }}" color="blue" />
+                            <x-badge text="{{ $role->name }}"
+                                color="{{ $role->name === 'Super Admin' ? 'blue' : 'gray' }}" />
                         @endforeach
                     </span>
                 </div>
@@ -21,6 +22,11 @@
                 <div class="sm:col-span-2">
                     <x-input wire:model="userForm.email" label="Email *" hint="Update your email" />
                 </div>
+                @if (auth()->user()->hasRole('Super Admin'))
+                    <div class="sm:col-span-2">
+                        <x-input label="Email *" hint="Update user role" />
+                    </div>
+                @endif
                 <div class="sm:col-span-2">
                     <x-button text="Save" submit />
                 </div>

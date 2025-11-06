@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="sm:grid-cols-1">
-                <x-stats :number="50" icon="cube" title="Supplies" footer="Total number of supplies."
+                <x-stats :number="$supplies" icon="cube" title="Supplies" footer="Total number of supplies."
                     animated />
             </div>
             <div class="sm:grid-cols-1">
