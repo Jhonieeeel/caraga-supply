@@ -269,7 +269,6 @@
         <x-tab.items tab="Manage Holiday">
             <livewire:holiday></livewire:holiday>
         </x-tab.items>
-
         <x-tab.items tab="Upload DTR">
             <div class="space-y-4 p-4">
                 <x-upload label="Upload DTR" wire:model="dtrFile" />

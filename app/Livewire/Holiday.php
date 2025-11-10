@@ -6,6 +6,7 @@ use Livewire\Component;
 
 class Holiday extends Component
 {
+    
     public $headers = [];
     public $rows = []; 
 
