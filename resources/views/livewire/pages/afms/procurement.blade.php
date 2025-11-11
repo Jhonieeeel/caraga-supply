@@ -10,7 +10,7 @@
                 Procurement
             </h2>
 
-            <x-button x-on:click="$modalOpen('upload')" icon="document" position="left">
+            <x-button x-on:click="$modalOpen('upload')" color="green" icon="document" position="left">
                 Upload CSV
             </x-button>
         </div>

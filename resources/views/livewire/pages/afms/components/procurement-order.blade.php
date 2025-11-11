@@ -5,7 +5,7 @@
             Entry</x-button>
     </div>
 
-    <x-table :$headers :rows='$this->rows' filter :quantity="[2, 5, 10]">
+    <x-table :$headers :rows='$this->rows' loading filter :quantity="[2, 5, 10]">
         @interact('column_ntp', $order)
             <span class="text-nowrap">
                 {{ $order->ntp?->format('Y-m-d') }}

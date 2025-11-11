@@ -6,6 +6,7 @@ use App\Actions\User\CreateUser;
 use App\Models\User;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+use Spatie\Permission\Models\Role;
 
 class UserForm extends Form
 {
@@ -21,14 +22,14 @@ class UserForm extends Form
     #[Validate('required|string|min:8')]
     public ?string $password_confirmation = null;
 
-    public function submit(CreateUser $create_action)
+    public function submit(CreateUser $create_action, $rold_id)
     {
         $this->validate();
 
         $user = $create_action->handle($this->toArray());
 
-        // by default
-        $user->assignRole('User');
+        $role = Role::find($rold_id);
+        $user->assignRole($role);
 
         $this->reset();
 

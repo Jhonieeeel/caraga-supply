@@ -42,9 +42,13 @@
                         </div>
                     </div>
                 </div>
+            @else
+                <div class="text-center py-6">
+                    <span class="text-gray-500 font-medium">No Procurement Data Available.</span>
+                </div>
             @endif
             <hr>
-            @if ($procurement->purchaseRequest)
+            @if ($procurement?->purchaseRequest)
                 <div
                     class="purchase-request bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
                     <!-- Header -->
@@ -53,12 +57,16 @@
                         </h5>
 
                         <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
-                            <x-button icon="printer" color="teal" wire:click="redirectRequest" position="left" flat>
+                            <x-button icon="printer" color="teal" wire:click="redirectRequest" position="left">
                                 Print
                             </x-button>
                             <x-button icon="pencil" wire:click="editRequest({{ $procurement->purchaseRequest }})"
                                 color="cyan" position="left" flat>
                                 Edit
+                            </x-button>
+                            <x-button icon="trash" wire:click="deleteRequest({{ $procurement->purchaseRequest }})"
+                                color="red" position="left" flat>
+                                Delete
                             </x-button>
                         </div>
                     </div>
@@ -140,7 +148,7 @@
                     </div>
                 </div>
             @endif
-            @if ($procurement->purchaseOrder)
+            @if ($procurement?->purchaseOrder)
                 <div
                     class="purchase-order bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
                     <div class="flex flex-wrap items-center justify-between mb-4">
@@ -153,6 +161,10 @@
                             </x-button>
                             <x-button icon="pencil" color="cyan" position="left"
                                 wire:click="editOrder({{ $procurement->purchaseOrder }})" flat>
+                                Edit
+                            </x-button>
+                            <x-button icon="trash" color="red" position="left"
+                                wire:click="deleteOrder({{ $procurement->purchaseOrder }})" flat>
                                 Edit
                             </x-button>
                         </div>

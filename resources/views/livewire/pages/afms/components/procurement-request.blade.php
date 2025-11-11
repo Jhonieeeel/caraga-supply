@@ -6,7 +6,7 @@
     </div>
 
     <div>
-        <x-table :$headers :rows='$this->rows' filter :quantity="[2, 5, 10]" blank>
+        <x-table :$headers :rows='$this->rows' loading filter :quantity="[2, 5, 10]" blank>
             @interact('column_procurement.code', $request)
                 <span class="text-nowrap">
                     {{ $request->procurement->code }}

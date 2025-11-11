@@ -13,8 +13,9 @@
                 <x-table :$headers :rows='$this->rows' filter :quantity="[2, 5, 10]" loading paginate>
                     @role('Super Admin')
                         @interact('column_action', $stock)
-                            <x-button.circle color="teal" icon="pencil-square" wire:click='edit({{ $stock }})' />
-                            <x-button.circle color="blue" icon="plus" wire:click="selectStock({{ $stock }})" />
+                            <x-button.circle flat color="teal" icon="pencil-square" wire:click='edit({{ $stock }})' />
+                            <x-button.circle flat color="blue" icon="folder-plus"
+                                wire:click="selectStock({{ $stock }})" />
                         @endinteract
                     @endrole
                 </x-table>

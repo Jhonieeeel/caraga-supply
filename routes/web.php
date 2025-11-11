@@ -10,6 +10,7 @@ use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Livewire\Pages\Afms\ShowData;
 use App\Livewire\Pages\Afms\StockTable;
 use App\Livewire\Pages\Afms\SupplyTable;
+use App\Livewire\Pages\Afms\UserManagement;
 use App\Livewire\Pages\Afms\UserTable;
 use App\Livewire\Rectification;
 use App\Models\Supply;
@@ -38,6 +39,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     // user management
+
+    Route::get('user-management', UserManagement::class)->name('user-management.index');
+
     Route::get('user', UserTable::class)->name('user.index');
     Route::get('/Rectification', Rectification::class)->name('Rectification');
     Route::get('/Managedtr', Managedtr::class)->name('Managedtr');

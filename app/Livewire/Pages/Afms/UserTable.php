@@ -16,6 +16,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Spatie\Permission\Models\Role;
 
 class UserTable extends Component
 {
@@ -24,7 +25,7 @@ class UserTable extends Component
     public array $headers = [];
 
     public ?int $quantity = 5;
-    public ?string $search = null;
+    public $search;
 
     // Form
     public UserForm $userForm;
@@ -36,6 +37,10 @@ class UserTable extends Component
 
     public ?int $unitId = null;
     public ?string $unitName = null;
+
+
+    // roles
+    public $role_id;
 
     public function mount()
     {
@@ -52,49 +57,17 @@ class UserTable extends Component
         $this->dispatch('user-detail', user: $user);
     }
 
-    public function create(CreateUser $create_user, CreateEmployee $create_employee)
-    {
-        $createdUser = $this->userForm->submit($create_user);
-        $this->employeeForm->fillForm($this->unitId, $this->sectionId, $createdUser->id);
-        $this->employeeForm->submit($create_employee, $createdUser);
-
-        $this->dispatch('refresh-users', id: $createdUser->id);
-        return;
-    }
-
-    #[Computed]
-    public function units()
-    {
-        return Unit::where('section_id', $this->sectionId)
-            ->get()
-            ->map(fn($unit) => [
-                'label' => $unit->name,
-                'value' => $unit->id,
-            ])
-            ->toArray();
-    }
 
     #[On('refresh-users')]
     public function updateList($id = null) {}
 
     #[Computed()]
-    public function sections()
-    {
-        return Section::all(['id', 'name'])
-            ->map(fn($section) => [
-                'label' => $section->name,
-                'value' => $section->id,
-            ]);
-    }
-
-    #[Computed()]
     public function rows()
     {
         return Employee::query()
-            ->with(['section', 'section', 'user'])
             ->when($this->search, function ($query) {
-                $query->whereHas('user', function ($userQuery) {
-                    return $userQuery->where('name', 'like', '%' . $this->search . '%');
+                $query->whereHas('user', function ($user) {
+                    $user->where('name', 'like', "%{$this->search}%");
                 });
             })
             ->paginate($this->quantity)

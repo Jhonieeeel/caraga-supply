@@ -87,16 +87,27 @@ class ProcurementAnnual extends Component
     }
 
     public function submitToRequest(Procurement $procurement) {
+
         $existingRequest = PurchaseRequest::where('procurement_id', $procurement->id)->first();
+
         if (!$existingRequest) {
+
             $procurement->purchaseRequest()->create([
                 'procurement_id' => $procurement->id,
                 'abc_based_app' => $procurement->id,
                 'app_year' => $procurement->id,
             ]);
-            $this->tab = "Request";
-            return redirect()->route('pmu.index');
+
+            $this->dispatch('procurement-tab', 'Requests');
+
+            return $this->dispatch('alert', [
+                'text' => 'Data successfully added to Purchase Request',
+                'color' => 'green',
+                'title' => 'Success'
+            ])->to(AfmsProcurement::class);
+
         }
+
         return $this->dispatch('alert', [
             'text' => 'Data already added to Purchase Request',
             'color' => 'yellow',

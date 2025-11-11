@@ -84,6 +84,7 @@ class ProcurementOrder extends Component
     #[Computed()]
     public function getPr() {
         return PurchaseRequest::all(['id', 'pr_number'])
+            ->where('pr_number', '!=' , null)
             ->map(fn($request) => [
                 'label' => $request->pr_number ?? 'No PR yet',
                 'value' => $request->id,

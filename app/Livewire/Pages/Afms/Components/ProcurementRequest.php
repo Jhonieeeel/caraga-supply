@@ -118,36 +118,34 @@ class ProcurementRequest extends Component
     // button to PO
    public function submitToOrder(PurchaseRequest $purchaseRequest) {
 
-    $existingOrder = PurchaseOrder::where('purchase_request_id' , $purchaseRequest->id)->first();
+    $existedOrder = PurchaseOrder::where('purchase_request_id', $purchaseRequest->id)->first();
 
-    if (!$existingOrder) {
-        // create here
-        $order = PurchaseOrder::create([
-            'procurement_id' => $purchaseRequest->procurement->id, // app
-            'purchase_request_id' => $purchaseRequest->id, // pr
-            'abc_based_app' => $purchaseRequest->procurement->id, // app
-            'abc' => $purchaseRequest->procurement->id, // pr
-            'date_posted' => $purchaseRequest->id // pr
+    if (!$existedOrder) {
+        $createdOrder = PurchaseOrder::create([
+            'purchase_request_id' => $purchaseRequest->id,
+            'procurement_id' => $purchaseRequest->procurement_id,
+            'abc_based_app' => $purchaseRequest->procurement_id,
+            'abc' => $purchaseRequest->id,
+            'date_posted' => $purchaseRequest->id
         ]);
 
-        $this->dispatch('procurement-tab', tab: 'Orders');
-        $this->dispatch('alert', [
-            'text' => 'Data Successfully Added to Order',
+        $this->dispatch('procurement-tab', 'Orders');
+
+        $this->dispatch('procurement-order-refresh');
+
+        return $this->dispatch('alert', [
+            'text' => 'Submitted to Order Successfully',
             'color' => 'teal',
             'title' => 'Success'
         ])->to(\App\Livewire\Pages\Afms\Procurement::class);
-
-        $this->dispatch('procurement-order-refresh')->to(ProcurementOrder::class);
-
-        return $order;
-
     }
 
-        return $this->dispatch('alert', [
-            'text' => 'Data Already Added to Order',
-            'color' => 'yellow',
-            'title' => 'Failed'
-        ])->to(\App\Livewire\Pages\Afms\Procurement::class);
+    return $this->dispatch('alert', [
+        'text' => 'Data Already Added to Order',
+        'color' => 'yellow',
+        'title' => 'Failed'
+    ])->to(\App\Livewire\Pages\Afms\Procurement::class);
+
    }
 
     #[Computed()]

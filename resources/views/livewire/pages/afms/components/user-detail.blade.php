@@ -1,4 +1,9 @@
 <div class="space-y-4">
+
+    <?php
+    $disabled = auth()->user()->hasRole('Super Admin') ? false : true;
+    ?>
+
     @if ($user)
         <div class="max-w-7xl mx-auto sm:px-3 sm:py-4 lg:px-8 bg-white border shadow rounded">
             <div class="flex gap-4 items-center ">
@@ -17,16 +22,16 @@
             </div>
             <div class="grid grid-cols-3 gap-7 my-6">
                 <div class="sm:col-span-2">
-                    <x-input wire:model="userForm.name" label="Name *" hint="Update your name" />
+                    <x-input wire:model="userForm.name" :disabled="$disabled" label="Name *" hint="Update your name" />
                 </div>
                 <div class="sm:col-span-2">
-                    <x-input wire:model="userForm.email" label="Email *" hint="Update your email" />
+                    <x-input wire:model="userForm.email" :disabled="$disabled" label="Email *" hint="Update your email" />
                 </div>
-                @if (auth()->user()->hasRole('Super Admin'))
+                @role('Super Admin')
                     <div class="sm:col-span-2">
-                        <x-input label="Email *" hint="Update user role" />
+                        <x-input label="Role *" hint="Update user role" />
                     </div>
-                @endif
+                @endrole
                 <div class="sm:col-span-2">
                     <x-button text="Save" submit />
                 </div>
@@ -41,15 +46,15 @@
             </p>
             <div class="grid grid-cols-3 gap-7 my-6">
                 <div class="sm:col-span-2">
-                    <x-password wire:model="userForm.password" value="{{ $userForm->password }}" typing-only
-                        label="Current Password *" />
+                    <x-password wire:model="userForm.password" :disabled="$disabled" value="{{ $userForm->password }}"
+                        typing-only label="Current Password *" />
                 </div>
                 <div class="sm:col-span-2">
-                    <x-password wire:model="userForm.password" value="{{ $userForm->password }}" typing-only
-                        label="New Password *" />
+                    <x-password wire:model="userForm.password" :disabled="$disabled" value="{{ $userForm->password }}"
+                        typing-only label="New Password *" />
                 </div>
                 <div class="sm:col-span-2">
-                    <x-password wire:model="userForm.password" typing-only label="Confirm Password" />
+                    <x-password wire:model="userForm.password" :disabled="$disabled" typing-only label="Confirm Password" />
                 </div>
                 <div class="sm:col-span-2">
                     <x-button text="Save" submit />

@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
         ->block('wrapper', 'overflow-hidden dark:ring-dark-600 rounded-sm shadow ring-1 ring-gray-300 w-full')
         ->block('table.thead.normal', 'bg-primary-900')
         ->block('table.th', 'px-3 py-3.5 pr-7 text-left text-xs whitespace-nowrap font-semibold text-gray-100')
-        ->block('table.td', 'text-left px-2 py-2.5 text-sm capitalize text-gray-500');
+        ->block('table.td', 'text-left px-2 py-2.5 text-sm capitalize text-gray-700');
 
         // sidebar
         TallStackUi::personalize()
@@ -40,12 +40,12 @@ class AppServiceProvider extends ServiceProvider
 
         Model::automaticallyEagerLoadRelationships();
 
-        // $storage = Storage::disk('local');
-        // foreach ($storage->allFiles('livewire-tmp') as $file) {
-        //     $yesterday = now()->subDay()->timestamp;
-        //     if ($yesterday > $storage->lastModified($file)) {
-        //         $storage->delete($file);
-        //     }
-        // }
+        $storage = Storage::disk('local');
+        foreach ($storage->allFiles('livewire-tmp') as $file) {
+            $yesterday = now()->subDay()->timestamp;
+            if ($yesterday > $storage->lastModified($file)) {
+                $storage->delete($file);
+            }
+        }
     }
 }

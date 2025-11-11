@@ -64,7 +64,9 @@ class Procurement extends Component
 
         }
 
+
         $this->dispatch('modal:upload-close');
+        $this->dispatch('refresh-app');
         return redirect()->route('pmu.index');
     }
 

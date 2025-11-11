@@ -40,6 +40,7 @@ class StockTable extends Component
             ['index' => 'stock_number', 'label' => 'Stock No.'],
             ['index' => 'quantity', 'label' => 'Quantity'],
             ['index' => 'price', 'label' => 'Price'],
+            ['index' => 'stock_location', 'label' => 'Location'],
             ['index' => 'action'],
         ];
     }
@@ -74,7 +75,7 @@ class StockTable extends Component
             ]);
     }
 
-    // purchase 
+    // purchase
     public function savePurchaseStock(CreateTransaction $create_transaction)
     {
         $stock = $this->stockForm->createPurchaseOrder($create_transaction);
@@ -103,7 +104,7 @@ class StockTable extends Component
         $this->dispatch('modal:add-close');
     }
 
-    // edit  
+    // edit
     public function edit(Stock $stock)
     {
         $this->stock = $stock;

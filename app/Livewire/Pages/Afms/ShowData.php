@@ -22,7 +22,7 @@ class ShowData extends Component
     public OrderForm $orderForm;
     public RequestForm $requestForm;
 
-    public Procurement $procurement;
+    public ?Procurement $procurement = null;
     public PurchaseOrder $purchaseOrder;
     public PurchaseRequest $purchaseRequest;
 
@@ -44,7 +44,19 @@ class ShowData extends Component
     {
         $this->procurement = $id
             ? Procurement::with(['purchaseRequest', 'purchaseOrder'])->find($id)
-            : null;
+            : [];
+    }
+    public function deleteOrder(PurchaseOrder $order) {
+        $this->dispatch('procurement-tab', 'Annual');
+
+        return $order->delete();
+    }
+
+    public function deleteRequest(PurchaseRequest $request) {
+        $this->dispatch('procurement-tab', 'Annual');
+
+        return $request->delete();
+
     }
 
     public function redirectRequest() {
@@ -54,17 +66,28 @@ class ShowData extends Component
 
 
 
-    #[Computed()]
-    public function variance()
+    #[Computed]
+    public function variance(): float
     {
-        $this->purchaseRequest = PurchaseRequest::find($this->procurement->purchaseOrder->id);
-        if ($this->purchaseRequest) {
-            $this->varianceResult = (float) $this->purchaseRequest->abc - (float) $this->orderForm->contract_price;
-            return $this->varianceResult;
+        // Use safe navigation to avoid "property on null"
+        $purchaseOrder = $this->procurement?->purchaseOrder;
+
+        // Exit early if there's no purchase order
+        if (!$purchaseOrder) {
+            return 0;
         }
 
-        return null;
+        // Use the correct foreign key (adjust if needed)
+        $purchaseRequest = PurchaseRequest::find($purchaseOrder->purchase_request_id);
+
+        if (!$purchaseRequest) {
+            return 0;
+        }
+
+        // Return computed variance safely
+        return (float) $purchaseRequest->abc - (float) $this->orderForm?->contract_price;
     }
+
 
 
     public function editOrder(PurchaseOrder $purchaseOrder) {

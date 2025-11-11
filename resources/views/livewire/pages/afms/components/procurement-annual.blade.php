@@ -5,23 +5,20 @@
             Entry</x-button>
     </div>
 
-    <div>
-        <x-table :$headers id="procurement" :rows='$this->rows' loading filter paginate :quantity="[2, 5, 10]">
-            @interact('column_code', $procurement)
-                <span class="text-nowrap">{{ $procurement->code }}</span>
-            @endinteract
-            @interact('column_remarks', $procurement)
-                <span class="whitespace-nowrap">{{ $procurement->remarks }}</span>
-            @endinteract
-            @interact('column_action', $procurement)
-                <div class="sm:flex items-center gap-x-4">
-                    <x-button.circle color="teal" icon="pencil" wire:click="edit({{ $procurement->id }})" />
-                    <x-button.circle color="teal" icon="document-text"
-                        wire:click="submitToRequest({{ $procurement->id }})" />
-                </div>
-            @endinteract
-        </x-table>
-    </div>
+    <x-table :$headers id="procurement" :rows='$this->rows' loading filter paginate :quantity="[2, 5, 10]">
+        @interact('column_code', $procurement)
+            <span class="text-nowrap">{{ $procurement->code }}</span>
+        @endinteract
+        @interact('column_remarks', $procurement)
+            <span class="whitespace-nowrap">{{ $procurement->remarks }}</span>
+        @endinteract
+        @interact('column_action', $procurement)
+            <div class="sm:flex items-center gap-x-4">
+                <x-button.circle color="teal" icon="pencil" wire:click="edit({{ $procurement->id }})" />
+                <x-button.circle color="teal" icon="document-text" wire:click="submitToRequest({{ $procurement->id }})" />
+            </div>
+        @endinteract
+    </x-table>
 
     {{-- edit --}}
     <x-modal title="Annual Procurment Plan" id="edit-entry" size="4xl" scrollable>

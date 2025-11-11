@@ -3,8 +3,6 @@
 namespace App\Livewire\Forms;
 
 use App\Actions\Employee\CreateEmployee;
-use App\Models\Employee;
-use App\Models\User;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -38,10 +36,8 @@ class EmployeeForm extends Form
 
     public function submit(CreateEmployee $create_employee)
     {
-        $create_employee->handle($this->toArray());
-
         $this->reset();
 
-        return;
+        return $create_employee->handle($this->toArray());
     }
 }
