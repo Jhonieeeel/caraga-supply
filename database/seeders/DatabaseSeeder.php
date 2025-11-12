@@ -1,6 +1,8 @@
 <?php
 
 namespace Database\Seeders;
+
+use App\Models\Employee;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -15,6 +17,14 @@ class DatabaseSeeder extends Seeder
     {
         $super = Role::create([
             'name' => 'Super Admin'
+        ]);
+
+        $admin = Role::create([
+            'name' => 'Admin'
+        ]);
+
+        $user = Role::create([
+            'name' => 'User'
         ]);
 
         $dave = User::factory()->create([
@@ -46,6 +56,12 @@ class DatabaseSeeder extends Seeder
                 'name' => 'HRMU',
                 'description' => 'Human Resource Management Unit',
             ],
+        ]);
+
+        Employee::create([
+            'user_id' => $dave->id,
+            'section_id' => $afms->id,
+            'unit_id' => $afms->units()->firstWhere('name', 'GASU')->id,
         ]);
 
 

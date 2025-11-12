@@ -36,8 +36,11 @@ class EmployeeForm extends Form
 
     public function submit(CreateEmployee $create_employee)
     {
-        $this->reset();
+        $this->validate();
 
-        return $create_employee->handle($this->toArray());
+        $createdEmployee =  $create_employee->handle($this->toArray());
+
+        $this->reset();
+        return $createdEmployee;
     }
 }

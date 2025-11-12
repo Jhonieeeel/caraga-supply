@@ -7,9 +7,8 @@
     </div>
     <h1 class="text-lg font-bold">Roles</h1>
     <div class="sm:flex justify-around">
-        @foreach ($this->roles as $role)
-            <p>test</p>
-            <x-checkbox wire:model.live="roles" value="{{ $role->id }}" label="{{ $role->name }}" />
+        @foreach ($this->currentRoles as $currentRole)
+            <x-checkbox label="{{ $currentRole->name }}" disabled :checked="$this->userRoles->pluck('name')->contains($currentRole->name)" />
         @endforeach
     </div>
 </div>

@@ -20,8 +20,8 @@ class UserManagement extends Component
     // forms
     public UserForm $userForm;
     public EmployeeForm $employeeForm;
-
-
+    public $role_id;
+    public $unitId;
     public $sectionId;
 
     public function create(CreateUser $create_user, CreateEmployee $create_employee)
@@ -34,7 +34,7 @@ class UserManagement extends Component
 
         $this->dispatch('refresh-users');
 
-        return redirect(route('user.index'));
+        return redirect(route('user-management.index'));
     }
 
     #[Computed]

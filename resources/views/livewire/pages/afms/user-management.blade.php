@@ -18,24 +18,21 @@
             </x-tab.items>
         </x-tab>
 
-        <x-modal size="lg" title="Add User Form" id="add-user">
+        <x-modal size="xl" title="Add User Form" id="add-user">
             <form wire:submit.prevent='create'>
                 <div class="grid sm:grid-cols-2 sm:gap-3 gap-5">
                     <div class="sm:col-span-2 space-y-3">
                         <x-input wire:model='userForm.name' label="Name *" />
                         <x-input wire:model='userForm.email' label="Email *" />
                     </div>
-
                     <x-input wire:model='userForm.Dtrnum' label="Dtr Number *" />
-                    <x-select.styled label="Section *" wire:model.live="role_id" :options="$this->roles" searchable />
-
+                    <x-select.styled label="Role *" wire:model.live="role_id" :options="$this->roles" searchable />
                     <x-select.styled label="Section *" wire:model.live="sectionId" :options="$this->sections" searchable />
-
                     <x-select.styled label="Unit *" wire:model.live="unitId" :options="$this->units" searchable />
                     <x-password wire:model="userForm.password" label="Password *" typing-only />
                     <x-password wire:model="userForm.password_confirmation" label="Confirm Password *" />
                 </div>
-                <div class="sm:py-4 ">
+                <div class="sm:py-4 sm:flex justify-end">
                     <x-button submit icon="plus-circle" position="right">Submit</x-button>
                 </div>
             </form>

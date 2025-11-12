@@ -51,7 +51,9 @@ new #[Layout('layouts.guest')] class extends Component {
                     {{ __('Forgot your password?') }}
                 </a>
             @endif
-            <x-button submit class="ms-3 text-xs" sm text="Login" />
+            <x-primary-button submit class="ms-4 bg-primary-600">
+                {{ __('Login') }}
+            </x-primary-button>
         </div>
     </form>
 </div>

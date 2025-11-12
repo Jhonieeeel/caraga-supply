@@ -6,21 +6,31 @@ use App\Models\User;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Spatie\Permission\Models\Role;
 
 class UserRoles extends Component
 {
     public $quantity = 5;
     public $search;
-    public $roles = [];
+
+    public $currentRoles = [];
+
+    public $selectedRoles = [];
     public $user_id;
 
 
+    public function mount() {
+        $roles = Role::all();
+        foreach($roles as $role) {
+            $this->currentRoles[] = $role;
+        }
+    }
+
     #[Computed()]
-    public function roles()
+    public function userRoles()
     {
         $user = User::find($this->user_id);
-        dd($user);
-        return $user ?? collect();
+        return $user ? $user->roles : collect();
     }
 
     #[Computed()]
