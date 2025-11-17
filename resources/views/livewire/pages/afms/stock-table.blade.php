@@ -33,7 +33,8 @@
                     <x-input wire:model='stockForm.barcode' label="Barcode *" hint="Insert your barcode" />
                 </div>
                 <div class="sm:col-span-1">
-                    <x-input wire:model='stockForm.stock_number' label="Stock Number *" hint="Insert your stock no." />
+                    <x-input wire:model='stockForm.stock_number' class="lowercase" label="Stock Number *"
+                        hint="Example: stock-1234" />
                 </div>
                 <div class="sm:col-span-1">
                     <x-number wire:model='stockForm.quantity' min="1" label="Quantity *"

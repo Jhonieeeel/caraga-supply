@@ -7,9 +7,17 @@
     </div>
     <h1 class="text-lg font-bold">Roles</h1>
     <div class="sm:flex justify-around">
-        @foreach ($this->currentRoles as $currentRole)
+        <small>User Roles: {{ $count }}</small>
+
+        @if ($this->selectedUser)
+            @foreach ($this->currentRoles as $current)
+                <x-checkbox label="{{ $current->name }}" wire:model="selectedRoles" value="{{ $current->id }}" />
+            @endforeach
+        @endif
+
+        {{-- @foreach ($this->currentRoles as $currentRole)
             <x-checkbox label="{{ $currentRole->name }}" disabled :checked="$this->userRoles->pluck('name')->contains($currentRole->name)" />
-        @endforeach
+        @endforeach --}}
     </div>
 </div>
 

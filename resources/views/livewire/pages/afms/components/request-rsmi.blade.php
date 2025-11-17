@@ -28,12 +28,33 @@
                 <div class="border">
                     <x-table :headers="$headers" :rows="$this->getTransactions ?? []" paginate :quantity="[2, 5, 10]" loading>
                         @interact('column_action', $transaction)
-                            <x-button.circle wire:click="createRsmi({{ $transaction->stock_id }})"
+                            <x-button.circle flat wire:click="createRsmi({{ $transaction->stock_id }})"
                                 text="{{ $transaction->id }}" color="teal" loading icon="document" />
+                            @if ($transaction->rsmi_file)
+                                <x-button.circle flat color="blue"
+                                    wire:click="downloadRsmi({{ $transaction->rsmi_file }})" loading
+                                    icon="arrow-down-tray" />
+                            @endif
                         @endinteract
                     </x-table>
                 </div>
             </div>
+            {{-- @if ($this->transaction)
+                <div class="overflow-hidden">
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight sm:py-4">
+                        Generated RSMI File for this DATE
+                    </h2>
+                    <div class="border">
+                        <x-table :headers="$fileHeaders" :rows="$this->getGeneratedFiles ?? []" :quantity="[2, 5, 10]" loading>
+                            @interact('column_action', $transaction)
+                                <x-button.circle flat color="blue"
+                                    wire:click="downloadRsmi({{ $transaction->rsmi_file }})" loading
+                                    icon="arrow-down-tray" />
+                            @endinteract
+                        </x-table>
+                    </div>
+                </div>
+            @endif --}}
         </div>
     </div>
 </div>

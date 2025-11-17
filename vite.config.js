@@ -10,4 +10,14 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    server: {
+        host: "0.0.0.0",
+        port: 5173,
+        strictPort: true,
+        cors: true, // Allow all origins
+        hmr: {
+            host: "10.20.2.172", // Your LAN IP
+            protocol: "ws",
+        },
+    },
 });

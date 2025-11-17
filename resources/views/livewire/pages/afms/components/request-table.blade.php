@@ -16,10 +16,11 @@
             @endif
         @endinteract
         @interact('column_action', $requisition)
-            <x-button.circle color="teal" icon="magnifying-glass" loading="view" wire:click="view({{ $requisition->id }})" />
+            <x-button.circle flat color="teal" icon="magnifying-glass" loading="view"
+                wire:click="view({{ $requisition->id }})" />
             @if (auth()->user()->hasRole('Super Admin') ||
                     (!$requisition->completed && auth()->user()->id === $requisition->user_id))
-                <x-button.circle color="red" loading="deleteRequisition" icon="trash"
+                <x-button.circle flat color="red" loading="deleteRequisition" icon="trash"
                     wire:click="deleteRequisition({{ $requisition->id }})" />
             @endif
         @endinteract

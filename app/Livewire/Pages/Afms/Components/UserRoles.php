@@ -3,6 +3,7 @@
 namespace App\Livewire\Pages\Afms\Components;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -13,11 +14,13 @@ class UserRoles extends Component
     public $quantity = 5;
     public $search;
 
-    public $currentRoles = [];
 
+    public $selectedUser;
+
+    public $currentRoles = [];
     public $selectedRoles = [];
     public $user_id;
-
+    public $count;
 
     public function mount() {
         $roles = Role::all();
@@ -26,11 +29,19 @@ class UserRoles extends Component
         }
     }
 
-    #[Computed()]
-    public function userRoles()
+
+    public function updatedSelectedUser($value)
     {
-        $user = User::find($this->user_id);
-        return $user ? $user->roles : collect();
+        if (!$value) {
+            $this->selectedRoles = [];
+            return;
+        }
+
+        $user = User::find($value);
+
+        // Load the user’s current roles into the checkboxes
+        $this->selectedRoles = $user->roles->pluck('id')->toArray();
+        Log::info('Selected Roles: ' . implode(',', $this->selectedRoles));
     }
 
     #[Computed()]
@@ -46,6 +57,8 @@ class UserRoles extends Component
     #[Layout('layouts.app')]
     public function render()
     {
+
+
         return view('livewire.pages.afms.components.user-roles');
     }
 }

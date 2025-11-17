@@ -2,13 +2,14 @@
 
 namespace App\Services\Afms;
 
+use App\Models\Transaction;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class GenerateRsmiService
 {
-    public function handle($rsmi, $rsmiDate)
+    public function handle($rsmi, $rsmiDate, Transaction $transaction)
     {
         $rsmiTemplate = public_path('templates/rsmi_template.xls');
         $spreadSheet = IOFactory::load($rsmiTemplate);
@@ -58,9 +59,17 @@ class GenerateRsmiService
 
         $writer = new Xls($spreadSheet);
         $newFileName = 'rsmi_' . now()->format('Y-m-d_His') . '.xls';
-        $outputPath = $directory . DIRECTORY_SEPARATOR . $newFileName;
+
+
+        $relativePath = 'rsmi/' . $newFileName;
+        $outputPath = storage_path('app/public/' . $relativePath);
+        $transaction->rsmi_file = $relativePath;
+        $transaction->save();
+
         $writer->save($outputPath);
 
-        return $newFileName;
+        return $relativePath
+
+        ;
     }
 }

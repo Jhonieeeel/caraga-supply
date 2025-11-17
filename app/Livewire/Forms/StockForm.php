@@ -19,7 +19,7 @@ class StockForm extends Form
     #[Validate(['required'])]
     public $barcode;
 
-    #[Rule(['required'])]
+    #[Rule(['required', 'starts_with:stock-',])]
     public $stock_number;
 
     #[Rule(['required', 'numeric'])]
@@ -81,6 +81,7 @@ class StockForm extends Form
         $this->quantity = $stock->quantity;
         $this->price = $stock->price;
         $this->stock_location = $stock->stock_location;
+        $this->initial_quantity = $stock->initial_quantity;
     }
 
     public function updatePartial(Stock $stock, EditStockAction $edit_stock_action)

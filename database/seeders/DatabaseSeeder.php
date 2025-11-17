@@ -32,7 +32,17 @@ class DatabaseSeeder extends Seeder
             'email' => 'dave@example.com',
         ]);
 
+        $mike = User::factory()->create([
+            'name' => 'Mike Madayag',
+            'email' => 'mike@example.com']);
+
+        $rocky = User::factory()->create([
+            'name' => 'Rocky Vagallon',
+            'email' => 'rocky@example.com']);
+
         $dave->assignRole($super);
+        $mike->assignRole($user);
+        $rocky->assignRole($user);
 
         $afms = Section::create([
             'name' => 'AFMS',
@@ -60,6 +70,18 @@ class DatabaseSeeder extends Seeder
 
         Employee::create([
             'user_id' => $dave->id,
+            'section_id' => $afms->id,
+            'unit_id' => $afms->units()->firstWhere('name', 'GASU')->id,
+        ]);
+
+        Employee::create([
+            'user_id' => $mike->id,
+            'section_id' => $afms->id,
+            'unit_id' => $afms->units()->firstWhere('name', 'GASU')->id,
+        ]);
+
+        Employee::create([
+            'user_id' => $rocky->id,
             'section_id' => $afms->id,
             'unit_id' => $afms->units()->firstWhere('name', 'GASU')->id,
         ]);

@@ -52,6 +52,7 @@ class UserTable extends Component
         ];
     }
 
+
     public function view(User $user)
     {
         $this->dispatch('user-detail', user: $user);

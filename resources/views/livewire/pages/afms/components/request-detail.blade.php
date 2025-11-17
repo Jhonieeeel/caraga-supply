@@ -10,6 +10,9 @@
             $status = auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin');
 
             $disableStatus = $isApproved || !$status;
+
+            $isOwner = auth()->user()->id === $requisition->user_id;
+            $isUser = auth()->user()->hasRole('User');
             $isAdmin = auth()->user()->hasRole('Super Admin');
         @endphp
         <div class="sm:flex items-center gap-x-4">
@@ -42,7 +45,7 @@
             <form wire:submit.prevent="update" class="w-full grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="col-span-4 sm:flex items-center justify-between w-full gap-3.5">
                     <div class="flex-1">
-                        <x-input :disabled="$disableStatus" wire:model="requestForm.ris" label="RIS" hint="Input RIS"
+                        <x-input :disabled="$disableStatus" disabled wire:model="requestForm.ris" label="RIS" hint="Input RIS"
                             class="w-full" />
                     </div>
                     <div>
@@ -73,13 +76,22 @@
                 </div>
                 <div class="sm:col-span-4 col-span-4 sm:ms-auto flex sm:items-center gap-x-3">
                     @if (!$requisition->completed)
-                        @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
-                            <x-button submit loading="update" icon="document" position="right">Update</x-button>
-                        @elseif(auth()->user()->hasRole('Super Admin') && $isApproved)
-                            <x-button wire:click='approvedRequisition({{ $requisition }})' loading="approved"
-                                icon="check" position="right" color="teal">Approve</x-button>
+                        @if (!$isApproved)
+                            @if ($isAdmin || $isOwner)
+                                <x-button submit loading="update" icon="document" position="right">Update</x-button>
+                            @else
+                                <x-button submit :disabled="$requested_by && $received_by" icon="document" position="right">Pending</x-button>
+                            @endif
+                        @else
+                            @if ($isAdmin || $isOwner)
+                                <x-button wire:click="approvedRequisition({{ $requisition->id }})" loading="approved"
+                                    icon="check" position="right" color="teal">
+                                    Proceed
+                                </x-button>
+                            @endif
                         @endif
                     @endif
+
                 </div>
             </form>
             <form>

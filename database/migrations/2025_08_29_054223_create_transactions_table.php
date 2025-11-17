@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('type_of_transaction'); // PO or RIS
             $table->integer('quantity');
             $table->integer('initial_quantity')->nullable();
+            $table->string('rsmi_file')->nullable();
+            $table->string('rpci_file')->nullable();
             $table->timestamps();
         });
     }
