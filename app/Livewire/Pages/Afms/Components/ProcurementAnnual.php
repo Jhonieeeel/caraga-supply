@@ -33,8 +33,6 @@ class ProcurementAnnual extends Component
 
     public array $headers = [];
 
-
-
     public function onSubmit(CreateAnnual $createAnnual)
     {
         $annual = $this->annualForm->onCreate($createAnnual);
