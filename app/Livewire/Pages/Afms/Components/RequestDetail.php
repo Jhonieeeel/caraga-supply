@@ -81,13 +81,17 @@ class RequestDetail extends Component
     public function update(UpdateRequestAction $update_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
     {
         $response = $this->requestForm->update($this->requisition, $update_request_action, $update_stock_quantity, $create_transaction);
-
         if ($response->completed) {
             $update_stock_quantity->handle($response);
         }
 
         $this->requisition = $response;
-        $this->dispatch('current-data', requisition: $response);
+        $this->dispatch('current-data', requisition: $response->id);
+         $this->dispatch('alert', [
+            'text' => 'Requisition Updated.',
+            'color' => 'teal',
+            'title' => 'Requisition and Issuance Slip'
+        ]);
 
         return $this->requisition->refresh();
     }

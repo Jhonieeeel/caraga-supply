@@ -11,12 +11,15 @@ use App\Models\PurchaseRequest;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 // csv
 
 
 class ProcurementAnnual extends Component
 {
+    use WithPagination;
+
     public AnnualForm $annualForm;
 
     public Procurement $procurement;
@@ -24,7 +27,7 @@ class ProcurementAnnual extends Component
     public $tab = 'Annual';
 
     public ?string $search = '';
-    public int $quantity = 5;
+    public ?int $quantity = 5;
 
     public array $years = [];
 
@@ -133,6 +136,7 @@ class ProcurementAnnual extends Component
             'title' => 'Success'
         ])->to(AfmsProcurement::class);
     }
+
 
     #[Computed()]
     public function rows() {

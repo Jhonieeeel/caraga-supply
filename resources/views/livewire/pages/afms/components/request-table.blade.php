@@ -3,14 +3,29 @@
         $isAdmin = auth()->user()->hasRole('Super Admin');
         $user = auth()->user()->hasRole('User');
         $authUser = auth()->user()->id;
+
     @endphp
     <span wire:loading.delay wire:target='view'>
         <x-loading />
     </span>
-    <x-table :headers="$headers" :rows="$this->rows" filter :quantity="[3, 5, 10]" loading paginate class="sm:pb-6">
+    <x-table :headers="$this->headers" :rows="$this->rows" filter :quantity="[3, 5, 10]" loading paginate class="sm:pb-6">
         @interact('column_completed', $requisition)
+            @php
+                $isApproved =
+                    $requisition->requested_by &&
+                    $requisition->approved_by &&
+                    $requisition->issued_by &&
+                    $requisition->received_by;
+
+                $isUpdated = $requisition->requested_by && $requisition->received_by;
+            @endphp
+
             @if ($requisition->completed)
                 <x-badge text="Completed" color="green" />
+            @elseif($isApproved)
+                <x-badge text="Approved" color="blue" />
+            @elseif($isUpdated)
+                <x-badge text="Updating" color="yellow" />
             @else
                 <x-badge text="Pending" color="red" />
             @endif

@@ -5,7 +5,7 @@
             Entry</x-button>
     </div>
 
-    <x-table :$headers id="procurement" :rows='$this->rows' loading filter paginate :quantity="[2, 5, 10]">
+    <x-table :headers="$this->headers" id="procurement" :rows="$this->rows" loading paginate filter :quantity="[2, 5, 10]">
         @interact('column_code', $procurement)
             <span class="text-nowrap">{{ $procurement->code }}</span>
         @endinteract

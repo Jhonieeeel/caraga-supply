@@ -72,7 +72,7 @@ class RequisitionForm extends Form
             $extension = $this->temporaryFile->getClientOriginalExtension();
 
             $date = now()->format('Ymd');
-            $userId = Auth::id();
+            $userId = $requisition->user_id;
             $random = substr((string) Str::uuid(), 0, 8);
 
             $uniqueName = "SIGNED_RIS_{$date}_{$userId}_{$random}.{$extension}";
@@ -138,6 +138,7 @@ class RequisitionForm extends Form
     public function fillForm(Requisition $requisition): void
     {
         $this->ris = $requisition->ris;
+        $this->user_id = $requisition->user_id;
         $this->requested_by = $requisition->requested_by;
         $this->approved_by = $requisition->approved_by;
         $this->issued_by = $requisition->issued_by;

@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Employee;
 use App\Models\Section;
+use App\Models\Stock;
+use App\Models\Supply;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -33,7 +35,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $mike = User::factory()->create([
-            'name' => 'Mike Madayag',
+            'name' => 'Mike Alsong',
             'email' => 'mike@example.com']);
 
         $rocky = User::factory()->create([
@@ -86,6 +88,23 @@ class DatabaseSeeder extends Seeder
             'unit_id' => $afms->units()->firstWhere('name', 'GASU')->id,
         ]);
 
+
+        // suppliies
+        $alcohol = Supply::create([
+            'name' => 'Alcohol 50ml',
+            'category' => 'supplies',
+            'unit' => 'bottle',
+        ]);
+
+        Stock::create([
+            'supply_id' => $alcohol->id,
+            'quantity' => 100,
+            'barcode' => 'ALC50ML001',
+            'stock_number' => 'stk-0001',
+            'price' => 150.00,
+            'initial_quantity' => 100,
+            'stock_location' => 'Main Warehouse',
+        ]);
 
     }
 }

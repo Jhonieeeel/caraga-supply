@@ -14,6 +14,11 @@
             $isOwner = auth()->user()->id === $requisition->user_id;
             $isUser = auth()->user()->hasRole('User');
             $isAdmin = auth()->user()->hasRole('Super Admin');
+
+            $twoFieldsFilled = $requisition->requested_by && $requisition->received_by;
+
+            // disable if two fields are filled AND you are NOT admin
+            $shouldDisable = $twoFieldsFilled && !$isAdmin;
         @endphp
         <div class="sm:flex items-center gap-x-4">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -21,6 +26,8 @@
             </h2>
             @if ($requisition->completed)
                 <x-badge text="Completed" color="green" light />
+            @elseif($isApproved)
+                <x-badge text="Approved" color="green" light />
             @endif
         </div>
         @if (!$requisition->completed)
@@ -77,80 +84,79 @@
                 <div class="sm:col-span-4 col-span-4 sm:ms-auto flex sm:items-center gap-x-3">
                     @if (!$requisition->completed)
                         @if (!$isApproved)
-                            @if ($isAdmin || $isOwner)
-                                <x-button submit loading="update" icon="document" position="right">Update</x-button>
-                            @else
-                                <x-button submit :disabled="$requested_by && $received_by" icon="document" position="right">Pending</x-button>
-                            @endif
-                        @else
-                            @if ($isAdmin || $isOwner)
-                                <x-button wire:click="approvedRequisition({{ $requisition->id }})" loading="approved"
-                                    icon="check" position="right" color="teal">
-                                    Proceed
+                            @if ($isAdmin || ($isOwner && !$shouldDisable))
+                                <x-button submit loading="update" icon="document" position="right">
+                                    {{ $isOwner ? 'Submit' : 'Update' }}
+                                </x-button>
+                            @elseif ($shouldDisable && $isOwner)
+                                <x-button icon="document" position="right" :disabled="$shouldDisable">
+                                    Pending
                                 </x-button>
                             @endif
+                        @else
+                            <x-button wire:click="approvedRequisition({{ $requisition->id }})" loading="approved"
+                                icon="check" position="right" color="teal" :disabled="$shouldDisable">
+                                Approved
+                            </x-button>
                         @endif
                     @endif
 
                 </div>
             </form>
-            <form>
-                <div class="sm:col-span-4 flex flex-col sm:pt-4">
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Requested Items
-                    </h2>
-                    <div class="-m-1.5 overflow-x-auto">
-                        <div class="p-1.5 min-w-full inline-block align-middle">
-                            <div class="overflow-hidden">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead>
+            <div class="sm:col-span-4 flex flex-col sm:pt-4">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Requested Items
+                </h2>
+                <div class="-m-1.5 overflow-x-auto">
+                    <div class="p-1.5 min-w-full inline-block align-middle">
+                        <div class="overflow-hidden">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                            Stock No.</th>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                            Supply Name</th>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                            Requested Quantity</th>
+                                        @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
+                                            <th scope="col"
+                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                Action</th>
+                                        @endif
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    @foreach ($requisition->items as $item)
                                         <tr>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Stock No.</th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Supply Name</th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Requested Quantity</th>
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 capitalize">
+                                                {{ $item->stock->stock_number }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                {{ $item->stock->supply->name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                {{ $item->requested_qty }}
+                                            </td>
                                             @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
-                                                <th scope="col"
-                                                    class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                    Action</th>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                    <x-button.circle wire:click="editRequestItem({{ $item }})"
+                                                        icon="pencil" color="teal" />
+                                                    <x-button.circle
+                                                        wire:click="deleteRequisitionItem({{ $item->id }})"
+                                                        icon="trash" color="red" />
+                                                </td>
                                             @endif
                                         </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200">
-                                        @foreach ($requisition->items as $item)
-                                            <tr>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 capitalize">
-                                                    {{ $item->stock->stock_number }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{ $item->stock->supply->name }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{ $item->requested_qty }}
-                                                </td>
-                                                @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                        <x-button.circle
-                                                            wire:click="editRequestItem({{ $item }})"
-                                                            icon="pencil" color="teal" />
-                                                        <x-button.circle
-                                                            wire:click="deleteRequisitionItem({{ $item->id }})"
-                                                            icon="trash" color="red" />
-                                                    </td>
-                                                @endif
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     @else
         <small class="text-sm text-gray-500">No Selected Requisition Yet</small>

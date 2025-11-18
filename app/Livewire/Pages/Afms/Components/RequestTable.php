@@ -47,7 +47,6 @@ class RequestTable extends Component
     {
         $this->requisition = Requisition::findOrFail($requisitionId);
         $this->requisition->delete();
-        $this->requisition = null;
         $this->dispatch('view-requisition', requisition: null)->to(RequestDetail::class);
         $this->dispatch('current-data', requisition: null)->to(RequestRIS::class);
 

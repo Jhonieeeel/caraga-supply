@@ -19,7 +19,7 @@ class RequestRIS extends Component
 {
     use WithFileUploads;
 
-    public Requisition $requisition;
+    public $requisition;
     public ?RequisitionForm $requestForm;
 
     public $pdfStatus;
@@ -70,8 +70,12 @@ class RequestRIS extends Component
     #[On('current-data')]
     public function currentData($requisition)
     {
+        if (!$requisition) {
+            $this->requisition = null;
+            return;
+        }
         $this->step = 1;
-        $this->requisition = Requisition::with('items.stock.supply')->find($requisition);
+        $this->requisition = Requisition::find($requisition);
     }
 
     #[On('refresh')]
