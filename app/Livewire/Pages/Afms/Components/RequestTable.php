@@ -9,17 +9,23 @@ use Livewire\Component;
 use Illuminate\Contracts\Database\Query\Builder;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Renderless;
 use Livewire\WithPagination;
 
 class RequestTable extends Component
 {
+
+    protected $listeners = [
+        'delete-event' => '$refresh'
+    ];
+
     use WithPagination;
 
     public array $headers = [];
     public string $search = '';
     public int $quantity = 5;
 
-    public Requisition $requisition;
+    public ?Requisition $requisition = null;
     public RequisitionForm $requestForm;
 
     public function mount()
@@ -39,14 +45,16 @@ class RequestTable extends Component
 
     public function deleteRequisition($requisitionId)
     {
-        Requisition::find($requisitionId)->delete();
+        $this->requisition = Requisition::findOrFail($requisitionId);
+        $this->requisition->delete();
+        $this->requisition = null;
+        $this->dispatch('view-requisition', requisition: null)->to(RequestDetail::class);
+        $this->dispatch('current-data', requisition: null)->to(RequestRIS::class);
 
-        $this->dispatch('update-list');
-
-        return $this->dispatch('alert', [
-            'text' => 'Requisition Deleted successfully.',
+        $this->dispatch('alert', [
+            'text' => 'Requisition Deleted Successfully.',
             'color' => 'teal',
-            'title' => 'Deleted'
+            'title' => 'Success'
         ]);
     }
 
@@ -72,13 +80,13 @@ class RequestTable extends Component
     public function view(Requisition $requisition)
     {
         $currentRequisition = Requisition::find($requisition->id);
-        // to Parent
+
         $this->dispatch('change-tab', tab: 'Detail')->to(RequisitionTable::class);
 
-        // to Detail Tab
-        $this->dispatch('view-requisition', requisition: $currentRequisition)->to(RequestDetail::class);
+        $this->dispatch('view-requisition', requisition: $currentRequisition->id)
+            ->to(RequestDetail::class);
 
-        // to RIS Tab
-        $this->dispatch('current-data', requisition: $currentRequisition)->to(RequestRIS::class);
+        $this->dispatch('current-data', requisition: $currentRequisition->id)
+            ->to(RequestRIS::class);
     }
 }

@@ -9,6 +9,7 @@ use App\Jobs\ProcessRequisition;
 use App\Livewire\Forms\RequisitionForm;
 use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
+use Illuminate\Support\Facades\Log;
 use Imtigger\LaravelJobStatus\TrackableJob;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -18,7 +19,7 @@ class RequestRIS extends Component
 {
     use WithFileUploads;
 
-    public ?Requisition $requisition;
+    public Requisition $requisition;
     public ?RequisitionForm $requestForm;
 
     public $pdfStatus;
@@ -67,10 +68,10 @@ class RequestRIS extends Component
     public function updateList($id = null) {}
 
     #[On('current-data')]
-    public function currentData(Requisition $requisition)
+    public function currentData($requisition)
     {
         $this->step = 1;
-        $this->requisition = $requisition;
+        $this->requisition = Requisition::with('items.stock.supply')->find($requisition);
     }
 
     #[On('refresh')]

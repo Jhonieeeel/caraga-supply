@@ -18,7 +18,7 @@ use Livewire\Component;
 
 class RequestDetail extends Component
 {
-    public Requisition $requisition;
+    public $requisition;
     public RequisitionItem $requisitionItem;
 
     public RequisitionForm $requestForm;
@@ -34,7 +34,7 @@ class RequestDetail extends Component
             'title' => 'Requisition and Issuance Slip'
         ]);
         $this->dispatch('change-tab', tab: 'RIS')->to(RequisitionTable::class);
-        $this->dispatch('current-data', requisition: $requisition);
+        $this->dispatch('current-data', requisition: $requisition->id);
 
         return;
     }
@@ -93,10 +93,18 @@ class RequestDetail extends Component
     }
 
     #[On('view-requisition')]
-    public function view(Requisition $requisition)
+    public function view($requisition)
     {
-        $this->requisition = $requisition->load('items.stock.supply');
+
+        if (!$requisition) {
+            $this->requisition = null;
+            return;
+        }
+
+        $this->requisition = Requisition::with('items.stock.supply')->find($requisition);
         $this->requestForm->fillForm($this->requisition);
+
+        return $this->requisition;
     }
 
     public function render()

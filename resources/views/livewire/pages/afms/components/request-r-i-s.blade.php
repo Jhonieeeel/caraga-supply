@@ -46,6 +46,10 @@
                         <x-button wire:click="$set('step', 3)" :disabled="!$requisition->pdf">
                             Next
                         </x-button>
+
+                        @if ($requisition->pdf)
+                            @dd($requisition->pdf)
+                        @endif
                     </div>
                 </x-step.items>
                 <x-step.items step="3" title="Upload Signed Document" description="Upload the signed RIS.">

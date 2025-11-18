@@ -41,7 +41,7 @@
                         ]" searchable />
                     <x-select.styled wire:model='supplyForm.unit' label="Unit of Measure *"
                         hint="Select unit of measure" :options="[
-                            ['label' => 'Pc', 'value' => 'pc'],
+                            ['label' => 'PC', 'value' => 'pc'],
                             ['label' => 'Pack', 'value' => 'pack'],
                             ['label' => 'Sachet', 'value' => 'sachet'],
                             ['label' => 'Unit', 'value' => 'unit'],
@@ -58,7 +58,7 @@
                             ['label' => 'Galon', 'value' => 'galon'],
                             ['label' => 'Crate', 'value' => 'crate'],
                             ['label' => 'Bottle', 'value' => 'bottle'],
-                        ]" lazy="10" searchable />
+                        ]" searchable />
                 </div>
                 <div class="sm:pt-2">
                     <x-button md submit icon="plus-circle" position="right">Submit</x-button>
