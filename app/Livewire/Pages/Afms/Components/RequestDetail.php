@@ -60,6 +60,7 @@ class RequestDetail extends Component
         return;
     }
 
+    #[On('generate-ris')]
     public function generateRIS()
     {
         $date = now()->format('Y-m');
@@ -86,14 +87,21 @@ class RequestDetail extends Component
         }
 
         $this->requisition = $response;
-        $this->dispatch('current-data', requisition: $response->id);
-         $this->dispatch('alert', [
+        $this->dispatch('update-request-table');
+        $this->dispatch('view-requisition', requisition: $this->requisition->id);
+
+        $this->dispatch('alert', [
             'text' => 'Requisition Updated.',
             'color' => 'teal',
             'title' => 'Requisition and Issuance Slip'
         ]);
 
-        return $this->requisition->refresh();
+        return;
+    }
+
+    #[On('update-detail-state')]
+    public function updateList($id = null) {
+
     }
 
     #[On('view-requisition')]
@@ -107,6 +115,12 @@ class RequestDetail extends Component
 
         $this->requisition = Requisition::with('items.stock.supply')->find($requisition);
         $this->requestForm->fillForm($this->requisition);
+
+        $isApproved = $this->requisition->requested_by && $this->requisition->approved_by && $this->requisition->issued_by && $this->requisition->received_by;
+
+        if (!$isApproved) {
+            $this->dispatch('generate-ris');
+        }
 
         return $this->requisition;
     }

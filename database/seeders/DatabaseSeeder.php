@@ -42,7 +42,13 @@ class DatabaseSeeder extends Seeder
             'name' => 'Rocky Vagallon',
             'email' => 'rocky@example.com']);
 
+        $aizy = User::factory()->create([
+            'name' => 'Aizy Lyn P Joloyohoy',
+            'email' => 'aizy@ocdcaraga.com'
+        ]);
+
         $dave->assignRole($super);
+        $aizy->assignRole($super);
         $mike->assignRole($user);
         $rocky->assignRole($user);
 
@@ -86,6 +92,12 @@ class DatabaseSeeder extends Seeder
             'user_id' => $rocky->id,
             'section_id' => $afms->id,
             'unit_id' => $afms->units()->firstWhere('name', 'GASU')->id,
+        ]);
+
+        Employee::create([
+            'user_id' => $aizy->id,
+            'section_id' => $afms->id,
+            'unit_id' => $afms->units()->firstWhere('name', 'PMU')->id,
         ]);
 
 

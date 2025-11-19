@@ -76,17 +76,21 @@ class RequisitionTable extends Component
         $newRequisition = $this->requestForm->create($create_request_action);
         $this->itemForm->create($create_item_action, $newRequisition);
 
-        $this->dispatch('update-list', id: $newRequisition->id);
+        $this->dispatch('update-request-table');
 
         $this->dispatch('modal:add-request-close');
 
-        $this->dispatch('alert', [
+        return $this->dispatch('alert', [
             'text' => 'Requisition added successfully.',
             'color' => 'green',
             'title' => 'Success'
         ]);
 
-        return;
+    }
+
+    #[On('update-list')]
+    public function updateList($id = null) {
+
     }
 
 

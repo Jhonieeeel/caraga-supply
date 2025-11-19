@@ -17,7 +17,7 @@
             @endif
             <x-tab wire:model.live="tab">
 
-                <x-tab.items tab="List">
+                <x-tab.items tab="List" wire:click="refreshStates">
                     <x-slot:right>
                         <x-icon name="list-bullet" class="w-5 h-5" />
                     </x-slot:right>

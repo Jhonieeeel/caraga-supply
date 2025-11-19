@@ -16,7 +16,10 @@
                             color="{{ session('message')['color'] }}" light />
                     </div>
                 @endif
-                <x-table :$headers :rows='$this->rows' :filter="['quantity' => 'quantity', 'search' => 'search']" :quantity="[2, 5, 10]" paginate loading>
+                <x-table :$headers :rows='$this->rows' :placeholders="[
+                    'quantity' => 'Items',
+                ]" :filter="['quantity' => 'quantity', 'search' => 'search']" :quantity="[2, 5, 10]" paginate
+                    loading>
                     @role('Super Admin')
                         @interact('column_action', $supply)
                             <x-button.circle color="red" flat icon="trash" wire:click="delete('{{ $supply->id }}')" />

@@ -7,6 +7,7 @@ use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
 use Livewire\Component;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Renderless;
@@ -14,10 +15,6 @@ use Livewire\WithPagination;
 
 class RequestTable extends Component
 {
-
-    protected $listeners = [
-        'delete-event' => '$refresh'
-    ];
 
     use WithPagination;
 
@@ -45,20 +42,26 @@ class RequestTable extends Component
 
     public function deleteRequisition($requisitionId)
     {
-        $this->requisition = Requisition::findOrFail($requisitionId);
-        $this->requisition->delete();
-        $this->dispatch('view-requisition', requisition: null)->to(RequestDetail::class);
-        $this->dispatch('current-data', requisition: null)->to(RequestRIS::class);
+        $request = Requisition::find( $requisitionId );
 
-        $this->dispatch('alert', [
-            'text' => 'Requisition Deleted Successfully.',
-            'color' => 'teal',
-            'title' => 'Success'
-        ]);
+        $deletion = $request->delete();
+
+        if ($deletion) {
+            $this->dispatch('alert', [
+                'text' => 'Requisition Deleted Successfully.',
+                'color' => 'teal',
+                'title' => 'Success'
+            ]);
+
+            return $this->dispatch('update-request-table');
+        }
+
+        return $this->dispatch('update-list');
     }
 
-    #[On('update-list')]
-    public function updateList($id = null) {}
+    #[On('update-request-table')]
+    public function updateList() {
+    }
 
     #[Computed()]
     public function rows()
@@ -78,7 +81,12 @@ class RequestTable extends Component
 
     public function view(Requisition $requisition)
     {
+
         $currentRequisition = Requisition::find($requisition->id);
+
+        if (!$currentRequisition) {
+            return $this->dispatch('change-tab', 'List')->to(RequisitionTable::class);
+        }
 
         $this->dispatch('change-tab', tab: 'Detail')->to(RequisitionTable::class);
 
@@ -87,5 +95,7 @@ class RequestTable extends Component
 
         $this->dispatch('current-data', requisition: $currentRequisition->id)
             ->to(RequestRIS::class);
+
+        return;
     }
 }

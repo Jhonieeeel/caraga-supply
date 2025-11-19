@@ -57,6 +57,11 @@ class RequestRIS extends Component
 
         $this->dispatch('update-list', id: $this->requisition->id);
 
+
+        if ($this->requisition->pdf) {
+            $this->step = 2;
+        }
+
         return $this->dispatch('alert', [
             'text' => 'Requisition Generated successfully.',
             'color' => 'teal',
@@ -64,8 +69,9 @@ class RequestRIS extends Component
         ]);
     }
 
-    #[On('update-list')]
-    public function updateList($id = null) {}
+    #[On('update-ris-state')]
+    public function updateList($id = null) {
+    }
 
     #[On('current-data')]
     public function currentData($requisition)
@@ -76,6 +82,7 @@ class RequestRIS extends Component
         }
         $this->step = 1;
         $this->requisition = Requisition::find($requisition);
+        return $this->requisition;
     }
 
     #[On('refresh')]

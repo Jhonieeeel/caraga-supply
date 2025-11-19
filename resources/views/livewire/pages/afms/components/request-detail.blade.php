@@ -52,7 +52,7 @@
             <form wire:submit.prevent="update" class="w-full grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="col-span-4 sm:flex items-center justify-between w-full gap-3.5">
                     <div class="flex-1">
-                        <x-input :disabled="$disableStatus" disabled wire:model="requestForm.ris" label="RIS" hint="Input RIS"
+                        <x-input :disabled="$disableStatus" wire:model="requestForm.ris" label="RIS" hint="Input RIS"
                             class="w-full" />
                     </div>
                     <div>
@@ -74,7 +74,7 @@
                     </div>
                     <div class="sm:col-span-2 col-span-4">
                         <x-select.styled :disabled="$disableStatus" wire:model="requestForm.issued_by" label="Issued by *"
-                            hint="Select issuenace" :options="$this->getUsers" searchable />
+                            hint="Select issueance" :options="$this->getUsers" searchable />
                     </div>
                 @endif
                 <div class="sm:col-span-2 col-span-4">
@@ -142,9 +142,10 @@
                                             </td>
                                             @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    <x-button.circle wire:click="editRequestItem({{ $item }})"
-                                                        icon="pencil" color="teal" />
-                                                    <x-button.circle
+                                                    <x-button.circle flat
+                                                        wire:click="editRequestItem({{ $item }})" icon="pencil"
+                                                        color="teal" />
+                                                    <x-button.circle flat
                                                         wire:click="deleteRequisitionItem({{ $item->id }})"
                                                         icon="trash" color="red" />
                                                 </td>
