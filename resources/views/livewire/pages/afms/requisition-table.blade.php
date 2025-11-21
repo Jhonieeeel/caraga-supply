@@ -1,4 +1,5 @@
 <div class="max-w-7xl mx-auto sm:px-3 sm:py-4 lg:px-6 bg-white border shadow rounded">
+    <x-dialog />
     <div class="flex items-center justify-between sm:pb-4 sm:p-6 p-3">
         <h2 class="font-semibold sm:text-xl text-md text-gray-800 leading-tight ">
             Requisition
@@ -9,12 +10,12 @@
     </div>
     <div class="overflow-hidden sm:rounded-lg">
         <div class="sm:p-3 text-gray-900">
-            @if (session('message'))
+            {{-- @if (session('message'))
                 <div class="sm:py-4">
                     <x-alert title="{{ session('message')['title'] }}" text="{{ session('message')['text'] }}"
                         color="{{ session('message')['color'] }}" light />
                 </div>
-            @endif
+            @endif --}}
             <x-tab wire:model.live="tab">
 
                 <x-tab.items tab="List" wire:click="refreshStates">

@@ -39,6 +39,10 @@ class RequisitionForm extends Form
     #[Rule('nullable')]
     public $status;
 
+
+    #[Rule(['nullable'])]
+    public $purpose;
+
     #[Validate(['nullable', 'file', 'mimes:pdf'])]
     public $pdf;
 
@@ -89,6 +93,7 @@ class RequisitionForm extends Form
             $update_stock_quantity->handle($requisition);
         }
 
+
         $edit_request_action->handle($requisition, $this->toArray());
 
         $requisition->refresh();
@@ -117,7 +122,8 @@ class RequisitionForm extends Form
             'issued_by' => $this->issued_by,
             'received_by' => $this->received_by,
             'pdf' => $this->pdf, // Use the renamed/stored file path
-            'completed' => $this->completed ?? false
+            'completed' => $this->completed ?? false,
+            'purpose' => $this->purpose
         ];
     }
 
@@ -131,7 +137,8 @@ class RequisitionForm extends Form
             'issued_by' => null,
             'received_by' => null,
             'pdf' => null,
-            'completed' => false
+            'completed' => false,
+            'purpose' => null,
         ];
     }
 
@@ -144,5 +151,6 @@ class RequisitionForm extends Form
         $this->issued_by = $requisition->issued_by;
         $this->received_by = $requisition->received_by;
         $this->completed = $requisition->completed;
+        $this->purpose = $requisition->purpose;
     }
 }

@@ -15,14 +15,22 @@ use App\Models\User;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use TallStackUi\Traits\Interactions;
 
 class RequestDetail extends Component
 {
+    use Interactions;
     public $requisition;
     public RequisitionItem $requisitionItem;
 
     public RequisitionForm $requestForm;
     public ItemForm $itemForm;
+
+
+    public function viewPdf()  {
+        $this->dispatch('change-tab', tab: 'RIS')->to(RequisitionTable::class);
+        $this->dispatch('change-ris-step', step: 2);
+    }
 
     public function approvedRequisition(Requisition $requisition)
     {
@@ -87,16 +95,11 @@ class RequestDetail extends Component
         }
 
         $this->requisition = $response;
-        $this->dispatch('update-request-table');
-        $this->dispatch('view-requisition', requisition: $this->requisition->id);
 
-        $this->dispatch('alert', [
-            'text' => 'Requisition Updated.',
-            'color' => 'teal',
-            'title' => 'Requisition and Issuance Slip'
-        ]);
+        // $this->dispatch('update-request-table');
+        // $this->dispatch('view-requisition', requisition: $this->requisition->id)
 
-        return;
+        $this->dialog()->success('Success', 'Request Detail Updated!')->send();
     }
 
     #[On('update-detail-state')]

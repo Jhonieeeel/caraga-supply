@@ -15,7 +15,7 @@ class GenerateRisService
         $docx->setValue('responsibility_code', '');
         $docx->setValue('office', '');
         $docx->setValue('ris', $requisition->ris ?? '');
-        $docx->setValue('purpose', '');
+        $docx->setValue('purpose', $requisition->purpose);
         $docx->setValue('requested_by', $requisition->requestedBy->name ?? '');
         $docx->setValue('approved_by', $requisition->approvedBy->name ?? '');
         $docx->setValue('issued_by', $requisition->issuedBy->name ?? '');

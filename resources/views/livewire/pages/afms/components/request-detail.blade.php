@@ -81,22 +81,31 @@
                     <x-select.styled :disabled="$disableStatus" wire:model="requestForm.received_by" label="Received by *"
                         hint="Select receiver" :options="$this->getUsers" searchable />
                 </div>
+                <div class="col-span-4">
+                    <x-textarea label="Purpose *" wire:model="requestForm.purpose" hint="Insert the purpose" />
+                </div>
                 <div class="sm:col-span-4 col-span-4 sm:ms-auto flex sm:items-center gap-x-3">
                     @if (!$requisition->completed)
-                        @if (!$isApproved)
-                            @if ($isAdmin || ($isOwner && !$shouldDisable))
-                                <x-button submit loading="update" icon="document" position="right">
-                                    {{ $isOwner ? 'Submit' : 'Update' }}
-                                </x-button>
-                            @elseif ($shouldDisable && $isOwner)
-                                <x-button icon="document" position="right" :disabled="$shouldDisable">
-                                    Pending
+                        @if (!$requisition->pdf)
+                            @if (!$isApproved)
+                                @if ($isAdmin || ($isOwner && !$shouldDisable))
+                                    <x-button submit loading="update" icon="document" position="right">
+                                        {{ $isOwner ? 'Submit' : 'Update' }}
+                                    </x-button>
+                                @elseif ($shouldDisable && $isOwner)
+                                    <x-button icon="document" position="right" :disabled="$shouldDisable">
+                                        Pending
+                                    </x-button>
+                                @endif
+                            @else
+                                <x-button wire:click="approvedRequisition({{ $requisition->id }})" loading="approved"
+                                    icon="check" position="right" color="teal" :disabled="$shouldDisable">
+                                    Approved
                                 </x-button>
                             @endif
                         @else
-                            <x-button wire:click="approvedRequisition({{ $requisition->id }})" loading="approved"
-                                icon="check" position="right" color="teal" :disabled="$shouldDisable">
-                                Approved
+                            <x-button wire:click="viewPdf" icon="document" position="right">
+                                View PDF
                             </x-button>
                         @endif
                     @endif

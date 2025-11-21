@@ -11,6 +11,7 @@ use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\Stock;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -18,10 +19,11 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use TallStackUi\Traits\Interactions;
 
 class RequisitionTable extends Component
 {
-    use WithPagination, WithFileUploads;
+    use WithPagination, WithFileUploads, Interactions;
 
     // for modal table
     public $headers = [];
@@ -76,15 +78,13 @@ class RequisitionTable extends Component
         $newRequisition = $this->requestForm->create($create_request_action);
         $this->itemForm->create($create_item_action, $newRequisition);
 
-        $this->dispatch('update-request-table');
-
         $this->dispatch('modal:add-request-close');
 
-        return $this->dispatch('alert', [
-            'text' => 'Requisition added successfully.',
-            'color' => 'green',
-            'title' => 'Success'
-        ]);
+        $this->dispatch('update-request-table');
+
+        $this->dialog()->success('Success', 'Request Added!')->flash()->send();
+
+        return $this->redirectRoute('requisition.index');
 
     }
 
@@ -92,7 +92,6 @@ class RequisitionTable extends Component
     public function updateList($id = null) {
 
     }
-
 
     #[On('change-tab')]
     public function changeTab($tab)

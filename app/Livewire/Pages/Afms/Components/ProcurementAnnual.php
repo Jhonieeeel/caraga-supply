@@ -34,8 +34,8 @@ class ProcurementAnnual extends Component
     public ?int $filterYear = null;
 
     public array $headers = [];
-public string $sortField = 'app_year';
-public string $sortDirection = 'asc';
+    public string $sortField = 'app_year';
+    public string $sortDirection = 'asc';
     public function onSubmit(CreateAnnual $createAnnual)
     {
         $annual = $this->annualForm->onCreate($createAnnual);
@@ -66,7 +66,7 @@ public string $sortDirection = 'asc';
 
     public function mount()
     {
-        
+
         $startYear = 2020;
         $currentYear = now()->year;
 
@@ -91,14 +91,14 @@ public string $sortDirection = 'asc';
         ];
     }
     public function sortByYear()
-{
-    if ($this->sortField === 'app_year') {
-        $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-        $this->sortField = 'app_year';
-        $this->sortDirection = 'asc';
+    {
+        if ($this->sortField === 'app_year') {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = 'app_year';
+            $this->sortDirection = 'asc';
+        }
     }
-}
 
 
     public function submitToRequest(Procurement $procurement) {

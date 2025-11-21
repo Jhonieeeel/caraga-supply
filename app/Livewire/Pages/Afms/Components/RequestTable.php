@@ -7,16 +7,15 @@ use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
 use Livewire\Component;
 use Illuminate\Contracts\Database\Query\Builder;
-use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Renderless;
 use Livewire\WithPagination;
+use TallStackUi\Traits\Interactions;
 
 class RequestTable extends Component
 {
 
-    use WithPagination;
+    use WithPagination, Interactions;
 
     public array $headers = [];
     public string $search = '';
@@ -42,26 +41,33 @@ class RequestTable extends Component
 
     public function deleteRequisition($requisitionId)
     {
-        $request = Requisition::find( $requisitionId );
 
-        $deletion = $request->delete();
+        if ($requisitionId) {
+           $this->dialog()
+                ->question('Warning', 'Are you sure?')
+                ->confirm('Confirm', 'confirmed', params: ['message' => 'Request Deleted', 'id' => $requisitionId])
+                ->cancel('Cancel', 'cancelled', 'Request Deletion Cancelled')
+                ->send();
 
-        if ($deletion) {
-            $this->dispatch('alert', [
-                'text' => 'Requisition Deleted Successfully.',
-                'color' => 'teal',
-                'title' => 'Success'
-            ]);
-
-            return $this->dispatch('update-request-table');
         }
+    }
 
-        return $this->dispatch('update-list');
+    public function confirmed(array $data) {
+        $this->dialog()->success('Success', $data['message'])->send();
+
+        return Requisition::findOrFail($data['id'])->delete();
+    }
+
+    public function cancelled(string $message): void
+    {
+        $this->dialog()->error('Cancelled', $message)->send();
     }
 
     #[On('update-request-table')]
     public function updateList() {
     }
+
+
 
     #[Computed()]
     public function rows()
@@ -96,6 +102,5 @@ class RequestTable extends Component
         $this->dispatch('current-data', requisition: $currentRequisition->id)
             ->to(RequestRIS::class);
 
-        return;
     }
 }

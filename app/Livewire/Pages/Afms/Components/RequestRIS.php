@@ -14,10 +14,11 @@ use Imtigger\LaravelJobStatus\TrackableJob;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
+use TallStackUi\Traits\Interactions;
 
 class RequestRIS extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, Interactions;
 
     public $requisition;
     public ?RequisitionForm $requestForm;
@@ -29,6 +30,11 @@ class RequestRIS extends Component
 
     public $tab = 'RIS';
 
+
+    #[On('change-ris-step')]
+    public function changeStep($step) {
+        $this->step = $step;
+    }
 
     // RIS
     public function updateRIS(UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
@@ -55,18 +61,15 @@ class RequestRIS extends Component
         // generate pdf
         ProcessRequisition::dispatchSync($this->requisition->id);
 
-        $this->dispatch('update-list', id: $this->requisition->id);
+        $this->redirectRoute('requisition.index');
 
+
+        $this->dialog()->success('Success', 'RIS Generated!')->flash()->send();
 
         if ($this->requisition->pdf) {
             $this->step = 2;
         }
 
-        return $this->dispatch('alert', [
-            'text' => 'Requisition Generated successfully.',
-            'color' => 'teal',
-            'title' => 'Requisition and Issuance Slip'
-        ]);
     }
 
     #[On('update-ris-state')]

@@ -19,6 +19,7 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-100">
+    <x-dialog />
     <x-layout>
         {{-- header --}}
         <x-slot:header>
@@ -70,7 +71,7 @@
             </x-side-bar>
         </x-slot:menu>
 
-        <div class="min-h-screen font-poppins">{{ $slot }}</div>
+        <div class="min-h-screen font-poppins" x-cloak>{{ $slot }}</div>
     </x-layout>
 
     @livewireScripts

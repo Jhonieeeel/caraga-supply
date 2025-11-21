@@ -1,4 +1,5 @@
 <div>
+
     @php
         $isAdmin = auth()->user()->hasRole('Super Admin');
         $user = auth()->user()->hasRole('User');
