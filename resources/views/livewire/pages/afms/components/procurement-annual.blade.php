@@ -4,23 +4,32 @@
         <x-button x-on:click="$modalOpen('add-entry')" icon="cube" position="right">Add
             Entry</x-button>
     </div>
-
-    <x-table :headers="$this->headers" :placeholders="[
-        'quantity' => 'Items per page',
-    ]" id="procurement" :rows="$this->rows" loading paginate filter
+    <div class="flex justify-between items-center mb-3">
+        <x-select.styled label="Filter by Year" wire:model.live="filterYear" :options="$years" placeholder="Select a year"
+            :placeholders="[
+                'default' => 'Select a year',
+                'search' => 'Type to search…',
+                'empty' => 'No years available',
+            ]" />
+    </div>
+    <x-table :headers="$this->headers" :placeholders="['quantity' => 'Items per page']" id="procurement" :rows="$this->rows" loading paginate filter
         :quantity="[2, 5, 10]">
+
         @interact('column_code', $procurement)
             <span class="text-nowrap">{{ $procurement->code }}</span>
         @endinteract
+
         @interact('column_remarks', $procurement)
             <span class="whitespace-nowrap">{{ $procurement->remarks }}</span>
         @endinteract
+
         @interact('column_action', $procurement)
             <div class="sm:flex items-center gap-x-4">
                 <x-button.circle color="teal" icon="pencil" wire:click="edit({{ $procurement->id }})" />
                 <x-button.circle color="teal" icon="document-text" wire:click="submitToRequest({{ $procurement->id }})" />
             </div>
         @endinteract
+
     </x-table>
 
     {{-- edit --}}
