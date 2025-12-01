@@ -20,7 +20,12 @@ return new class extends Migration
             $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->foreignId('issued_by')->nullable()->constrained('users');
             $table->foreignId('received_by')->nullable()->constrained('users');
-            $table->text('purpose')->nullable();
+            // date
+            $table->date('requested_date')->nullable();
+            $table->date('approved_date')->nullable();
+            $table->date('issued_date')->nullable();
+            $table->date('received_date')->nullable();
+            $table->string('purpose')->nullable();
             $table->string('status')->default('pending');
             $table->boolean('completed')->default(false);
             $table->string('pdf')->nullable();

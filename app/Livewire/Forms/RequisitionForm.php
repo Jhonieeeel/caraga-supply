@@ -8,6 +8,7 @@ use App\Actions\Stock\UpdateStockQuantity;
 use App\Actions\Transaction\CreateTransaction;
 use App\Models\Requisition;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -39,7 +40,6 @@ class RequisitionForm extends Form
     #[Rule('nullable')]
     public $status;
 
-
     #[Rule(['nullable'])]
     public $purpose;
 
@@ -47,6 +47,13 @@ class RequisitionForm extends Form
     public $pdf;
 
     public $temporaryFile;
+
+    // dates
+
+    public $approved_date;
+    public $requested_date;
+    public $issued_date;
+    public $received_date;
 
     public function create(CreateRequestAction $create_request_action)
     {
@@ -68,6 +75,8 @@ class RequisitionForm extends Form
         if (!$this->ris) {
             $this->validate();
         }
+
+        Log::info('Data.', $this->toArray());
 
         $currentPath = storage_path('app/public/' . $requisition->pdf);
 
@@ -96,8 +105,6 @@ class RequisitionForm extends Form
 
         $edit_request_action->handle($requisition, $this->toArray());
 
-        $requisition->refresh();
-
         if ($requisition->completed) {
             foreach ($requisition->items as $item) {
                 $create_transaction->handle([
@@ -123,7 +130,11 @@ class RequisitionForm extends Form
             'received_by' => $this->received_by,
             'pdf' => $this->pdf, // Use the renamed/stored file path
             'completed' => $this->completed ?? false,
-            'purpose' => $this->purpose
+            'purpose' => $this->purpose,
+            'approved_date' => $this->approved_date,
+            'issued_date' => $this->issued_date,
+            'received_date' => $this->received_date,
+            'requested_date' => $this->requested_date
         ];
     }
 
@@ -139,6 +150,10 @@ class RequisitionForm extends Form
             'pdf' => null,
             'completed' => false,
             'purpose' => null,
+            'approved_date' => null,
+            'issued_date' => null,
+            'received_date' => null,
+            'requested_date' => null
         ];
     }
 
@@ -152,5 +167,9 @@ class RequisitionForm extends Form
         $this->received_by = $requisition->received_by;
         $this->completed = $requisition->completed;
         $this->purpose = $requisition->purpose;
+        $this->approved_date = $requisition->approved_date;
+        $this->issued_date = $requisition->issued_date;
+        $this->received_date = $requisition->received_date;
+        $this->requested_date = $requisition->requested_date;
     }
 }

@@ -29,22 +29,32 @@ class DatabaseSeeder extends Seeder
             'name' => 'User'
         ]);
 
+        $guest = Role::create([
+            'name' => 'Guest'
+        ]);
+
         $dave = User::factory()->create([
             'name' => 'Dave Madayag',
             'email' => 'dave@example.com',
+            'gender' => 'Male'
         ]);
 
         $mike = User::factory()->create([
             'name' => 'Mike Alsong',
-            'email' => 'mike@example.com']);
+            'email' => 'mike@example.com',
+             'gender' => 'Male'
+        ]);
 
         $rocky = User::factory()->create([
             'name' => 'Rocky Vagallon',
-            'email' => 'rocky@example.com']);
+            'email' => 'rocky@example.com',
+            'gender' => 'Male'
+        ]);
 
         $aizy = User::factory()->create([
             'name' => 'Aizy Lyn P Joloyohoy',
-            'email' => 'aizy@ocdcaraga.com'
+            'email' => 'aizy@ocdcaraga.com',
+            'gender' => 'Female'
         ]);
 
         $dave->assignRole($super);

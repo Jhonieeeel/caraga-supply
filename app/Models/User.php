@@ -22,7 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'gender'
+        'gender',
+        'dtr_number',
+        'designation',
+        'office_position'
     ];
 
     /**
@@ -48,6 +51,10 @@ class User extends Authenticatable
         ];
     }
 
+    public function guest() {
+        return $this->hasOne(Guest::class);
+    }
+
     public function employee()
     {
         return $this->hasOne(Employee::class);
@@ -57,4 +64,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(Requisition::class);
     }
+
 }

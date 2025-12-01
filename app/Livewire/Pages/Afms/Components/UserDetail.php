@@ -13,6 +13,17 @@ class UserDetail extends Component
     public User $user;
     public UserForm $userForm;
 
+    // userInfo
+
+
+    public function updatePassword() {
+        return;
+    }
+
+    public function updateUserInfo() {
+        return $this->userForm->updateInfo($this->user);
+    }
+
     #[On('user-detail')]
     public function userDetail(User $user)
     {

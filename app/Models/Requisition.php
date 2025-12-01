@@ -14,7 +14,12 @@ class Requisition extends Model
         'issued_by',
         'received_by',
         'completed',
-        'pdf'
+        'pdf',
+        'purpose',
+        'approved_date',
+        'issued_date',
+        'received_date',
+        'requested_date'
     ];
 
     public function requestedBy()

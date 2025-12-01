@@ -3,8 +3,10 @@
 namespace App\Livewire\Pages\Afms;
 
 use App\Actions\Employee\CreateEmployee;
+use App\Actions\Guest\CreateGuest;
 use App\Actions\User\CreateUser;
 use App\Livewire\Forms\EmployeeForm;
+use App\Livewire\Forms\GuestForm;
 use App\Livewire\Forms\UserForm;
 use App\Models\Section;
 use App\Models\Unit;
@@ -20,9 +22,22 @@ class UserManagement extends Component
     // forms
     public UserForm $userForm;
     public EmployeeForm $employeeForm;
+    public GuestForm $guestForm;
     public $role_id;
     public $unitId;
     public $sectionId;
+
+    // guest form
+    public $agency;
+
+
+    public function createGuest(CreateUser $createUser, CreateGuest $createGuest) {
+
+        $user = $this->userForm->submitGuest($createUser);
+        $this->guestForm->fillform($user->id, $this->agency);
+        $this->guestForm->submit($createGuest);
+
+    }
 
     public function create(CreateUser $create_user, CreateEmployee $create_employee)
     {

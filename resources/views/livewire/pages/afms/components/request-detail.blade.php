@@ -63,10 +63,16 @@
                         @endif
                     </div>
                 </div>
+                {{-- users --}}
+                <div class="col-span-4">
+                    <h3 class="text-lg font-semibold">Employees/Guest</h3>
+                </div>
                 <div class="sm:col-span-2 col-span-4">
                     <x-select.styled :disabled="$disableStatus" wire:model="requestForm.requested_by" label="Requested by *"
                         hint="Select requester" :options="$this->getUsers" searchable />
                 </div>
+                {{-- dates --}}
+
                 @if ($isAdmin)
                     <div class="sm:col-span-2 col-span-4">
                         <x-select.styled :disabled="$disableStatus" wire:model="requestForm.approved_by" label="Approved by *"
@@ -82,7 +88,23 @@
                         hint="Select receiver" :options="$this->getUsers" searchable />
                 </div>
                 <div class="col-span-4">
-                    <x-textarea label="Purpose *" wire:model="requestForm.purpose" hint="Insert the purpose" />
+                    <h3 class="text-lg font-semibold">Dates</h3>
+                </div>
+                <div class="sm:col-span-2 col-span-4">
+                    <x-date format="YYYY-MM-DD" label="Requested Date *" wire:model="requestForm.requested_date" />
+                </div>
+                <div class="sm:col-span-2 col-span-4">
+                    <x-date format="YYYY-MM-DD" label="Approved Date *" x wire:model="requestForm.approved_date" />
+                </div>
+                <div class="sm:col-span-2 col-span-4">
+                    <x-date format="YYYY-MM-DD" label="Issued Date *" wire:model="requestForm.issued_date" />
+                </div>
+                <div class="sm:col-span-2 col-span-4">
+                    <x-date format="YYYY-MM-DD" label="Received Date *" wire:model="requestForm.received_date" />
+                </div>
+                <div class="col-span-4">
+                    <x-textarea label="Purpose *" :disabled="$disableStatus" wire:model="requestForm.purpose"
+                        hint="Insert the purpose" />
                 </div>
                 <div class="sm:col-span-4 col-span-4 sm:ms-auto flex sm:items-center gap-x-3">
                     @if (!$requisition->completed)
@@ -109,7 +131,6 @@
                             </x-button>
                         @endif
                     @endif
-
                 </div>
             </form>
             <div class="sm:col-span-4 flex flex-col sm:pt-4">
@@ -152,8 +173,8 @@
                                             @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                     <x-button.circle flat
-                                                        wire:click="editRequestItem({{ $item }})" icon="pencil"
-                                                        color="teal" />
+                                                        wire:click="editRequestItem({{ $item }})"
+                                                        icon="pencil" color="teal" />
                                                     <x-button.circle flat
                                                         wire:click="deleteRequisitionItem({{ $item->id }})"
                                                         icon="trash" color="red" />

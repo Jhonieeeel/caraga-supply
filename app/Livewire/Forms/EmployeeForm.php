@@ -17,8 +17,7 @@ class EmployeeForm extends Form
     #[Validate('exists:users,id')]
     public ?int $user_id = null;
 
-
-      public function fillForm($unit_id, $section_id, $user_id): void
+    public function fillForm($unit_id, $section_id, $user_id): void
     {
         $this->section_id = $section_id;
         $this->unit_id = $unit_id;

@@ -26,7 +26,6 @@ class RequestDetail extends Component
     public RequisitionForm $requestForm;
     public ItemForm $itemForm;
 
-
     public function viewPdf()  {
         $this->dispatch('change-tab', tab: 'RIS')->to(RequisitionTable::class);
         $this->dispatch('change-ris-step', step: 2);
@@ -76,7 +75,6 @@ class RequestDetail extends Component
         return $this->requestForm->ris = "RIS-{$date}-{$count}";
     }
 
-
     #[Computed()]
     public function getUsers()
     {
@@ -89,15 +87,13 @@ class RequestDetail extends Component
 
     public function update(UpdateRequestAction $update_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
     {
+
         $response = $this->requestForm->update($this->requisition, $update_request_action, $update_stock_quantity, $create_transaction);
         if ($response->completed) {
             $update_stock_quantity->handle($response);
         }
 
         $this->requisition = $response;
-
-        // $this->dispatch('update-request-table');
-        // $this->dispatch('view-requisition', requisition: $this->requisition->id)
 
         $this->dialog()->success('Success', 'Request Detail Updated!')->send();
     }

@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('dtr_number')->nullable();
+            $table->string('designation')->nullable();
+            $table->string('office_position')->nullable();
             $table->string('gender')->default('Male');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
