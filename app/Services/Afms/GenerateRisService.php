@@ -21,6 +21,18 @@ class GenerateRisService
         $docx->setValue('issued_by', $requisition->issuedBy->name ?? '');
         $docx->setValue('received_by', $requisition->receivedBy->name ?? '');
 
+        // user designation
+        $docx->setValue('req_designation', $requisition->requestedBy->designation ?? '');
+        $docx->setValue('approved_designation', $requisition->approvedBy->designation ?? '');
+        $docx->setValue('issued_designation', $requisition->requestedBy->designation ?? '');
+        $docx->setValue('received_designation', $requisition->receivedBy->designation ?? '');
+
+        // dates
+        $docx->setValue('requested_date', $requisition->requested_date ?? '');
+        $docx->setValue('approved_date', $requisition->approved_date ?? '');
+        $docx->setValue('issued_date', $requisition->issued_date ?? '');
+        $docx->setValue('received_date', $requisition->received_date ?? '');
+
         $data = [];
 
         foreach ($requisition->items as $item) {
@@ -30,6 +42,8 @@ class GenerateRisService
                 'item' => $item->stock->supply->name ?? '',
                 'quantity' => $item->requested_qty ?? '',
                 'yes' => '✓',
+
+
                 'no'  => '',
                 'remarks' => $item->remarks ?? '',
             ];

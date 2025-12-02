@@ -11,6 +11,8 @@
 
             $disableStatus = $isApproved || !$status;
 
+            $isCompleted = $requisition->completed;
+
             $isOwner = auth()->user()->id === $requisition->user_id;
             $isUser = auth()->user()->hasRole('User');
             $isAdmin = auth()->user()->hasRole('Super Admin');
@@ -65,46 +67,46 @@
                 </div>
                 {{-- users --}}
                 <div class="col-span-4">
-                    <h3 class="text-lg font-semibold">Employees/Guest</h3>
+                    <h3 class="text-lg font-semibold">Users </h3>
                 </div>
                 <div class="sm:col-span-2 col-span-4">
-                    <x-select.styled :disabled="$disableStatus" wire:model="requestForm.requested_by" label="Requested by *"
+                    <x-select.styled :disabled="$isCompleted" wire:model="requestForm.requested_by" label="Requested by *"
                         hint="Select requester" :options="$this->getUsers" searchable />
+                </div>
+                <div class="sm:col-span-2 col-span-4">
+                    <x-select.styled :disabled="$isCompleted" wire:model="requestForm.received_by" label="Received by *"
+                        hint="Select receiver" :options="$this->getUsers" searchable />
                 </div>
                 {{-- dates --}}
 
                 @if ($isAdmin)
                     <div class="sm:col-span-2 col-span-4">
-                        <x-select.styled :disabled="$disableStatus" wire:model="requestForm.approved_by" label="Approved by *"
+                        <x-select.styled :disabled="$isCompleted" wire:model="requestForm.approved_by" label="Approved by *"
                             hint="Select approver" :options="$this->getUsers" searchable />
                     </div>
                     <div class="sm:col-span-2 col-span-4">
-                        <x-select.styled :disabled="$disableStatus" wire:model="requestForm.issued_by" label="Issued by *"
+                        <x-select.styled :disabled="$isCompleted" wire:model="requestForm.issued_by" label="Issued by *"
                             hint="Select issueance" :options="$this->getUsers" searchable />
+                    </div>
+                    <div class="col-span-4">
+                        <h3 class="text-lg font-semibold">Dates</h3>
+                    </div>
+                    <div class="sm:col-span-2 col-span-4">
+                        <x-date format="YYYY-MM-DD" label="Approved Date *" wire:model="requestForm.approved_date" />
+                    </div>
+                    <div class="sm:col-span-2 col-span-4">
+                        <x-date format="YYYY-MM-DD" label="Issued Date *" wire:model="requestForm.issued_date" />
                     </div>
                 @endif
                 <div class="sm:col-span-2 col-span-4">
-                    <x-select.styled :disabled="$disableStatus" wire:model="requestForm.received_by" label="Received by *"
-                        hint="Select receiver" :options="$this->getUsers" searchable />
-                </div>
-                <div class="col-span-4">
-                    <h3 class="text-lg font-semibold">Dates</h3>
-                </div>
-                <div class="sm:col-span-2 col-span-4">
                     <x-date format="YYYY-MM-DD" label="Requested Date *" wire:model="requestForm.requested_date" />
                 </div>
-                <div class="sm:col-span-2 col-span-4">
-                    <x-date format="YYYY-MM-DD" label="Approved Date *" x wire:model="requestForm.approved_date" />
-                </div>
-                <div class="sm:col-span-2 col-span-4">
-                    <x-date format="YYYY-MM-DD" label="Issued Date *" wire:model="requestForm.issued_date" />
-                </div>
+
                 <div class="sm:col-span-2 col-span-4">
                     <x-date format="YYYY-MM-DD" label="Received Date *" wire:model="requestForm.received_date" />
                 </div>
                 <div class="col-span-4">
-                    <x-textarea label="Purpose *" :disabled="$disableStatus" wire:model="requestForm.purpose"
-                        hint="Insert the purpose" />
+                    <x-textarea label="Purpose *" wire:model="requestForm.purpose" hint="Insert the purpose" />
                 </div>
                 <div class="sm:col-span-4 col-span-4 sm:ms-auto flex sm:items-center gap-x-3">
                     @if (!$requisition->completed)
@@ -114,7 +116,7 @@
                                     <x-button submit loading="update" icon="document" position="right">
                                         {{ $isOwner ? 'Submit' : 'Update' }}
                                     </x-button>
-                                @elseif ($shouldDisable && $isOwner)
+                                @elseif ($isOwner && $shouldDisable)
                                     <x-button icon="document" position="right" :disabled="$shouldDisable">
                                         Pending
                                     </x-button>

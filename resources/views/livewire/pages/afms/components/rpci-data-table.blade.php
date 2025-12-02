@@ -8,7 +8,6 @@
             The supplies listed below are from stocks that have been <span class="font-semibold">touched</span> or
             transacted with.
         </p>
-
     </div>
     <form wire:submit.prevent="submit" class="sm:pb-4 my-4 sm:pt-6 grid grid-cols-1 sm:grid-cols-3 sm:gap-4 gap-3">
         <div class="sm:col-span-2 col-span-1">

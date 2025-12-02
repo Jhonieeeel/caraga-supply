@@ -36,25 +36,34 @@ class DatabaseSeeder extends Seeder
         $dave = User::factory()->create([
             'name' => 'Dave Madayag',
             'email' => 'dave@example.com',
-            'gender' => 'Male'
+            'gender' => 'Male',
+            'designation' => 'Designation 1',
+            'office_position' => 'GASU HEAD'
         ]);
 
         $mike = User::factory()->create([
             'name' => 'Mike Alsong',
             'email' => 'mike@example.com',
-             'gender' => 'Male'
+             'gender' => 'Male',
+            'designation' => 'Designation 2',
+            'office_position' => 'Programmer'
+
         ]);
 
         $rocky = User::factory()->create([
             'name' => 'Rocky Vagallon',
             'email' => 'rocky@example.com',
-            'gender' => 'Male'
+            'gender' => 'Male',
+            'designation' => 'Designation 3',
+            'office_position' => 'Programmer',
         ]);
 
         $aizy = User::factory()->create([
             'name' => 'Aizy Lyn P Joloyohoy',
             'email' => 'aizy@ocdcaraga.com',
-            'gender' => 'Female'
+            'gender' => 'Female',
+            'designation' => 'Designation 4',
+            'office_position' => 'PMU HEAD'
         ]);
 
         $dave->assignRole($super);
