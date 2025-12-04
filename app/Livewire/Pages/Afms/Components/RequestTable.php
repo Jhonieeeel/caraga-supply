@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Afms\Components;
 
+use App\Events\RequisitionUploaded;
 use App\Livewire\Forms\RequisitionForm;
 use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
@@ -55,7 +56,11 @@ class RequestTable extends Component
     public function confirmed(array $data) {
         $this->dialog()->success('Success', $data['message'])->send();
 
-        return Requisition::findOrFail($data['id'])->delete();
+        $requisition = Requisition::findOrFail($data['id'])->delete();
+
+        $this->dispatch('update-request-table');
+
+        return $requisition;
     }
 
     public function cancelled(string $message): void
@@ -63,10 +68,10 @@ class RequestTable extends Component
         $this->dialog()->error('Cancelled', $message)->send();
     }
 
+    #[On('echo:request-created,RequestCreated')]
     #[On('update-request-table')]
     public function updateList() {
     }
-
 
 
     #[Computed()]

@@ -96,6 +96,8 @@ class RequestDetail extends Component
         $this->requisition = $response;
 
         $this->dialog()->success('Success', 'Request Detail Updated!')->send();
+
+        return $this->redirectRoute('requisition.index');
     }
 
     #[On('update-detail-state')]

@@ -127,11 +127,11 @@
                                     Approved
                                 </x-button>
                             @endif
-                        @else
-                            <x-button wire:click="viewPdf" icon="document" position="right">
-                                View PDF
-                            </x-button>
                         @endif
+                    @else
+                        <x-button wire:click="viewPdf" icon="document" position="right">
+                            View PDF
+                        </x-button>
                     @endif
                 </div>
             </form>

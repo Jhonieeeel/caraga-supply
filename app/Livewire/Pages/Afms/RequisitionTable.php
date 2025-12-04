@@ -4,9 +4,9 @@ namespace App\Livewire\Pages\Afms;
 
 use App\Actions\Requisition\CreateRequestAction;
 use App\Actions\RequisitionItem\CreateItemAction;
+use App\Events\RequestCreated;
 use App\Livewire\Forms\ItemForm;
 use App\Livewire\Forms\RequisitionForm;
-use App\Livewire\Pages\Afms\Components\RequestTable;
 use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\Stock;
@@ -51,6 +51,8 @@ class RequisitionTable extends Component
             ['index' => 'quantity', 'label' => 'Stock Availability'],
             ['index' => 'action'],
         ];
+
+
     }
 
     // for modal table
@@ -79,17 +81,12 @@ class RequisitionTable extends Component
         $this->itemForm->create($create_item_action, $newRequisition);
 
         $this->dispatch('modal:add-request-close');
-
-        $this->dispatch('update-request-table');
-
         $this->dialog()->success('Success', 'Request Added!')->flash()->send();
 
+        event(new RequestCreated($newRequisition));
+        $this->dispatch('update-request-table');
+
         return $this->redirectRoute('requisition.index');
-
-    }
-
-    #[On('update-list')]
-    public function updateList($id = null) {
 
     }
 

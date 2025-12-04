@@ -57,9 +57,12 @@ class RequisitionForm extends Form
 
     public function create(CreateRequestAction $create_request_action)
     {
-        $this->validate();
+        $this->user_id = Auth::id();
 
         $requisition = Requisition::where('user_id', Auth::id())->where('completed', false)->first();
+
+        $this->validate();
+
 
         if (!$requisition) {
             return $create_request_action->handle($this->newArray());
@@ -123,7 +126,7 @@ class RequisitionForm extends Form
     {
         return [
             'ris' => $this->ris,
-            'user_id' => Auth::id(),
+            'user_id' => $this->user_id,
             'requested_by' => $this->requested_by,
             'approved_by' => $this->approved_by,
             'issued_by' => $this->issued_by,

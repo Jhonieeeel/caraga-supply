@@ -13,6 +13,7 @@
         "imtigger/laravel-job-status": "^1.2",
         "jmrashed/zkteco": "^1.2",
         "laravel/framework": "^12.0",
+        "laravel/reverb": "^1.0",
         "laravel/tinker": "^2.10.1",
         "league/csv": "^9.27.0",
         "livewire/livewire": "^3.6",
@@ -64,7 +65,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve --host=10.20.2.188 --port=8000\" \"php artisan queue:listen --tries=1\" \"npm run dev --host\" --names='server,queue,vite'"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve --host=10.20.2.223 --port=8000\" \" php artisan reverb:start \"  \"php artisan queue:listen --tries=1\" \"npm run dev --host\" --names='server,queue,vite'"
         ],
         "test": [
             "@php artisan config:clear --ansi",

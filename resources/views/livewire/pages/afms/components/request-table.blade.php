@@ -1,5 +1,5 @@
 <div>
-
+    {{-- @if ($this->rows) wire:poll.10s @else wire:poll.5s @endif --}}
     @php
         $isAdmin = auth()->user()->hasRole('Super Admin');
         $user = auth()->user()->hasRole('User');

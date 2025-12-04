@@ -14,10 +14,12 @@
         "axios": "^1.11.0",
         "blade-formatter": "^1.44.2",
         "concurrently": "^9.0.1",
+        "laravel-echo": "^2.2.6",
         "laravel-vite-plugin": "^2.0.0",
         "postcss": "^8.4.31",
         "prettier": "^3.6.2",
         "prettier-plugin-tailwindcss": "^0.7.1",
+        "pusher-js": "^8.4.0",
         "tailwindcss": "^4.1.12",
         "vite": "^7.0.4"
     }
