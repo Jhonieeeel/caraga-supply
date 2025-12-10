@@ -12,7 +12,3 @@ window.Echo = new Echo({
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? "https") === "https",
     enabledTransports: ["ws", "wss"],
 });
-
-window.Echo.channel("posts").listen(".App\\Events\\PostCreated", (e) => {
-    alert("A new post has been created: " + e.post.message);
-});

@@ -11,6 +11,7 @@ use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\Stock;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
@@ -42,6 +43,8 @@ class RequisitionTable extends Component
 
     public $session = [];
 
+    public $loggedInId;
+
     public function mount()
     {
         // for modal table
@@ -51,6 +54,8 @@ class RequisitionTable extends Component
             ['index' => 'quantity', 'label' => 'Stock Availability'],
             ['index' => 'action'],
         ];
+
+        $this->loggedInId = Auth::id();
 
 
     }
@@ -69,26 +74,45 @@ class RequisitionTable extends Component
             ->withQueryString();
     }
 
-    public function create(CreateRequestAction $create_request_action, CreateItemAction $create_item_action)
+   public function create(CreateRequestAction $create_request_action, CreateItemAction $create_item_action)
     {
+        // Validate at least one requested item
         if (!count($this->itemForm->requestedItems)) {
             throw ValidationException::withMessages([
                 'itemForm.requestedItems' => 'Please add at least one item.',
             ]);
         }
 
+        // Create the new requisition
         $newRequisition = $this->requestForm->create($create_request_action);
+
+        // Create items for the requisition
         $this->itemForm->create($create_item_action, $newRequisition);
 
+        // Close the modal (frontend)
         $this->dispatch('modal:add-request-close');
-        $this->dialog()->success('Success', 'Request Added!')->flash()->send();
 
-        event(new RequestCreated($newRequisition));
+        // ----------------------------
+        // BROADCAST EVENT (Real-time update)
+        // ----------------------------
+        broadcast(new RequestCreated($newRequisition))->toOthers();
+
+        // ----------------------------
+        // OPTIONAL: dispatch browser event
+        // This can trigger a JS listener if you want visual updates
+        // ----------------------------
         $this->dispatch('update-request-table');
 
-        return $this->redirectRoute('requisition.index');
+        // Show success dialog
+        $this->dialog()->success('Success', 'Request Added!')->flash()->send();
 
+        // Reset forms if needed
+        $this->requestForm->reset();
+        $this->itemForm->reset();
+
+        return $this->redirectRoute('requisition.index');
     }
+
 
     #[On('change-tab')]
     public function changeTab($tab)

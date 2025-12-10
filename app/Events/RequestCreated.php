@@ -8,30 +8,43 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RequestCreated
+class RequestCreated implements ShouldBroadcast
 {
-    public $request;
-
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Requisition $request)
-    {
-        $this->request = $request;
-    }
+    public function __construct(
+        public Requisition $requisition
+    ){}
+
 
     /**
      * Get the channels the event should broadcast on.
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
-        return new Channel('request-created');
+        // channel name: requisitions
+       return [
+            new PrivateChannel('requisitions.'.$this->requisition->user_id),
+       ];
+    }
+
+    public function broadcastAs() {
+        return 'RequestCreated';
+    }
+
+    public function broadcastWith() {
+        return [
+            'requisition_id' => $this->requisition->id,
+            'user_id' => $this->requisition->user_id,
+        ];
     }
 }

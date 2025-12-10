@@ -8,6 +8,8 @@ use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
 use Livewire\Component;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
@@ -22,6 +24,8 @@ class RequestTable extends Component
     public string $search = '';
     public int $quantity = 5;
 
+    public int $loggedInId;
+
     public ?Requisition $requisition = null;
     public RequisitionForm $requestForm;
 
@@ -33,6 +37,21 @@ class RequestTable extends Component
             ['index' => 'completed', 'label' => 'Status'],
             ['index' => 'action']
         ];
+
+        $this->loggedInId = Auth::id();
+
+    }
+
+    public function getListeners()
+    {
+        return [
+            'echo-private:requisitions.' . $this->loggedInId . ',RequestCreated' => 'newRequestNotification',
+        ];
+    }
+
+    public function newRequestNotification($event)
+    {
+        Log::info('New Requisition Created: ' . json_encode($event));
     }
 
     public function render()
@@ -68,10 +87,7 @@ class RequestTable extends Component
         $this->dialog()->error('Cancelled', $message)->send();
     }
 
-    #[On('echo:request-created,RequestCreated')]
-    #[On('update-request-table')]
-    public function updateList() {
-    }
+
 
 
     #[Computed()]
@@ -106,6 +122,5 @@ class RequestTable extends Component
 
         $this->dispatch('current-data', requisition: $currentRequisition->id)
             ->to(RequestRIS::class);
-
     }
 }

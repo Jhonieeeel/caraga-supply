@@ -2,11 +2,6 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
-
-
-Broadcast::channel('request-created', function($request) {
-    return true;
+Broadcast::channel('requisitions.{user_id}', function ($user, $user_id) {
+    return (int) $user->id === (int) $user_id;
 });
