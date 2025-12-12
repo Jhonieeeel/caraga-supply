@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Pages\Afms\Components;
 
+use App\Events\DeleteRequest;
+use App\Events\RequestDeleted;
 use App\Events\RequisitionUploaded;
 use App\Livewire\Forms\RequisitionForm;
 use App\Livewire\Pages\Afms\RequisitionTable;
@@ -42,44 +44,34 @@ class RequestTable extends Component
 
     }
 
-    public function getListeners()
-    {
-        return [
-            'echo-private:requisitions.' . $this->loggedInId . ',RequestCreated' => 'newRequestNotification',
-        ];
-    }
-
-    public function newRequestNotification($event)
-    {
-        Log::info('New Requisition Created: ' . json_encode($event));
-    }
-
     public function render()
     {
         return view('livewire.pages.afms.components.request-table');
     }
 
-    public function deleteRequisition($requisitionId)
+    public function deleteRequisition(Requisition $requisition)
     {
 
-        if ($requisitionId) {
-           $this->dialog()
+        if ($requisition) {
+            return $this->dialog()
                 ->question('Warning', 'Are you sure?')
-                ->confirm('Confirm', 'confirmed', params: ['message' => 'Request Deleted', 'id' => $requisitionId])
+                ->confirm('Confirm', 'confirmed', params: ['message' => 'Request Deleted', 'id' => $requisition->id])
                 ->cancel('Cancel', 'cancelled', 'Request Deletion Cancelled')
                 ->send();
-
         }
+
     }
 
     public function confirmed(array $data) {
         $this->dialog()->success('Success', $data['message'])->send();
 
-        $requisition = Requisition::findOrFail($data['id'])->delete();
+        $requisition = Requisition::findOrFail($data['id']);
 
-        $this->dispatch('update-request-table');
+        // broadcast
+        broadcast(new RequestDeleted($data['id']))->toOthers();
 
-        return $requisition;
+        $requisition->delete();
+
     }
 
     public function cancelled(string $message): void
@@ -87,8 +79,13 @@ class RequestTable extends Component
         $this->dialog()->error('Cancelled', $message)->send();
     }
 
-
-
+    public function getListeners()
+    {
+        return [
+            'echo:requisitions,RequestCreated' => 'rows',
+            'echo:requisition-delete,RequestDeleted' => 'rows',
+        ];
+    }
 
     #[Computed()]
     public function rows()

@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\Section;
 use App\Models\Stock;
 use App\Models\Supply;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -127,7 +128,39 @@ class DatabaseSeeder extends Seeder
             'unit' => 'bottle',
         ]);
 
-        Stock::create([
+        $soap = Supply::create([
+            'name' => 'Soap',
+            'category' => 'supplies',
+            'unit' => 'pcs'
+        ]);
+
+        $dishwashing_liquid = Supply::create([
+            'name' => 'Dishwashing Liquid',
+            'category' => 'supplies',
+            'unit' => 'bottle',
+        ]);
+
+        $stock_soap = Stock::create([
+            'supply_id' => $soap->id,
+            'quantity' => 200,
+            'barcode' => 'SOAP001',
+            'stock_number' => 'stk-0002',
+            'price' => 50.00,
+            'initial_quantity' => 200,
+            'stock_location' => 'Main Warehouse',
+        ]);
+
+        $stock_dishwashing = Stock::create([
+            'supply_id' => $dishwashing_liquid->id,
+            'quantity' => 150,
+            'barcode' => 'DWL001',
+            'stock_number' => 'stk-0003',
+            'price' => 80.00,
+            'initial_quantity' => 150,
+            'stock_location' => 'Main Warehouse',
+        ]);
+
+        $stock_alchol = Stock::create([
             'supply_id' => $alcohol->id,
             'quantity' => 100,
             'barcode' => 'ALC50ML001',
@@ -135,6 +168,28 @@ class DatabaseSeeder extends Seeder
             'price' => 150.00,
             'initial_quantity' => 100,
             'stock_location' => 'Main Warehouse',
+        ]);
+
+        // so every add og stock kay e add pod sa transaction considering nga ge addan og quantity
+        Transaction::create([
+            'stock_id' => $stock_alchol->id,
+            'type_of_transaction' => 'PO',
+            'quantity' => $stock_alchol->quantity,
+            'initial_quantity' => $stock_alchol->initial_quantity,
+        ]);
+
+        Transaction::create([
+            'stock_id' => $stock_dishwashing->id,
+            'type_of_transaction' => 'PO',
+            'quantity' => $stock_dishwashing->quantity,
+            'initial_quantity' => $stock_dishwashing->initial_quantity,
+        ]);
+
+        Transaction::create([
+            'stock_id' => $stock_soap->id,
+            'type_of_transaction' => 'PO',
+            'quantity' => $stock_soap->quantity,
+            'initial_quantity' => $stock_soap->initial_quantity,
         ]);
 
     }

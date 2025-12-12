@@ -22,11 +22,5 @@
     <h2 class="font-semibold text-xl text-gray-800 leading-tight py-3 sm:py-4">
         Supplies Report — Showing All Transactions This Month
     </h2>
-    <x-table :headers="$headers" :rows="$this->rows ?? []" filter :quantity="[2, 5, 10]">
-        @interact('column_action', $transaction)
-            <x-button.circle wire:click="createRpci({{ $transaction->stock_id }})" text="{{ $transaction->id }}"
-                color="teal" loading icon="document-chart-bar" />
-        @endinteract
-    </x-table>
 </div>
 

@@ -76,37 +76,23 @@ class RequisitionTable extends Component
 
    public function create(CreateRequestAction $create_request_action, CreateItemAction $create_item_action)
     {
-        // Validate at least one requested item
         if (!count($this->itemForm->requestedItems)) {
             throw ValidationException::withMessages([
                 'itemForm.requestedItems' => 'Please add at least one item.',
             ]);
         }
 
-        // Create the new requisition
         $newRequisition = $this->requestForm->create($create_request_action);
 
-        // Create items for the requisition
         $this->itemForm->create($create_item_action, $newRequisition);
 
-        // Close the modal (frontend)
         $this->dispatch('modal:add-request-close');
 
-        // ----------------------------
-        // BROADCAST EVENT (Real-time update)
-        // ----------------------------
+
         broadcast(new RequestCreated($newRequisition))->toOthers();
 
-        // ----------------------------
-        // OPTIONAL: dispatch browser event
-        // This can trigger a JS listener if you want visual updates
-        // ----------------------------
-        $this->dispatch('update-request-table');
-
-        // Show success dialog
         $this->dialog()->success('Success', 'Request Added!')->flash()->send();
 
-        // Reset forms if needed
         $this->requestForm->reset();
         $this->itemForm->reset();
 

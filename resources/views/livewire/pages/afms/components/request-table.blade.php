@@ -20,7 +20,6 @@
 
                 $isUpdated = $requisition->requested_by && $requisition->received_by;
             @endphp
-
             @if ($requisition->completed)
                 <x-badge text="Completed" color="green" />
             @elseif($isApproved)
@@ -37,7 +36,7 @@
             @if (auth()->user()->hasRole('Super Admin') ||
                     (!$requisition->completed && auth()->user()->id === $requisition->user_id))
                 <x-button.circle flat color="red" loading="deleteRequisition" icon="trash"
-                    wire:click="deleteRequisition({{ $requisition->id }})" />
+                    wire:click="deleteRequisition({{ $requisition }})" />
             @endif
         @endinteract
     </x-table>

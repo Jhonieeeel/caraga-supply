@@ -1,5 +1,4 @@
 import "./bootstrap";
-import "./echo";
 document.addEventListener("livewire:navigated", () => {
     if (window.tallstack) {
         window.tallstack.init();

@@ -8,11 +8,10 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RequestCreated implements ShouldBroadcast
+class RequestDeleted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,9 +19,8 @@ class RequestCreated implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public Requisition $requisition
+        public int $id
     ){}
-
 
     /**
      * Get the channels the event should broadcast on.
@@ -31,14 +29,8 @@ class RequestCreated implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        // channel name: requisitions
-       return [
-            new Channel('requisitions'),
-       ];
-    }
-    public function broadcastWith() {
         return [
-            'requisition' => $this->requisition,
+            new Channel('requisition-delete'),
         ];
     }
 }

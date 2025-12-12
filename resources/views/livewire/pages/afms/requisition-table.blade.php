@@ -47,6 +47,13 @@
                         {{-- rsmi --}}
                         <livewire:pages.afms.components.request-rsmi />
                     </x-tab.items>
+                    <x-tab.items tab="RPCI">
+                        <x-slot:right>
+                            <x-icon name="cog-6-tooth" class="w-5 h-5" />
+                        </x-slot:right>
+                        {{-- rsmi --}}
+                        <livewire:pages.afms.components.request-rpci />
+                    </x-tab.items>
                 @endrole
             </x-tab>
         </div>
