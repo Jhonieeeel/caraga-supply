@@ -44,6 +44,7 @@ class StockForm extends Form
         $create_transaction->handle([
             'stock_id' => $stock->id,
             'quantity' => $this->quantity,
+            'current_quantity' => $stock->quantity,
             'type_of_transaction' => 'PO'
         ]);
 

@@ -144,7 +144,7 @@ class DatabaseSeeder extends Seeder
             'supply_id' => $soap->id,
             'quantity' => 200,
             'barcode' => 'SOAP001',
-            'stock_number' => 'stk-0002',
+            'stock_number' => 'stock-0002',
             'price' => 50.00,
             'initial_quantity' => 200,
             'stock_location' => 'Main Warehouse',
@@ -154,7 +154,7 @@ class DatabaseSeeder extends Seeder
             'supply_id' => $dishwashing_liquid->id,
             'quantity' => 150,
             'barcode' => 'DWL001',
-            'stock_number' => 'stk-0003',
+            'stock_number' => 'stock-0003',
             'price' => 80.00,
             'initial_quantity' => 150,
             'stock_location' => 'Main Warehouse',
@@ -164,7 +164,7 @@ class DatabaseSeeder extends Seeder
             'supply_id' => $alcohol->id,
             'quantity' => 100,
             'barcode' => 'ALC50ML001',
-            'stock_number' => 'stk-0001',
+            'stock_number' => 'stock-0001',
             'price' => 150.00,
             'initial_quantity' => 100,
             'stock_location' => 'Main Warehouse',
@@ -175,6 +175,7 @@ class DatabaseSeeder extends Seeder
             'stock_id' => $stock_alchol->id,
             'type_of_transaction' => 'PO',
             'quantity' => $stock_alchol->quantity,
+            'current_quantity' => $stock_alchol->quantity,
             'initial_quantity' => $stock_alchol->initial_quantity,
         ]);
 
@@ -182,6 +183,7 @@ class DatabaseSeeder extends Seeder
             'stock_id' => $stock_dishwashing->id,
             'type_of_transaction' => 'PO',
             'quantity' => $stock_dishwashing->quantity,
+            'current_quantity' => $stock_dishwashing->quantity,
             'initial_quantity' => $stock_dishwashing->initial_quantity,
         ]);
 
@@ -189,6 +191,7 @@ class DatabaseSeeder extends Seeder
             'stock_id' => $stock_soap->id,
             'type_of_transaction' => 'PO',
             'quantity' => $stock_soap->quantity,
+            'current_quantity' => $stock_soap->quantity,
             'initial_quantity' => $stock_soap->initial_quantity,
         ]);
 

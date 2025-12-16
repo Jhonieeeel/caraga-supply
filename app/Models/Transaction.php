@@ -11,6 +11,7 @@ class Transaction extends Model
         'stock_id',
         'requisition_id',
         'quantity',
+        'current_quantity',
         'type_of_transaction',
         'rsmi_file',
         'rpci_file',

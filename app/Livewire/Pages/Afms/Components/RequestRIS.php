@@ -60,8 +60,6 @@ class RequestRIS extends Component
         // generate pdf
         ProcessRequisition::dispatchSync($this->requisition->id);
 
-        // $this->redirectRoute('requisition.index');
-
         $this->dialog()->success('Success', 'RIS Generated!')->flash()->send();
         $this->dispatch('update-ris-state');
 

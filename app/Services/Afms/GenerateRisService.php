@@ -37,7 +37,7 @@ class GenerateRisService
 
         foreach ($requisition->items as $item) {
             $data[] = [
-                'stock_no' => $item->stock->barcode ?? '',
+                'stock_no' => $item->stock->stock_number ?? '',
                 'unit' => $item->stock->supply->unit ?? '',
                 'item' => $item->stock->supply->name ?? '',
                 'quantity' => $item->requested_qty ?? '',

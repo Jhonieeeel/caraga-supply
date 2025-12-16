@@ -22,7 +22,7 @@ class GenerateRpciService
 
         // duplicate or insert new row
         $rowNumber = 17;
-        for ($index = 0; $index < count($transactions); $index++) {
+        for ($index = 0; $index <= count($transactions); $index++) {
             $sheet->insertNewRowBefore($rowNumber + $index + 1, 1);
         }
 
@@ -40,7 +40,6 @@ class GenerateRpciService
             if ($sheetToCopy) {
                 $newTitle = (string)$articleNumber;
 
-                // Limit to 31 characters and replace invalid characters
                 $newTitle = substr($newTitle, 0, 31);
                 $newTitle = preg_replace('/[:\\\\\/\?\*\[\]]/', '_', $newTitle);
 
@@ -65,12 +64,12 @@ class GenerateRpciService
 
             // name col
             $sheet->setCellValue("D{$index}", $transaction['stock_name']);
-            $sheet->getCell("D{$index}")->getHyperlink()->setUrl("sheet://{$articleNumber}!A1");
+            $sheet->getCell("D{$index}")->getHyperlink()->setUrl("#'{$articleNumber}'!A1");
 
             $cell = "D{$index}";
             $sheet->getStyle($cell)->applyFromArray([
             'font' => [
-                    'color' => ['argb' => Color::COLOR_DARKBLUE],
+                    'color' => ['argb' => Color::COLOR_BLUE],
                     'underline' => Font::UNDERLINE_SINGLE,
                 ],
             ]);
@@ -97,9 +96,9 @@ class GenerateRpciService
 
             $transaction = $transactions[$index];
 
-            // 1️⃣ Select sheet by name
             $sheetName = (string)($index + 1);
             $currentSheet = $spreadsheet->getSheetByName($sheetName);
+
 
             if (!$currentSheet) {
                 Log::error("Sheet {$sheetName} not found!");
@@ -107,49 +106,53 @@ class GenerateRpciService
             }
 
             $currentSheet->setCellValue("F4", $transaction['stock_name']);
+            $startingRow = 17 + $index;
+            $currentSheet->getCell("F4")->getHyperlink()->setUrl("#'sheet 1 '!D{$startingRow}");
             $currentSheet->setCellValue("K4", $transaction['stock_number']);
 
 
             $poTransactions = $transaction['po']['transactions'];
             $risTransactions = $transaction['ris']['transactions'];
+            $risData = $transaction['ris']['ris'];
 
-            // Po Transactions
+            Log::info("RIS".$risData);
+
+
+
             $startRow = 10;
-            foreach($poTransactions as $transaction) {
 
-                // write data
+            $allTransactions = collect($poTransactions)
+                ->merge($risTransactions)
+                ->sortBy('created_at')
+                ->values();
+
+            foreach ($allTransactions as $transaction) {
+
+                $currentSheet->insertNewRowBefore($startRow + $index + 1, 1);
+
                 $date = Carbon::parse($transaction['created_at'])->format('Y-m-d');
-                $currentSheet->setCellValue("F{$startRow}", $date);
+
+                // Date
+                $currentSheet->setCellValue("E{$startRow}", $date);
+
+                // Transaction type
                 $currentSheet->setCellValue("F{$startRow}", $transaction['type_of_transaction']);
-                $currentSheet->setCellValue("G{$startRow}", $transaction['quantity']);
-                $currentSheet->setCellValue("J{$startRow}", $transaction['quantity']);
 
-                $startRow ++;
+                // RIS
+                $currentSheet->setCellValue("I{$startRow}", $risData->user->employee->section->name);
+
+                // Quantities
+                if ($transaction['type_of_transaction'] === 'PO') {
+                    $currentSheet->setCellValue("G{$startRow}", $transaction['quantity']);
+                } else { // RIS
+                    $currentSheet->setCellValue("H{$startRow}", $transaction['quantity']);
+                }
+
+                $currentSheet->setCellValue("J{$startRow}", $transaction['current_quantity']);
+
+                $startRow++;
             }
-
-            // Ris Transactions
-            foreach($risTransactions as $transaction) {
-
-                // write data
-                $date = Carbon::parse($transaction['created_at'])->format('Y-m-d');
-                $currentSheet->setCellValue("F{$startRow}", $date);
-                $currentSheet->setCellValue("F{$startRow}", $transaction['type_of_transaction']);
-                $currentSheet->setCellValue("H{$startRow}", $transaction['quantity']);
-
-                // calculation
-                $currentSheet->setCellValue("J{$startRow}", "=J" . ($startRow - 1) . "+G{$startRow}-H{$startRow}");
-
-
-                $startRow ++;
-
-            }
-
-
         }
-
-
-
-
 
         // save process
         $directory = storage_path('app/public/rpci');
