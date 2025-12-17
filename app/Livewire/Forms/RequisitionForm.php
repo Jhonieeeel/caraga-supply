@@ -115,7 +115,7 @@ class RequisitionForm extends Form
                     'stock_id' => $item->stock_id,
                     'quantity' => $item->requested_qty,
                     'current_quantity' => $item->stock->quantity,
-                    'type_of_transaction' => $requisition->ris,
+                    'type_of_transaction' => "RIS",
                 ]);
             }
         }

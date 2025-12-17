@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Afms\Components;
 
+use App\Models\Requisition;
 use App\Models\Stock;
 use App\Models\Transaction;
 use App\Services\Afms\GenerateRpciService;
@@ -9,7 +10,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class RequestRpci extends Component
@@ -21,6 +24,8 @@ class RequestRpci extends Component
     public int $quantity = 5;
 
     public Collection $rpci;
+
+    public Requisition $requisition;
 
     public $transactionDate;
 
@@ -103,7 +108,8 @@ class RequestRpci extends Component
             $risTransactions = $stock->transactions()
                 ->where('type_of_transaction', 'RIS')->with('requisition')->get();
 
-            $ris = $risTransactions->pluck('requisition')->first();
+
+            $this->requisition = $risTransactions->first()?->requisition;
 
             return [
                 'stock_id' => $stock->id,
@@ -120,8 +126,6 @@ class RequestRpci extends Component
                 'ris' => [
                     'transactions' => $risTransactions->values()->toArray(),
                     'total_quantity' => $risTransactions->sum('quantity'),
-                    'ris' => $ris
-
                 ],
 
                 'net_quantity' =>
@@ -130,7 +134,7 @@ class RequestRpci extends Component
             ];
         });
 
-        return $generate_rpci->handle($stockDetails->toArray());
+        return $generate_rpci->handle($stockDetails->toArray(), $this->requisition);
     }
 
     public function render()

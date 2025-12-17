@@ -68,8 +68,6 @@ class GenerateRsmiService
 
         $writer->save($outputPath);
 
-        return $relativePath
-
-        ;
+        return $relativePath;
     }
 }

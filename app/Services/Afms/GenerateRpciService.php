@@ -12,7 +12,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class GenerateRpciService
 {
-    public function handle(array $transactions)
+    public function handle(array $transactions, $requisition)
     {
         // read file
         $srcFile = public_path('templates/rpci_template.xlsx');
@@ -113,9 +113,8 @@ class GenerateRpciService
 
             $poTransactions = $transaction['po']['transactions'];
             $risTransactions = $transaction['ris']['transactions'];
-            $risData = $transaction['ris']['ris'];
 
-            Log::info("RIS".$risData);
+            // Log::info("RIS".$risData);
 
 
 
@@ -136,16 +135,19 @@ class GenerateRpciService
                 $currentSheet->setCellValue("E{$startRow}", $date);
 
                 // Transaction type
-                $currentSheet->setCellValue("F{$startRow}", $transaction['type_of_transaction']);
 
-                // RIS
-                $currentSheet->setCellValue("I{$startRow}", $risData->user->employee->section->name);
+                // $currentSheet->setCellValue("I{$startRow}", $risData->user->employee->section->name);
 
                 // Quantities
                 if ($transaction['type_of_transaction'] === 'PO') {
+                    $currentSheet->setCellValue("F{$startRow}", $transaction['type_of_transaction']);
                     $currentSheet->setCellValue("G{$startRow}", $transaction['quantity']);
                 } else { // RIS
+                    $currentSheet->setCellValue("F{$startRow}", $requisition->ris);
                     $currentSheet->setCellValue("H{$startRow}", $transaction['quantity']);
+                    $section = $requisition->user->employee->section->name;
+                    $unit = $requisition->user->employee->unit->name;
+                    $currentSheet->setCellValue("I{$startRow}", "{$section}-{$unit}");
                 }
 
                 $currentSheet->setCellValue("J{$startRow}", $transaction['current_quantity']);
@@ -165,6 +167,8 @@ class GenerateRpciService
         $outputPath = $directory . DIRECTORY_SEPARATOR . $newFileName;
 
         $writer->save($outputPath);
+
+        $path = 'rpci/'.$newFileName;
 
         return $newFileName;
     }
