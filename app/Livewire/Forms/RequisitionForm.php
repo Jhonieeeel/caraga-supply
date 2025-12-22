@@ -79,8 +79,6 @@ class RequisitionForm extends Form
             $this->validate();
         }
 
-        Log::info('Data.', $this->toArray());
-
         $currentPath = storage_path('app/public/' . $requisition->pdf);
 
         if ($this->temporaryFile && file_exists($currentPath)) {

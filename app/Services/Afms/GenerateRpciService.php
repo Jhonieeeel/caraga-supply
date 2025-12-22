@@ -142,17 +142,23 @@ class GenerateRpciService
                 if ($transaction['type_of_transaction'] === 'PO') {
                     $currentSheet->setCellValue("F{$startRow}", $transaction['type_of_transaction']);
                     $currentSheet->setCellValue("G{$startRow}", $transaction['quantity']);
-                } else { // RIS
-                    $currentSheet->setCellValue("F{$startRow}", $requisition->ris);
-                    $currentSheet->setCellValue("H{$startRow}", $transaction['quantity']);
-                    $section = $requisition->user->employee->section->name;
-                    $unit = $requisition->user->employee->unit->name;
-                    $currentSheet->setCellValue("I{$startRow}", "{$section}-{$unit}");
+                } else {
+                    // RIS
+                    $count = $requisition->count();
+                   foreach ($requisition as $request) {
+                        $currentSheet->setCellValue("F{$startRow}", $request->ris);
+                        $currentSheet->setCellValue("H{$startRow}", $transaction['quantity']);
+                        $section = $request->user->employee->section->name;
+                        $unit = $request->user->employee->unit->name;
+                        $currentSheet->setCellValue("I{$startRow}", "{$section}-{$unit}");
+                   }
                 }
+
+                $startRow++;
+
 
                 $currentSheet->setCellValue("J{$startRow}", $transaction['current_quantity']);
 
-                $startRow++;
             }
         }
 

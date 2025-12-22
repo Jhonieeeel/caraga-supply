@@ -25,7 +25,7 @@ class RequestRpci extends Component
 
     public Collection $rpci;
 
-    public Requisition $requisition;
+    public $requisition;
 
     public $transactionDate;
 
@@ -109,7 +109,10 @@ class RequestRpci extends Component
                 ->where('type_of_transaction', 'RIS')->with('requisition')->get();
 
 
-            $this->requisition = $risTransactions->first()?->requisition;
+            // $this->requisition = $risTransactions->
+            $this->requisition = $risTransactions->pluck('requisition')->filter();
+
+            // dd($this->requisition);
 
             return [
                 'stock_id' => $stock->id,
