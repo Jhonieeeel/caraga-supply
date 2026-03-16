@@ -26,8 +26,6 @@
   color utility to any element that depends on these defaults.
 */
 
-
-
 @layer base {
     *,
     ::after,
@@ -55,7 +53,6 @@
     --color-primary-800: #3a30a3;
     --color-primary-900: #332e81;
     --color-primary-950: #231e54;
-
 
     /* --color-primary-50: #eef2ff;
     --color-primary-100: #e0e7ff;

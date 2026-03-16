@@ -2,17 +2,15 @@
 
 namespace App\Services\Afms;
 
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use App\Services\Print\PrPrintService;
 
-
-class RequestService {
-    public function handle($request) {
-
-        $template = public_path('');
-
-        $sheet = IOFactory::load($template);
-        $activeSheet = $sheet->getActiveSheet();
-
-    }
+/**
+ * @deprecated Use App\Services\Print\PrPrintService directly.
+ *
+ * Kept as an alias so any code that still injects RequestService
+ * continues to work without changes. Remove once all callsites
+ * have been updated to PrPrintService.
+ */
+class RequestService extends PrPrintService
+{
 }

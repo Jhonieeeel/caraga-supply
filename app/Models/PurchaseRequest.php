@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PurchaseRequest extends Model
 {
@@ -44,5 +45,32 @@ class PurchaseRequest extends Model
 
     public function purchaseOrder() {
         return $this->hasOne(PurchaseOrder::class);
+    }
+
+    //PR EXcel Template Relationships
+    public function workbookBlocks()
+    {
+        return $this->hasMany(PrWorkbookBlock::class)
+            ->orderBy('sort_order');
+    }
+
+    public function mealLotBlocks()
+    {
+        return $this->hasMany(PrMealLotBlock::class);
+    }
+
+    public function transportation(): HasOne
+    {
+        return $this->hasOne(PrTransportation::class);
+    }
+
+    public function service(): HasOne
+    {
+        return $this->hasOne(PrService::class);
+    }
+
+    public function adminJanitorialBlocks()
+    {
+        return $this->hasMany(PrAdminJanitorialBlock::class)->orderBy('sort_order');
     }
 }
