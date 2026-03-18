@@ -16,9 +16,6 @@ class UserForm extends Form
     #[Validate('required|string|max:255|email|unique:users,email')]
     public ?string $email = null;
 
-    #[Validate('required|string|min:8|confirmed')]
-    public ?string $password = null;
-
     #[Validate('nullable')]
     public $dtr_number;
 
@@ -31,16 +28,40 @@ class UserForm extends Form
     #[Validate('required|in:male,female')]
     public $gender;
 
-    #[Validate('required|string|min:8')]
+
+    // update 
+
+    public ?string $current_password = '';
+
+    #[Validate('required|string|min:8|confirmed')]
+    public ?string $password = null;
+
+    #[Validate('required|string|min:8|confirmed')]
+    public ?string $new_password_confirmation = null;
+
+    // create
+
+    #[Validate('required|string|min:8|confirmed')]
+    public ?string $new_password = null;
+
+     #[Validate('required|string|min:8|confirmed')]
     public ?string $password_confirmation = null;
+
 
     public function updatePass(User $user) {
 
-        $this->validate();
+        $validated = $this->validate([
+            'current_password' => ['required', 'string', 'current_password'],
+            'new_password' => ['required', 'string', 'confirmed'], // looks for new_password_confirmation
+        ]);
 
         $user->update([
-            'password' => $this->password
+            'password' => $validated['new_password']
         ]);
+
+        Log:info("Update ".$user);
+
+        return $user;
     }
 
     public function updateInfo(User $user) {

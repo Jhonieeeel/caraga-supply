@@ -63,7 +63,6 @@ class RequisitionForm extends Form
 
         $this->validate();
 
-
         if (!$requisition) {
             return $create_request_action->handle($this->newArray());
         }
