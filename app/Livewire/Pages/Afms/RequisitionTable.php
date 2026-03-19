@@ -60,14 +60,14 @@ class RequisitionTable extends Component
 
     }
 
-    // for modal table
     #[Computed()]
     public function rows()
     {
-        return Stock::query()->with('supply:id,name')
+        return Stock::query()
+            ->with('supply:id,name')
             ->when($this->search, function ($query) {
                 $query->whereHas('supply', function (Builder $supplyQuery) {
-                    return $supplyQuery->where('name', 'like', "{$this->search}%");
+                    $supplyQuery->where('name', 'like', "%{$this->search}%");
                 });
             })
             ->paginate($this->quantity)
@@ -84,23 +84,24 @@ class RequisitionTable extends Component
 
         $newRequisition = $this->requestForm->create($create_request_action);
 
-        $this->itemForm->create($create_item_action, $newRequisition);
 
-        $this->dispatch('modal:add-request-close');
+        // mo add og items if the RIS is still false or not completed
+        if ($newRequisition) {
 
+            $this->itemForm->create($create_item_action, $newRequisition);
+            broadcast(new RequestCreated($newRequisition))->toOthers();
+            $this->dialog()->success('Success', 'Request Added!')->flash()->send();
+            $this->dispatch('modal:add-request-close');
 
-        broadcast(new RequestCreated($newRequisition))->toOthers();
+            $this->requestForm->reset();
+            $this->itemForm->reset();
+        }
 
-        $this->dialog()->success('Success', 'Request Added!')->flash()->send();
-
-        $this->requestForm->reset();
-        $this->itemForm->reset();
 
         return $this->redirectRoute('requisition.index');
     }
 
-
-    #[On('change-tab')]
+     #[On('change-tab')]
     public function changeTab($tab)
     {
         $this->tab = $tab;
@@ -117,4 +118,5 @@ class RequisitionTable extends Component
     {
         return view('livewire.pages.afms.requisition-table');
     }
+   
 }

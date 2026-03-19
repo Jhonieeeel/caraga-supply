@@ -31,8 +31,6 @@
                 <div></div>
             @endrole
 
-            auth()->user()-hasRole()
-
             {{-- FORM: Profile Update --}}
             <form wire:submit.prevent="updateUserInfo " class="space-y-3 pt-4 border-t">
 
@@ -59,7 +57,7 @@
             </form>
         </div>
 
-        <div class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
+        <form wire:submit.prevent="updatePassword" class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
 
             <div>
                 <h2 class="text-lg font-semibold text-gray-900">Update Password</h2>
@@ -70,21 +68,15 @@
 
             <div class="grid sm:grid-cols-2 gap-4 pt-2">
 
-                {{-- Current Password --}}
-                <x-password label="Current Password *" wire:model="userForm.password" :disabled="$disabled" typing-only />
-
-                {{-- New Password --}}
-                <x-password label="New Password *" wire:model="userForm.new_password" :disabled="$disabled" typing-only />
-
-                {{-- Confirm --}}
-                <x-password label="Confirm Password *" wire:model="userForm.new_password_confirmation" :disabled="$disabled"
-                    typing-only />
+                <x-password label="Current Password *" wire:model="userForm.current_password" />
+                <x-password label="New Password *" wire:model="userForm.new_password" />
+                <x-password label="Confirm Password *" wire:model="userForm.new_password_confirmation" />
 
             </div>
             <div class="pt-3 flex justify-end">
                 <x-button text="Update Password" submit />
             </div>
-        </div>
+        </form>
     @else
         {{-- EMPTY STATE --}}
         <div class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg">

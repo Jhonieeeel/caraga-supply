@@ -14,9 +14,9 @@ class UserDetail extends Component
     public UserForm $userForm;
 
     // userInfo
+    public function updatePassword(User $user) {
+        $this->userForm->updatePass($this->user);
 
-
-    public function updatePassword() {
         return;
     }
 
@@ -28,7 +28,7 @@ class UserDetail extends Component
     public function userDetail(User $user)
     {
         $this->user = $user;
-        $this->userForm->fillForm($user);
+        $data = $this->userForm->fillForm($this->user);
     }
 
     public function render()

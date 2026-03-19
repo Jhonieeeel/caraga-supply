@@ -51,7 +51,10 @@ class RequestRIS extends Component
 
         $this->dispatch('change-tab', tab: 'List')->to(RequisitionTable::class);
         $this->dispatch('update-list', id: $this->requisition->id)->to(RequestTable::class);
-        return $this->dialog()->success('Success', 'Request Completed')->send();
+        $this->dialog()->success('Success', 'Request Completed')->send();
+
+        return $this->redirectRoute('requisition.index');
+
     }
 
     // generate ris
