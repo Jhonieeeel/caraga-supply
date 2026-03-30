@@ -12,7 +12,8 @@ class MealBlockRenderer implements BlockRenderer
     public function __construct(
         private $sheet,
         private array $config,
-        private \Closure $duplicator
+        private \Closure $duplicator,
+        private \Closure $accommodationDuplicator,
     ) {}
 
     public function render(array $block, int $startRow, bool $insertNew = false): array
@@ -25,7 +26,7 @@ class MealBlockRenderer implements BlockRenderer
             $total = $this->calculateTotal($block);
 
             $this->fillTitleSection($startRow, [
-                $block['lot_title']  ?? '',
+                $block['lot_title'] ?? '',
                 'Delivery Site: ' . ($block['location'] ?? ''),
                 'Delivery Period: ' . ($block['date'] ?? ''),
             ], $total);
@@ -49,7 +50,12 @@ class MealBlockRenderer implements BlockRenderer
     private function renderAccommodation(array $data, int $startRow): int
     {
         try {
-            $startRow = ($this->duplicator)($startRow);
+            $startRow = ($this->accommodationDuplicator)($startRow);
+
+            if (!empty($this->config['total_cell'])) {
+                $totalCell = str_replace('{row}', $startRow, $this->config['total_cell']);
+                $this->sheet->setCellValue($totalCell, '');
+            }
 
             $this->fillTitleSection($startRow, [
                 $data['accommodation_title'] ?? '',

@@ -21,11 +21,12 @@ class MealDraftForm extends Form
     ];
 
     public array $currentAccommodationItem = [
-        'no_days' => 0,
-        'room_type' => '',
-        'room_arrangement' => '',
-        'inclusive_dates' => '',
-        'remarks' => '',
+        'no_of_pax' => 0,
+        'room_requirement' => '',
+        'no_of_rooms' => 0,
+        'check_in' => '',
+        'check_out' => '',
+        'no_of_nights' => 0,
         'other_requirement' => '',
         'qty' => 0,
         'unit' => '',
@@ -123,8 +124,8 @@ class MealDraftForm extends Form
         $this->cancelEdit();
 
         $required = [
-            'no_days', 'room_type', 'room_arrangement', 'inclusive_dates',
-            'remarks', 'qty', 'unit', 'estimated_unit_cost'
+            'no_of_pax', 'room_requirement', 'no_of_rooms', 'check_in', 'check_out',
+            'no_of_nights', 'qty', 'unit', 'estimated_unit_cost'
         ];
 
         if ($error = $this->validateFields($this->currentAccommodationItem, $required)) {
@@ -216,8 +217,8 @@ class MealDraftForm extends Form
 
         if ($type === 'accommodation') {
             $required = [
-                'no_days', 'room_type', 'room_arrangement', 'inclusive_dates',
-                'remarks', 'qty', 'unit', 'estimated_unit_cost'
+                'no_of_pax', 'room_requirement', 'no_of_rooms', 'check_in', 'check_out',
+                'no_of_nights', 'qty', 'unit', 'estimated_unit_cost'
             ];
 
             if ($error = $this->validateFields($this->editForm, $required)) {
@@ -287,11 +288,12 @@ class MealDraftForm extends Form
     private function resetCurrentAccommodationItem(): void
     {
         $this->currentAccommodationItem = [
-            'no_days' => 0,
-            'room_type' => '',
-            'room_arrangement' => '',
-            'inclusive_dates' => '',
-            'remarks' => '',
+            'no_of_pax' => 0,
+            'room_requirement' => '',
+            'no_of_rooms' => 0,
+            'check_in' => '',
+            'check_out' => '',
+            'no_of_nights' => 0,
             'other_requirement' => '',
             'qty' => 0,
             'unit' => '',

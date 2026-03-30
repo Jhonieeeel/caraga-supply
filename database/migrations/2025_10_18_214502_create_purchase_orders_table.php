@@ -26,6 +26,9 @@ return new class extends Migration
             $table->date('ntp')->nullable();
             $table->string('resolution_number')->nullable(); // year-month-series same sa po
             $table->string('supplier')->nullable();
+            $table->string('supplier_address')->nullable();
+            $table->string('supplier_contacts')->nullable();
+            $table->string('tin')->nullable();
             $table->decimal('contract_price')->nullable();
             $table->string('email_link')->nullable();
             $table->foreignId('abc_based_app')->nullable()->constrained('procurements')->cascadeOnDelete();

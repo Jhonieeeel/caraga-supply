@@ -37,6 +37,7 @@ return new class extends Migration {
             $table->decimal('qty', 15, 2)->default(0);
             $table->string('unit')->nullable();
             $table->decimal('estimated_unit_cost', 15, 2)->default(0);
+            $table->decimal('po_estimated_unit_cost', 15, 2)->nullable()->default(null);
 
             $table->timestamps();
         });
@@ -60,17 +61,18 @@ return new class extends Migration {
 
             $table->unsignedInteger('sort_order')->default(0);
 
-            $table->unsignedInteger('no_days')->default(0);
-            $table->string('room_type')->nullable();
-            $table->string('room_arrangement')->nullable();
-            $table->string('inclusive_dates')->nullable();
-
-            $table->text('remarks')->nullable();
-            $table->text('other_requirement')->nullable();
+            $table->unsignedInteger('no_of_pax')->default(0);
+            $table->string('room_requirement')->nullable();
+            $table->unsignedInteger('no_of_rooms')->default(0);
+            $table->dateTime('check_in')->nullable();
+            $table->dateTime('check_out')->nullable();
+            $table->unsignedInteger('no_of_nights')->default(0);
+            $table->text('other_requirements')->nullable();
 
             $table->decimal('qty', 15, 2)->default(0);
             $table->string('unit')->nullable();
             $table->decimal('estimated_unit_cost', 15, 2)->default(0);
+            $table->decimal('po_estimated_unit_cost', 15, 2)->nullable()->default(null);
 
             $table->timestamps();
         });

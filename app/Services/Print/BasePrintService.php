@@ -12,7 +12,9 @@ abstract class BasePrintService implements PrintService
 {
     protected $sheet;
     protected array $config;
-    private array $templateRowCache = [];
+    private array $templateRowCache        = [];
+    private array $accommodationRowCache   = [];
+
 
     // ==================== MAIN ENTRY POINT ====================
 
@@ -23,21 +25,15 @@ abstract class BasePrintService implements PrintService
         $this->config = $this->loadTemplateConfig($template);
 
         $this->cacheTemplateRows();
+        $this->deleteAccommodationTemplateRows();
         $this->fillCommonFields($sourceRecord);
 
-        // Fill document-level markers (e.g. delivery_period, delivery_site) that appear
-        // outside the block range — read once from the first block's injected values.
         if (!empty($this->config['document_markers']) && !empty($blocks[0])) {
-            $replacements = [];
+            $docReplacements = [];
             foreach ($this->config['document_markers'] as $field => $cells) {
-                $value = (string) ($blocks[0][$field] ?? '');
-                foreach ((array) $cells as $cell) {
-                    $cellValue = $this->sheet->getCell($cell)->getValue();
-                    if (is_string($cellValue) && str_contains($cellValue, '{{' . $field . '}}')) {
-                        $this->sheet->setCellValue($cell, str_replace('{{' . $field . '}}', $value, $cellValue));
-                    }
-                }
+                $docReplacements['{{' . $field . '}}'] = (string) ($blocks[0][$field] ?? '');
             }
+            $this->bulkReplace($docReplacements);
         }
 
         $row          = $this->config['items_start_row'] ?? $this->config['block_start'] ?? 0;
@@ -59,13 +55,11 @@ abstract class BasePrintService implements PrintService
         return $this->saveFile($template, $spreadsheet);
     }
 
-    // ==================== ABSTRACT: subclasses must implement ====================
 
-    /**
-     * Fill fields that differ per document type (PR vs PO vs future types).
-     * Called once per handle() after cacheTemplateRows().
-     */
+    // ==================== ABSTRACT ====================
+
     abstract protected function fillCommonFields($sourceRecord): void;
+
 
     // ==================== CONFIGURATION ====================
 
@@ -80,7 +74,6 @@ abstract class BasePrintService implements PrintService
 
         $config = require $path;
 
-        // Guard: every config must declare placeholders
         if (!isset($config['placeholders'])) {
             throw new \Exception("Template config missing 'placeholders' key: {$name}");
         }
@@ -101,22 +94,58 @@ abstract class BasePrintService implements PrintService
         $class = RendererRegistry::$rendererMap[$key];
 
         return new $class(
-            sheet:      $this->sheet,
-            config:     $this->config,
-            duplicator: fn (int $row) => $this->duplicateTemplateBlock($row)
+            sheet: $this->sheet,
+            config: $this->config,
+            duplicator: fn (int $row) => $this->duplicateBlock(
+                $row,
+                $this->templateRowCache,
+                $this->config['block_start'],
+                $this->config['block_end']
+            ),
+            accommodationDuplicator: fn (int $row) => $this->duplicateBlock(
+                $row,
+                $this->accommodationRowCache,
+                $this->config['accommodation_block_start'],
+                $this->config['accommodation_block_end']
+            ),
         );
     }
+
 
     // ==================== TEMPLATE CACHING ====================
 
     private function cacheTemplateRows(): void
     {
-        if (!isset($this->config['block_start'], $this->config['block_end'])) {
+        $this->cacheBlock(
+            $this->config['block_start'],
+            $this->config['block_end'],
+            $this->templateRowCache
+        );
+
+        if (isset($this->config['accommodation_block_start'], $this->config['accommodation_block_end'])) {
+            $this->cacheBlock(
+                $this->config['accommodation_block_start'],
+                $this->config['accommodation_block_end'],
+                $this->accommodationRowCache
+            );
+        }
+    }
+
+    private function deleteAccommodationTemplateRows(): void
+    {
+        if (!isset($this->config['accommodation_block_start'], $this->config['accommodation_block_end'])) {
             return;
         }
 
-        $start  = $this->config['block_start'];
-        $end    = $this->config['block_end'];
+        $start = $this->config['accommodation_block_start'];
+        $end = $this->config['accommodation_block_end'];
+        $count = $end - $start + 1;
+
+        $this->sheet->removeRow($start, $count);
+    }
+
+    private function cacheBlock(int $start, int $end, array &$cache): void
+    {
         $colEnd = Coordinate::columnIndexFromString($this->config['item_columns']['end'] ?? 'M');
 
         for ($row = $start; $row <= $end; $row++) {
@@ -124,14 +153,13 @@ abstract class BasePrintService implements PrintService
             $values = [];
 
             foreach (range(1, $colEnd + 5) as $col) {
-                $colLetter    = Coordinate::stringFromColumnIndex($col);
-                $cellRef      = $colLetter . $row;
+                $colLetter = Coordinate::stringFromColumnIndex($col);
+                $cellRef = $colLetter . $row;
                 $styles[$col] = $this->sheet->getStyle($cellRef)->exportArray();
-                // Cache value so header rows ("Administrative Supplies" etc.) are reproduced on duplication
                 $values[$col] = $this->sheet->getCell($cellRef)->getValue();
             }
 
-            $this->templateRowCache[$row] = [
+            $cache[$row] = [
                 'height' => $this->sheet->getRowDimension($row)->getRowHeight(),
                 'styles' => $styles,
                 'values' => $values,
@@ -143,31 +171,30 @@ abstract class BasePrintService implements PrintService
             if (preg_match('/([A-Z]+)(\d+):([A-Z]+)(\d+)/', $range, $m)) {
                 $row = (int) $m[2];
                 if ($row >= $start && $row <= $end) {
-                    $this->templateRowCache[$row]['merges'][] = $range;
+                    $cache[$row]['merges'][] = $range;
                 }
             }
         }
     }
 
-    private function duplicateTemplateBlock(int $insertAt): int
+    private function duplicateBlock(int $insertAt, array $cache, int $blockStart, int $blockEnd): int
     {
         if ($insertAt <= 0) {
             throw new \InvalidArgumentException("Invalid row for block duplication: $insertAt");
         }
 
-        $blockSize = $this->config['block_end'] - $this->config['block_start'] + 1;
+        $blockSize = $blockEnd - $blockStart + 1;
         $this->sheet->insertNewRowBefore($insertAt, $blockSize);
-        $offset = $insertAt - $this->config['block_start'];
+        $offset = $insertAt - $blockStart;
 
-        foreach ($this->templateRowCache as $templateRow => $cache) {
-            $targetRow = $insertAt + ($templateRow - $this->config['block_start']);
+        foreach ($cache as $templateRow => $data) {
+            $targetRow = $insertAt + ($templateRow - $blockStart);
 
-            if ($cache['height'] !== -1) {
-                $this->sheet->getRowDimension($targetRow)->setRowHeight($cache['height']);
+            if ($data['height'] !== -1) {
+                $this->sheet->getRowDimension($targetRow)->setRowHeight($data['height']);
             }
 
-            // Write cached cell values (restores static header text like "Administrative Supplies")
-            foreach ($cache['values'] as $col => $value) {
+            foreach ($data['values'] as $col => $value) {
                 if ($value !== null && $value !== '') {
                     $this->sheet->setCellValue(
                         Coordinate::stringFromColumnIndex($col) . $targetRow,
@@ -176,20 +203,23 @@ abstract class BasePrintService implements PrintService
                 }
             }
 
-            foreach ($cache['styles'] as $col => $style) {
+            foreach ($data['styles'] as $col => $style) {
                 $this->sheet->getStyle(Coordinate::stringFromColumnIndex($col) . $targetRow)
                     ->applyFromArray($style);
             }
 
-            foreach ($cache['merges'] as $mergeRange) {
+            foreach ($data['merges'] as $mergeRange) {
                 if (preg_match('/([A-Z]+)(\d+):([A-Z]+)(\d+)/', $mergeRange, $m)) {
-                    $this->sheet->mergeCells("{$m[1]}" . ($m[2] + $offset) . ":{$m[3]}" . ($m[4] + $offset));
+                    $this->sheet->mergeCells(
+                        "{$m[1]}" . ($m[2] + $offset) . ":{$m[3]}" . ($m[4] + $offset)
+                    );
                 }
             }
         }
 
         return $insertAt;
     }
+
 
     // ==================== HELPERS ====================
 
@@ -202,6 +232,26 @@ abstract class BasePrintService implements PrintService
             foreach ($cellIterator as $cell) {
                 try {
                     $value = $cell->getValue();
+
+                    if ($value instanceof \PhpOffice\PhpSpreadsheet\RichText\RichText) {
+                        $changed = false;
+                        foreach ($value->getRichTextElements() as $element) {
+                            $original = $element->getText();
+                            $replaced = str_replace(
+                                array_keys($replacements),
+                                array_values($replacements),
+                                $original
+                            );
+                            if ($replaced !== $original) {
+                                $element->setText($replaced);
+                                $changed = true;
+                            }
+                        }
+                        if ($changed) {
+                            $cell->setValue($value);
+                        }
+                        continue;
+                    }
 
                     if (!is_string($value) || $value === '') {
                         continue;

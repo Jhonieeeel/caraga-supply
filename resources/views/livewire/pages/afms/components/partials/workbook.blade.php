@@ -8,9 +8,7 @@
                     Total: ₱{{ number_format($this->getBlockTotal($blockIndex), 2) }}
                 </p>
             </div>
-            @if ($blockIndex > 0)
-                <x-button flat negative icon="trash" wire:click="removeBlock({{ $blockIndex }})" />
-            @endif
+            <x-button flat negative icon="trash" wire:click="removeBlock({{ $blockIndex }})" />
         </summary>
 
         {{-- Block Title --}}

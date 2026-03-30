@@ -43,7 +43,6 @@ class TransportationBlockRenderer implements BlockRenderer
             $value = $this->sheet->getCell($cell)->getValue();
 
             if ($value instanceof RichText) {
-                // Preserve formatting — replace within each RichText element
                 foreach ($value->getRichTextElements() as $element) {
                     $element->setText(str_replace($placeholder, $replacement, $element->getText()));
                 }

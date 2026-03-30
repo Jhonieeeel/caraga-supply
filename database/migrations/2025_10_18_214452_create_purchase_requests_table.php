@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('philgeps_pdf_file')->nullable();
             $table->string('philgeps_pdf_filename')->nullable();
             $table->string('pr_number')->nullable();
+            $table->string('chargeability')->nullable();
             $table->foreignId('abc_based_app')->nullable()->constrained('procurements');
             $table->decimal('abc', 15, 2)->nullable();
             $table->string('email_posting')->nullable();

@@ -54,6 +54,9 @@ class RequestForm extends Form
     #[Validate(['nullable', 'exists:procurements,id'])]
     public $abc_based_app;
 
+    #[Validate(['nullable', 'string', 'max:255'])]
+    public $chargeability;
+
 
     // for storing
     public $new_app_spp_pdf_file;
@@ -121,6 +124,7 @@ class RequestForm extends Form
             'procurement_id' => $this->procurement_id,
             'app_year' => $this->app_year,
             'abc_based_app' => $this->abc_based_app,
+            'chargeability' => $this->chargeability,
         ];
     }
 
@@ -145,6 +149,7 @@ class RequestForm extends Form
         // fks
         $this->procurement_id = $request->procurement_id;
         $this->app_year = $request->app_year;
+        $this->chargeability = $request->chargeability;
         $this->abc_based_app = $request->abc_based_app;
     }
 

@@ -29,6 +29,7 @@ class PurchaseRequest extends Model
         'email_posting',
         'date_posted',
         'app_year',
+        'chargeability',
     ];
 
     public function procurement() {

@@ -145,6 +145,11 @@
                             <span class="w-56 text-gray-500 font-medium">APP Year:</span>
                             <span class="text-gray-800 font-semibold">{{ $pr?->AppYear->app_year ?? 'N/A' }}</span>
                         </div>
+
+                        <div class="py-3 flex flex-col sm:flex-row text-sm">
+                            <span class="w-56 text-gray-500 font-medium">Chargeability:</span>
+                            <span class="text-gray-800 font-semibold">{{ $pr?->chargeability ?? 'N/A' }}</span>
+                        </div>
                     </div>
                 </div>
             @endif
@@ -155,8 +160,7 @@
                         <h5 class="text-sm uppercase text-primary-600 font-semibold tracking-wider">Purchase Order</h5>
 
                         <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
-                            <x-button icon="printer" color="teal" disabled position="left" wire:click="printOrder"
-                                flat>
+                            <x-button icon="printer" color="teal" position="left" wire:click="printOrder">
                                 Print
                             </x-button>
                             <x-button icon="pencil" color="cyan" position="left"
@@ -311,6 +315,7 @@
                 <x-date label="Date Posted *" wire:model="requestForm.date_posted" format="YYYY-MM-DD" />
                 <x-date label="Input Date *" wire:model="requestForm.input_date" format="YYYY-MM-DD" />
                 <x-input label="Email Posting *" wire:model="requestForm.email_posting" />
+                <x-input label="Chargeability" wire:model="requestForm.chargeability" />
             </div>
 
             <div class="grid grid-cols-2 gap-4">

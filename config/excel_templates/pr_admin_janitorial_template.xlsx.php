@@ -4,7 +4,7 @@ return [
 
 
     'block_start' => 13,
-    'block_end'   => 19,
+    'block_end'   => 20,
 
 
     'item_columns' => [

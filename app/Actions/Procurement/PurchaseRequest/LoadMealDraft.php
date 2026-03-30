@@ -46,11 +46,12 @@ class LoadMealDraft
                         'date' => $a->date,
                         'items' => $a->items->map(function ($i) {
                             return [
-                                'no_days' => (int) $i->no_days,
-                                'room_type' => $i->room_type,
-                                'room_arrangement' => $i->room_arrangement,
-                                'inclusive_dates' => $i->inclusive_dates,
-                                'remarks' => $i->remarks,
+                                'no_of_pax' => (int) $i->no_of_pax,
+                                'room_requirement' => $i->room_requirement,
+                                'no_of_rooms' => (int) $i->no_of_rooms,
+                                'check_in' => $i->check_in,
+                                'check_out' => $i->check_out,
+                                'no_of_nights' => (int) $i->no_of_nights,
                                 'other_requirement' => $i->other_requirement,
                                 'qty' => (float) $i->qty,
                                 'unit' => $i->unit,

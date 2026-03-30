@@ -8,9 +8,7 @@
                     Total: ₱{{ number_format($this->getBlockTotal($blockIndex), 2) }}
                 </p>
             </div>
-            @if ($blockIndex > 0)
-                <x-button flat negative icon="trash" wire:click="removeBlock({{ $blockIndex }})" />
-            @endif
+            <x-button flat negative icon="trash" wire:click="removeBlock({{ $blockIndex }})" />
         </summary>
 
         {{-- Main Information --}}
@@ -232,22 +230,22 @@
                             </summary>
 
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <x-number wire:model="mealForm.currentAccommodationItem.no_days"
-                                    label="No. of Days *" />
-                                <x-input wire:model="mealForm.currentAccommodationItem.room_type"
-                                    label="Room Type *" />
-                                <x-input wire:model="mealForm.currentAccommodationItem.room_arrangement"
-                                    label="Room Arrangement *" />
-                                <x-input wire:model="mealForm.currentAccommodationItem.inclusive_dates"
-                                    label="Inclusive Date/s *" />
+                                <x-number wire:model="mealForm.currentAccommodationItem.no_of_pax"
+                                    label="No. of Pax *" />
+                                <x-input wire:model="mealForm.currentAccommodationItem.room_requirement"
+                                    label="Room Requirement *" />
+                                <x-number wire:model="mealForm.currentAccommodationItem.no_of_rooms"
+                                    label="No. of Rooms *" />
+                                <x-input type="date" wire:model="mealForm.currentAccommodationItem.check_in"
+                                    label="Check-In Date *" />
+                                <x-input type="date" wire:model="mealForm.currentAccommodationItem.check_out"
+                                    label="Check-Out Date *" />
+                                <x-number wire:model="mealForm.currentAccommodationItem.no_of_nights"
+                                    label="No. of nights *" />
 
                                 <div class="col-span-2">
-                                    <x-textarea wire:model="mealForm.currentAccommodationItem.remarks" resize-auto
-                                        label="Remarks *" />
-                                </div>
-                                <div class="col-span-2">
                                     <x-textarea wire:model="mealForm.currentAccommodationItem.other_requirement"
-                                        resize-auto label="Other Requirements" />
+                                        resize-auto label="Other Requirements" placeholder="Enter any additional requests"/>
                                 </div>
 
                                 <x-number wire:model="mealForm.currentAccommodationItem.qty" label="Quantity *" />
@@ -291,12 +289,12 @@
                                         @if (!$isEditing)
                                             <div class="flex justify-between items-center p-2 border rounded bg-white">
                                                 <div class="text-sm">
-                                                    <span class="font-medium">{{ $item['room_type'] ?? 'N/A' }}</span>
+                                                    <span class="font-medium">{{ $item['room_requirement'] ?? 'N/A' }}</span>
                                                     <span class="text-gray-600 ml-2">
-                                                        (Days: {{ $item['no_days'] ?? 0 }} |
+                                                        (Pax: {{ $item['no_of_pax'] ?? 0 }} |
+                                                        Rooms: {{ $item['no_of_rooms'] ?? 0 }} |
+                                                        Nights: {{ $item['no_of_nights'] ?? 0 }} |
                                                         Qty: {{ $item['qty'] ?? 0 }} {{ $item['unit'] ?? '' }} |
-                                                        Unit Cost:
-                                                        ₱{{ number_format($item['estimated_unit_cost'] ?? 0, 2) }} |
                                                         Total:
                                                         ₱{{ number_format(($item['qty'] ?? 0) * ($item['estimated_unit_cost'] ?? 0), 2) }})
                                                     </span>
@@ -313,19 +311,19 @@
                                         @else
                                             <div class="p-3 border rounded bg-yellow-50">
                                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                                    <x-number wire:model="mealForm.editForm.no_days"
-                                                        label="No. of Days *" />
-                                                    <x-input wire:model="mealForm.editForm.room_type"
-                                                        label="Room Type *" />
-                                                    <x-input wire:model="mealForm.editForm.room_arrangement"
-                                                        label="Room Arrangement *" />
-                                                    <x-input wire:model="mealForm.editForm.inclusive_dates"
-                                                        label="Inclusive Date/s *" />
+                                                    <x-number wire:model="mealForm.editForm.no_of_pax"
+                                                        label="No. of Pax *" />
+                                                    <x-input wire:model="mealForm.editForm.room_requirement"
+                                                        label="Room Requirement *" />
+                                                    <x-number wire:model="mealForm.editForm.no_of_rooms"
+                                                        label="No. of Rooms *" />
+                                                    <x-input type="date" wire:model="mealForm.editForm.check_in"
+                                                        label="Check-In Date *" />
+                                                    <x-input type="date" wire:model="mealForm.editForm.check_out"
+                                                        label="Check-Out Date *" />
+                                                    <x-number wire:model="mealForm.editForm.no_of_nights"
+                                                        label="No. of nights *" />
 
-                                                    <div class="col-span-2">
-                                                        <x-textarea wire:model="mealForm.editForm.remarks" resize-auto
-                                                            label="Remarks *" />
-                                                    </div>
                                                     <div class="col-span-2">
                                                         <x-textarea wire:model="mealForm.editForm.other_requirement"
                                                             resize-auto label="Other Requirements" />
