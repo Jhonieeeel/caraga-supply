@@ -411,7 +411,6 @@ class ProcurementPrint extends Component
             return;
         }
 
-        // Flat types: validate and wrap as single-element array for the renderer
         if (isset($this->flatForms()[$this->type])) {
             $form = $this->activeFlatForm();
 
@@ -422,7 +421,6 @@ class ProcurementPrint extends Component
 
             $blocks = [$form->toFormArray()];
 
-        // Block-based types: validate all blocks have items
         } else {
             $form   = $this->activeBlockForm();
             $blocks = $form->blocks;
@@ -439,8 +437,6 @@ class ProcurementPrint extends Component
                 }
             }
 
-            // For Admin & Janitorial: delivery_period/site live on the form, not the blocks.
-            // Inject them into each block so the renderer can write them via document_markers.
             if ($this->type === 'Admin & Janitorial') {
                 $blocks = array_map(fn ($block) => array_merge($block, [
                     'delivery_period' => $form->delivery_period,
