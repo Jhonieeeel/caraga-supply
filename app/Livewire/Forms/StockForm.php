@@ -19,7 +19,7 @@ class StockForm extends Form
     #[Validate(['required'])]
     public $barcode;
 
-    #[Rule(['required', 'starts_with:stock-',])]
+    #[Rule(['required',])]
     public $stock_number;
 
     #[Rule(['required', 'numeric'])]
@@ -27,7 +27,7 @@ class StockForm extends Form
 
     public $initial_quantity;
 
-    #[Rule(['required', 'numeric'])]
+    #[Rule(['min:0', 'numeric'])]
     public $price;
 
     #[Rule('required')]
