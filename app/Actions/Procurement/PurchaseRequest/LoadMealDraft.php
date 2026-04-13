@@ -26,6 +26,7 @@ class LoadMealDraft
 
                 'items' => $lot->items->map(function ($i) {
                     return [
+                        'id' => $i->id,
                         'pax_qty' => (int) $i->pax_qty,
                         'mealSnack' => $i->meal_snack,
                         'arrangement' => $i->arrangement,
@@ -35,6 +36,9 @@ class LoadMealDraft
                         'qty' => (float) $i->qty,
                         'unit' => $i->unit,
                         'estimated_unit_cost' => (float) $i->estimated_unit_cost,
+                        'po_estimated_unit_cost' => $i->po_estimated_unit_cost !== null
+                            ? (float) $i->po_estimated_unit_cost
+                            : null,
                     ];
                 })->toArray(),
 
@@ -46,6 +50,7 @@ class LoadMealDraft
                         'date' => $a->date,
                         'items' => $a->items->map(function ($i) {
                             return [
+                                'id' => $i->id,
                                 'no_of_pax' => (int) $i->no_of_pax,
                                 'room_requirement' => $i->room_requirement,
                                 'no_of_rooms' => (int) $i->no_of_rooms,
@@ -56,6 +61,9 @@ class LoadMealDraft
                                 'qty' => (float) $i->qty,
                                 'unit' => $i->unit,
                                 'estimated_unit_cost' => (float) $i->estimated_unit_cost,
+                                'po_estimated_unit_cost' => $i->po_estimated_unit_cost !== null
+                                    ? (float) $i->po_estimated_unit_cost
+                                    : null,
                             ];
                         })->toArray(),
                     ];

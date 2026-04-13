@@ -25,15 +25,15 @@
 
             {{-- Section Router --}}
             @if ($type === 'Meals')
-                @include('livewire.pages.afms.components.partials.meals')
+                @include('livewire.pages.afms.components.partials.pr.meals')
             @elseif ($type === 'Workbook')
-                @include('livewire.pages.afms.components.partials.workbook')
+                @include('livewire.pages.afms.components.partials.pr.workbook')
             @elseif ($type === 'Transportation')
-                @include('livewire.pages.afms.components.partials.transportation')
+                @include('livewire.pages.afms.components.partials.pr.transportation')
             @elseif ($type === 'Services')
-                @include('livewire.pages.afms.components.partials.service')
+                @include('livewire.pages.afms.components.partials.pr.service')
             @elseif ($type === 'Admin & Janitorial')
-                @include('livewire.pages.afms.components.partials.admin-janitorial')
+                @include('livewire.pages.afms.components.partials.pr.admin-janitorial')
             @endif
 
         </div>

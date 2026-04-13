@@ -16,7 +16,7 @@ export default defineConfig({
         strictPort: true,
         cors: true,
         hmr: {
-            host: "10.20.2.246",
+            host: "10.20.2.152",
             protocol: "ws",
         },
     },

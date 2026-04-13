@@ -64,6 +64,11 @@ class ShowData extends Component
         return redirect()->route('print-pr', ['request' => $request]); // or just $request if model binding
     }
 
+    public function redirectOrder() {
+        $request = $this->procurement->purchaseRequest;
+        return redirect()->route('print-po', ['request' => $request]);
+    }
+
 
 
     #[Computed]

@@ -24,6 +24,9 @@ class OrderForm extends Form
     public $ntp;
     public $resolution_number;
     public $supplier;
+    public $supplier_address;
+    public $supplier_contacts;
+    public $tin;
     public $contract_price;
     public $email_link;
     public $abc_based_app;
@@ -63,6 +66,9 @@ class OrderForm extends Form
             'po_number'            => ['nullable', 'string'],
             'resolution_number'    => ['nullable', 'string'],
             'supplier'             => ['nullable', 'string'],
+            'supplier_address'     => ['nullable', 'string'],
+            'supplier_contacts'    => ['nullable', 'string'],
+            'tin'                  => ['nullable', 'string'],
             'contract_price'       => ['nullable', 'numeric'],
             'email_link'           => ['nullable', 'email'],
 
@@ -120,6 +126,9 @@ class OrderForm extends Form
         $this->ntp = $order->ntp;
         $this->resolution_number = $order->resolution_number;
         $this->supplier = $order->supplier;
+        $this->supplier_address = $order->supplier_address;
+        $this->supplier_contacts = $order->supplier_contacts;
+        $this->tin = $order->tin;
         $this->contract_price = $order->contract_price;
         $this->email_link = $order->email_link;
         $this->abc_based_app = $order->procurement_id;
@@ -146,6 +155,9 @@ class OrderForm extends Form
             'ntp' => $this->ntp,
             'resolution_number' => $this->resolution_number,
             'supplier' => $this->supplier,
+            'supplier_address' => $this->supplier_address,
+            'supplier_contacts' => $this->supplier_contacts,
+            'tin' => $this->tin,
             'contract_price' => $this->contract_price,
             'email_link' => $this->email_link,
             'abc_based_app' => $this->abc_based_app,

@@ -4,6 +4,7 @@ use App\Livewire\Actions\Logout;
 use App\Livewire\DTR;
 use App\Livewire\Managedtr;
 use App\Livewire\Pages\Afms\Components\ProcurementPrint;
+use App\Livewire\Pages\Afms\Components\ProcurementOrderPrint;
 use App\Livewire\Pages\Afms\Dashboard;
 use App\Livewire\Pages\Afms\Procurement;
 use App\Livewire\Pages\Afms\RequisitionTable;
@@ -34,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pmu', Procurement::class)->name('pmu.index');
     Route::get('pmu/{id}', ShowData::class)->name('pmu.show');
     Route::get('pmu/{request}/print-request', ProcurementPrint::class)->name('print-pr');
+    Route::get('pmu/{request}/print-order', ProcurementOrderPrint::class)->name('print-po');
 
 
 

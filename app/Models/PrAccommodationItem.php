@@ -19,6 +19,7 @@ class PrAccommodationItem extends Model
         'qty',
         'unit',
         'estimated_unit_cost',
+        'po_estimated_unit_cost',
     ];
 
     public function accommodationBlock()

@@ -45,6 +45,9 @@
             <x-input label="Resolution Number *" wire:model="orderForm.resolution_number" />
             <x-date label="Delivery Date *" wire:model="orderForm.delivery_date" format="YYYY-MM-DD" />
             <x-input label="Supplier *" wire:model="orderForm.supplier" />
+            <x-input label="Supplier Address" wire:model="orderForm.supplier_address" />
+            <x-input label="Supplier Contacts" wire:model="orderForm.supplier_contacts" />
+            <x-input label="TIN" wire:model="orderForm.tin" />
             <x-number label="Contact Price *" wire:model.live="orderForm.contract_price" />
             <x-number label="Variance *" :value="$this->variance" readonly />
             <x-input label="Email Link *" wire:model="orderForm.email_link" />

@@ -160,7 +160,7 @@
                         <h5 class="text-sm uppercase text-primary-600 font-semibold tracking-wider">Purchase Order</h5>
 
                         <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
-                            <x-button icon="printer" color="teal" position="left" wire:click="printOrder">
+                            <x-button icon="printer" color="teal" position="left" wire:click="redirectOrder">
                                 Print
                             </x-button>
                             <x-button icon="pencil" color="cyan" position="left"
@@ -216,6 +216,21 @@
                             <div class="py-3 flex flex-col sm:flex-row text-sm">
                                 <span class="w-56 text-gray-500 font-medium">Supplier:</span>
                                 <span class="text-gray-800 font-semibold">{{ $po?->supplier ?? 'N/A' }}</span>
+                            </div>
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
+                                <span class="w-56 text-gray-500 font-medium">Supplier Address:</span>
+                                <span class="text-gray-800 font-semibold">{{ $po?->supplier_address ?? 'N/A' }}</span>
+                            </div>
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
+                                <span class="w-56 text-gray-500 font-medium">Supplier Contacts:</span>
+                                <span class="text-gray-800 font-semibold">{{ $po?->supplier_contacts ?? 'N/A' }}</span>
+                            </div>
+
+                            <div class="py-3 flex flex-col sm:flex-row text-sm">
+                                <span class="w-56 text-gray-500 font-medium">TIN:</span>
+                                <span class="text-gray-800 font-semibold">{{ $po?->tin ?? 'N/A' }}</span>
                             </div>
 
                             <div class="py-3 flex flex-col sm:flex-row text-sm">
@@ -348,6 +363,9 @@
                 <x-input label="Resolution Number *" wire:model="orderForm.resolution_number" />
                 <x-date label="Delivery Date *" wire:model="orderForm.delivery_date" format="YYYY-MM-DD" />
                 <x-input label="Supplier *" wire:model="orderForm.supplier" />
+                <x-input label="Supplier Address" wire:model="orderForm.supplier_address" />
+                <x-input label="Supplier Contacts" wire:model="orderForm.supplier_contacts" />
+                <x-input label="TIN" wire:model="orderForm.tin" />
                 <x-number label="Contact Price *" wire:model.live="orderForm.contract_price" />
                 <x-number label="Variance *" :value="$this->variance" readonly />
                 <x-input label="Email Link *" wire:model="orderForm.email_link" />
