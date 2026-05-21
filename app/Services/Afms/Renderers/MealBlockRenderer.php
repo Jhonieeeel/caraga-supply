@@ -12,8 +12,8 @@ class MealBlockRenderer implements BlockRenderer
     public function __construct(
         private $sheet,
         private array $config,
-        private \Closure $duplicator,
-        private \Closure $accommodationDuplicator,
+        private ?\Closure $duplicator = null,
+        private ?\Closure $accommodationDuplicator = null,
     ) {}
 
     public function render(array $block, int $startRow, bool $insertNew = false): array

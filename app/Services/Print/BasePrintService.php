@@ -93,21 +93,29 @@ abstract class BasePrintService implements PrintService
 
         $class = RendererRegistry::$rendererMap[$key];
 
-        return new $class(
-            sheet: $this->sheet,
-            config: $this->config,
-            duplicator: fn (int $row) => $this->duplicateBlock(
+        $duplicator = isset($this->config['block_start'], $this->config['block_end'])
+            ? fn (int $row) => $this->duplicateBlock(
                 $row,
                 $this->templateRowCache,
                 $this->config['block_start'],
                 $this->config['block_end']
-            ),
-            accommodationDuplicator: fn (int $row) => $this->duplicateBlock(
+            )
+            : null;
+
+        $accommodationDuplicator = isset($this->config['accommodation_block_start'], $this->config['accommodation_block_end'])
+            ? fn (int $row) => $this->duplicateBlock(
                 $row,
                 $this->accommodationRowCache,
                 $this->config['accommodation_block_start'],
                 $this->config['accommodation_block_end']
-            ),
+            )
+            : null;
+
+        return new $class(
+            sheet: $this->sheet,
+            config: $this->config,
+            duplicator: $duplicator,
+            accommodationDuplicator: $accommodationDuplicator,
         );
     }
 
@@ -116,11 +124,13 @@ abstract class BasePrintService implements PrintService
 
     private function cacheTemplateRows(): void
     {
-        $this->cacheBlock(
-            $this->config['block_start'],
-            $this->config['block_end'],
-            $this->templateRowCache
-        );
+        if (isset($this->config['block_start'], $this->config['block_end'])) {
+            $this->cacheBlock(
+                $this->config['block_start'],
+                $this->config['block_end'],
+                $this->templateRowCache
+            );
+        }
 
         if (isset($this->config['accommodation_block_start'], $this->config['accommodation_block_end'])) {
             $this->cacheBlock(

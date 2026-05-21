@@ -57,7 +57,7 @@
                         :href="route('requisition.index')" />
                 </x-side-bar.item>
                 <x-side-bar.item text="PMU" :visible="true">
-                    <x-side-bar.item text="Archives" icon="archive-box" wire:navigate :current="request()->routeIs('pmu.index')"
+                    <x-side-bar.item text="Tracking" icon="archive-box" wire:navigate :current="request()->routeIs('pmu.index')"
                         :href="route('pmu.index')" />
                 </x-side-bar.item>
                 <x-side-bar.item text="HRMU" :visible="true">

@@ -73,10 +73,7 @@ class MealDraftForm extends Form
     public function removeBlock(int $blockIndex): void
     {
         $this->cancelEdit();
-
-        if (count($this->blocks) > 1) {
-            array_splice($this->blocks, $blockIndex, 1);
-        }
+        array_splice($this->blocks, $blockIndex, 1);
     }
 
     public function addAccommodationBlock(int $blockIndex): void

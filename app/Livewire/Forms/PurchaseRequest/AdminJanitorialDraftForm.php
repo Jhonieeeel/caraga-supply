@@ -34,7 +34,7 @@ class AdminJanitorialDraftForm extends Form
     {
         $this->delivery_period        = '';
         $this->delivery_site          = '';
-        $this->blocks                 = [];
+        $this->blocks                 = [$this->defaultBlock()];
         $this->editForm               = [];
         $this->editing                = ['blockIndex' => null, 'itemIndex' => null, 'group' => null];
         $this->currentAdminItem       = $this->defaultItem();

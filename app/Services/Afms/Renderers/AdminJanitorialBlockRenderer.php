@@ -14,7 +14,8 @@ class AdminJanitorialBlockRenderer implements BlockRenderer
     public function __construct(
         private $sheet,
         private array $config,
-        private \Closure $duplicator
+        private ?\Closure $duplicator = null,
+        private ?\Closure $accommodationDuplicator = null,
     ) {}
 
     // ==================== MAIN ====================
