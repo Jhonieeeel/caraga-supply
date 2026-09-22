@@ -55,6 +55,27 @@ test('rsmi serial number follows the Supply-year-month-series format', function 
     @unlink($path);
 });
 
+test('rsmi serial number year-month reflects when it was generated, not the covered report period', function () {
+    $transaction = makeTransactionForRsmi();
+
+    // Report covers January, but it's being generated "now" (whatever the
+    // current date is in this test run) — the serial must use "now", not January.
+    $rsmiDate = ['2026-01-01', '2026-01-31'];
+
+    $file = (new GenerateRsmiService())->handle(collect([$transaction]), $rsmiDate, $transaction);
+
+    $path = storage_path('app/public/' . $file);
+    $spreadsheet = IOFactory::load($path);
+    $serial = $spreadsheet->getActiveSheet()->getCell('I7')->getValue();
+
+    $expectedPrefix = 'Supply-' . now()->format('Y') . '-' . now()->format('m') . '-';
+
+    expect($serial)->toStartWith($expectedPrefix)
+        ->not->toContain('2026-01');
+
+    @unlink($path);
+});
+
 test('rsmi serial series increments for additional reports generated in the same month', function () {
     $first = makeTransactionForRsmi();
     $rsmiDate = ['2026-09-01', '2026-09-30'];

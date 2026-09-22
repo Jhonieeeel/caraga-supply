@@ -16,14 +16,16 @@ class GenerateRsmiService
         $activeSheet = $spreadSheet->getActiveSheet();
 
         $start = Carbon::parse($rsmiDate[0])->startOfDay();
+        $generatedAt = now();
 
         $report = 'For the month of ' . $start->format('F');
 
         $series = Transaction::whereNotNull('rsmi_file')
-            ->whereBetween('created_at', [$start->copy()->startOfMonth(), $start->copy()->endOfMonth()])
+            ->whereYear('updated_at', $generatedAt->year)
+            ->whereMonth('updated_at', $generatedAt->month)
             ->count() + 1;
 
-        $serialNo = 'Supply-' . $start->format('Y') . '-' . $start->format('m') . '-' . $series;
+        $serialNo = 'Supply-' . $generatedAt->format('Y') . '-' . $generatedAt->format('m') . '-' . $series;
 
         $activeSheet->setCellValue('B5', $report);
         $activeSheet->setCellValue('I7', $serialNo);
