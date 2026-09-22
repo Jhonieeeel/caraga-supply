@@ -43,12 +43,6 @@
 
                     {{-- Email --}}
                     <x-input label="Email *" hint="Update your email" wire:model="userForm.email" :disabled="$disabled" />
-
-                    {{-- Role (Super Admin only) --}}
-                    {{-- @role('Super Admin')
-                        <x-select.styled label="Role *" hint="Update user role" placeholder="Select role" :options="$this->roles"
-                            searchable />
-                    @endrole --}}
                 </div>
 
                 <div class="pt-3 flex justify-end">
@@ -56,6 +50,28 @@
                 </div>
             </form>
         </div>
+
+        {{-- Role (Super Admin only) --}}
+        @role('Super Admin')
+            <div class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900">Role</h2>
+                    <p class="text-sm text-gray-600">
+                        Promote or change this user's role.
+                    </p>
+                </div>
+
+                <form wire:submit.prevent="updateRole" class="sm:flex items-end gap-4">
+                    <div class="flex-1">
+                        <x-select.styled label="Role *" hint="Update user role" placeholder="Select role"
+                            wire:model="role_id" :options="$this->roles" searchable />
+                    </div>
+                    <div class="pt-3 sm:pt-0">
+                        <x-button text="Update Role" submit />
+                    </div>
+                </form>
+            </div>
+        @endrole
 
         <form wire:submit.prevent="updatePassword" class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
 

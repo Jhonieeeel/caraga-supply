@@ -36,7 +36,6 @@ class UserForm extends Form
     #[Validate('required|string|min:8|confirmed')]
     public ?string $password = null;
 
-    #[Validate('required|string|min:8|confirmed')]
     public ?string $new_password_confirmation = null;
 
     // create
@@ -44,7 +43,6 @@ class UserForm extends Form
     #[Validate('required|string|min:8|confirmed')]
     public ?string $new_password = null;
 
-     #[Validate('required|string|min:8|confirmed')]
     public ?string $password_confirmation = null;
 
 
@@ -77,7 +75,10 @@ class UserForm extends Form
 
        $this->password_confirmation = $this->password;
 
-       $this->validate();
+       $this->validate([
+           'name' => 'required|string|max:255',
+           'email' => 'required|string|max:255|email|unique:users,email',
+       ]);
 
        $user = $createUser->handle([
             'name' => $this->name,
@@ -96,9 +97,17 @@ class UserForm extends Form
 
     public function submit(CreateUser $create_action, $rold_id)
     {
-        $this->validate();
+        $this->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|max:255|email|unique:users,email',
+            'dtr_number' => 'nullable',
+            'designation' => 'nullable',
+            'office_position' => 'nullable',
+            'gender' => 'required|in:male,female',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
 
-        $user = $create_action->handle($this->toArray());
+        $user = $create_action->handle($this->payload());
 
         $role = Role::find($rold_id);
 
@@ -120,7 +129,7 @@ class UserForm extends Form
         $this->gender = $user->gender;
     }
 
-    public function toArray(): array
+    public function payload(): array
     {
         return [
             'name' => $this->name,

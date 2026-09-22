@@ -19,6 +19,7 @@
             @role('Super Admin')
                 @interact('column_action', $employee)
                     <x-button.circle md flat icon="eye" wire:click="view({{ $employee->user->id }})" />
+                    <x-button.circle md flat color="red" icon="trash" wire:click="deleteUser({{ $employee->user->id }})" />
                 @endinteract
             @endrole
         </x-table>

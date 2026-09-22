@@ -50,10 +50,26 @@ class RequisitionForm extends Form
 
     // dates
 
+    #[Rule(['nullable', 'date', 'after_or_equal:requested_date'])]
     public $approved_date;
+
+    #[Rule(['nullable', 'date'])]
     public $requested_date;
+
+    #[Rule(['nullable', 'date', 'after_or_equal:requested_date'])]
     public $issued_date;
+
+    #[Rule(['nullable', 'date', 'after_or_equal:requested_date'])]
     public $received_date;
+
+    protected function messages(): array
+    {
+        return [
+            'approved_date.after_or_equal' => 'The approved date cannot be earlier than the requested date.',
+            'issued_date.after_or_equal' => 'The issued date cannot be earlier than the requested date.',
+            'received_date.after_or_equal' => 'The received date cannot be earlier than the requested date.',
+        ];
+    }
 
     public function create(CreateRequestAction $create_request_action)
     {
@@ -74,6 +90,13 @@ class RequisitionForm extends Form
 
     public function update(Requisition $requisition, UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
     {
+        $this->validate([
+            'requested_date' => ['nullable', 'date'],
+            'approved_date' => ['nullable', 'date', 'after_or_equal:requested_date'],
+            'issued_date' => ['nullable', 'date', 'after_or_equal:requested_date'],
+            'received_date' => ['nullable', 'date', 'after_or_equal:requested_date'],
+        ]);
+
         if (!$this->ris) {
             $this->validate();
         }

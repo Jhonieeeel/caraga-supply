@@ -16,8 +16,9 @@ use App\Livewire\Pages\Afms\UserTable;
 use App\Livewire\Rectification;
 use App\Models\Supply;
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 
-Route::view('profile', 'profile')
+Volt::route('profile', 'pages.profile')
     ->middleware(['auth'])
     ->name('profile');
 

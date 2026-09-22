@@ -49,7 +49,7 @@ class SupplyTable extends Component
     {
         return Supply::query()
             ->when($this->search, function(Builder $query) {
-                return $query->where('name', 'like', "{$this->search}%");
+                return $query->where('name', 'like', "%{$this->search}%");
             })
             ->paginate($this->quantity)
             ->withQueryString();

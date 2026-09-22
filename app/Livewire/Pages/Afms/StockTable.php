@@ -58,7 +58,7 @@ class StockTable extends Component
             ->where('quantity', '>=', 1)
             ->when($this->search, function ($query) {
                 $query->whereHas('supply', function (Builder $supplyQuery) {
-                    return $supplyQuery->where('name', 'like', "{$this->search}%");
+                    return $supplyQuery->where('name', 'like', "%{$this->search}%");
                 });
             })
             ->paginate($this->quantity)

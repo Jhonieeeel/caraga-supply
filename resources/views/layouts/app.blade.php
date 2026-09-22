@@ -26,6 +26,7 @@
             <x-layout.header>
                 <x-slot:right>
                     <x-dropdown text="Hello, {{ auth()->user()->name }}!">
+                        <x-dropdown.items text="Profile" :href="route('profile')" navigate />
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <x-dropdown.items text="Logout"

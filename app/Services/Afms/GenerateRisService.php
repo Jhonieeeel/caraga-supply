@@ -10,10 +10,15 @@ class GenerateRisService
     {
         $docx = new TemplateProcessor(public_path("templates/ris_template.docx"));
 
+        $employee = $requisition->requestedBy?->employee;
+        $office = collect([$employee?->section?->name, $employee?->unit?->name])
+            ->filter()
+            ->implode('-');
+
         // fields
-        $docx->setValue('division', '');
+        $docx->setValue('division', 'DRRMD');
         $docx->setValue('responsibility_code', '');
-        $docx->setValue('office', '');
+        $docx->setValue('office', $office);
         $docx->setValue('ris', $requisition->ris ?? '');
         $docx->setValue('purpose', $requisition->purpose);
         $docx->setValue('requested_by', $requisition->requestedBy->name ?? '');
@@ -24,7 +29,7 @@ class GenerateRisService
         // user designation
         $docx->setValue('req_designation', $requisition->requestedBy->designation ?? '');
         $docx->setValue('approved_designation', $requisition->approvedBy->designation ?? '');
-        $docx->setValue('issued_designation', $requisition->requestedBy->designation ?? '');
+        $docx->setValue('issued_designation', $requisition->issuedBy->designation ?? '');
         $docx->setValue('received_designation', $requisition->receivedBy->designation ?? '');
 
         // dates

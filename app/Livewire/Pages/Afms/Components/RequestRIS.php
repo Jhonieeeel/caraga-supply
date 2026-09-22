@@ -68,14 +68,16 @@ class RequestRIS extends Component
         // generate pdf
         ProcessRequisition::dispatchSync($this->requisition->id);
 
-        $this->dialog()->success('Success', 'RIS Generated!')->flash()->send();
+        $this->requisition = $this->requisition->fresh();
+
         $this->dispatch('update-ris-state');
 
         if ($this->requisition->pdf) {
+            $this->dialog()->success('Success', 'RIS Generated!')->flash()->send();
             $this->step = 2;
-
+        } else {
+            $this->dialog()->error('Error', 'Failed to generate the RIS document. Please try again or contact support.')->send();
         }
-
     }
 
     #[On('update-ris-state')]
