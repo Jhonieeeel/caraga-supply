@@ -26,6 +26,11 @@ class RequestDetail extends Component
     public RequisitionForm $requestForm;
     public ItemForm $itemForm;
 
+    public function goBack()
+    {
+        $this->dispatch('change-tab', tab: 'List')->to(RequisitionTable::class);
+    }
+
     public function viewPdf()  {
         $this->dispatch('change-tab', tab: 'RIS')->to(RequisitionTable::class);
         $this->dispatch('change-ris-step', step: 2);

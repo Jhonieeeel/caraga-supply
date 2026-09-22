@@ -56,11 +56,9 @@
                                     <x-select.styled placeholder="Role" label="Role *" wire:model.live="role_id"
                                         :options="$this->roles" searchable />
 
-                                    <x-select.styled placeholder="Section" label="Section *" wire:model.live="sectionId"
-                                        :options="$this->sections" searchable />
+                                    <x-input placeholder="Section" label="Section *" wire:model="sectionName" />
 
-                                    <x-select.styled placeholder="Unit" label="Unit *" wire:model.live="unitId"
-                                        :options="$this->units" searchable />
+                                    <x-input placeholder="Unit" label="Unit *" wire:model="unitName" />
                                 </div>
                             </div>
 

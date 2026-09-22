@@ -80,7 +80,7 @@
         </div>
     @else
         <small class="text-sm text-gray-500">No Selected Requisition Yet.</small>
-        <button class="text-sm block cursor-pointer underline" wire:click="$set('tab', 'Requests List')">Go
+        <button class="text-sm block cursor-pointer underline" wire:click="goBack">Go
             back</button>
     @endif
 </div>

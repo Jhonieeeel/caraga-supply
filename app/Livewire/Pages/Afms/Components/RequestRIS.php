@@ -36,6 +36,11 @@ class RequestRIS extends Component
         $this->step = $step;
     }
 
+    public function goBack()
+    {
+        $this->dispatch('change-tab', tab: 'List')->to(RequisitionTable::class);
+    }
+
     // RIS
     public function updateRIS(UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
     {

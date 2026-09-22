@@ -24,8 +24,8 @@ class UserManagement extends Component
     public EmployeeForm $employeeForm;
     public GuestForm $guestForm;
     public $role_id;
-    public $unitId;
-    public $sectionId;
+    public $unitName;
+    public $sectionName;
 
     // guest form
     public $agency;
@@ -41,8 +41,19 @@ class UserManagement extends Component
 
     public function create(CreateUser $create_user, CreateEmployee $create_employee)
     {
+        $this->validate([
+            'sectionName' => 'required|string|max:255',
+            'unitName' => 'required|string|max:255',
+        ]);
+
+        $section = Section::firstOrCreate(['name' => trim($this->sectionName)]);
+        $unit = Unit::firstOrCreate([
+            'name' => trim($this->unitName),
+            'section_id' => $section->id,
+        ]);
+
         $createdUser = $this->userForm->submit($create_user, $this->role_id);
-        $this->employeeForm->fillForm($this->unitId, $this->sectionId, $createdUser->id);
+        $this->employeeForm->fillForm($unit->id, $section->id, $createdUser->id);
         $this->employeeForm->submit($create_employee);
 
         $this->dispatch('modal:add-user-close');
@@ -50,28 +61,6 @@ class UserManagement extends Component
         $this->dispatch('refresh-users');
 
         return redirect(route('user-management.index'));
-    }
-
-    #[Computed]
-    public function units()
-    {
-        return Unit::where('section_id', $this->sectionId)
-            ->get()
-            ->map(fn($unit) => [
-                'label' => $unit->name,
-                'value' => $unit->id,
-            ])
-            ->toArray();
-    }
-
-    #[Computed()]
-    public function sections()
-    {
-        return Section::all(['id', 'name'])
-            ->map(fn($section) => [
-                'label' => $section->name,
-                'value' => $section->id,
-            ]);
     }
 
     #[Computed()]

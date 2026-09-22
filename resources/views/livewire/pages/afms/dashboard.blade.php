@@ -13,7 +13,7 @@
                         <h2 class="text-2xl font-bold text-blue-500">Welcome Back, {{ auth()->user()->name }}</h2>
                         {{-- user office here --}}
                         {{-- <p class="py-2 text-xs text-blue-600">Administrative and Financial Management Dashboard</p> --}}
-                        <p class="py-2 text-xs text-blue-600">{{ auth()->user()->employee->section->description }}</p>
+                        <p class="py-2 text-xs text-blue-600">{{ auth()->user()->employee?->section?->description }}</p>
                     </div>
                     <div class=" absolute right-0 bottom-0">
                         <img src="{{ asset('customer-support.svg') }}" class="w-24 overflow-hidden" alt="">
