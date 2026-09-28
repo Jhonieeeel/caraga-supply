@@ -72,6 +72,8 @@ class UserTable extends Component
             return;
         }
 
+        $this->authorize('delete', $user);
+
         $hasRequisitions = Requisition::where('user_id', $user->id)
             ->orWhere('requested_by', $user->id)
             ->orWhere('approved_by', $user->id)

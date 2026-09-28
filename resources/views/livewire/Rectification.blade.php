@@ -1,4 +1,10 @@
 <div class="p-2 max-w-7xl mx-auto bg-slate-200 shadow-md rounded-xl border-all">
+    @if (session('message'))
+        <div class="mb-4">
+            <x-alert title="{{ session('message')['title'] }}" text="{{ session('message')['text'] }}"
+                color="{{ session('message')['color'] }}" light />
+        </div>
+    @endif
     <x-tab selected="Rectification">
         <x-tab.items tab="Rectification">
             <div class="grid bg-slate-200 border-all rounded-xl grid-cols-2 gap-4 p-2">

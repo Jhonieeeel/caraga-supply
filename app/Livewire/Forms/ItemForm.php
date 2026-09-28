@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Forms;
 
-use App\Actions\RequisitionItem\CreateItemAction;
+use App\Actions\RequisitionItem\AllocateStockToRequisitionAction;
 use App\Actions\RequisitionItem\UpdateItemAction;
 use App\Models\Requisition;
 use App\Models\RequisitionItem;
@@ -54,17 +54,17 @@ class ItemForm extends Form
 
         if ($requisition->completed) {
             foreach ($requisition->items as $item) {
-                return Stock::find($item->stock_id)->decrement('quantity', $item->requested_qty);
+                Stock::find($item->stock_id)?->decrement('quantity', $item->requested_qty);
             }
         }
 
         return;
     }
 
-    public function create(CreateItemAction $create_item_action, Requisition $requisition)
+    public function create(AllocateStockToRequisitionAction $allocate_stock_action, Requisition $requisition)
     {
         $this->validate();
-        $create_item_action->handle($requisition, $this->requestedItems);
+        $allocate_stock_action->handle($requisition, $this->requestedItems);
         $this->reset();
         return;
     }

@@ -42,6 +42,8 @@ class ShowData extends Component
 
     public function mount($id = null)
     {
+        $this->authorize('manage-procurement');
+
         $this->procurement = $id
             ? Procurement::with(['purchaseRequest', 'purchaseOrder'])->find($id)
             : [];

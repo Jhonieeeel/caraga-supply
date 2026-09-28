@@ -20,6 +20,11 @@ class Procurement extends Component
 
     public $app_csv;
 
+    public function mount(): void
+    {
+        $this->authorize('manage-procurement');
+    }
+
     public function readCSV() {
         $tempPath = $this->app_csv->storeAs('temp', $this->app_csv->getClientOriginalName(), 'public');
         $filePath = storage_path('app/public/' . $tempPath);

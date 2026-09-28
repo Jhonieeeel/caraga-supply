@@ -3,7 +3,7 @@
 namespace App\Livewire\Pages\Afms;
 
 use App\Actions\Requisition\CreateRequestAction;
-use App\Actions\RequisitionItem\CreateItemAction;
+use App\Actions\RequisitionItem\AllocateStockToRequisitionAction;
 use App\Events\RequestCreated;
 use App\Livewire\Forms\ItemForm;
 use App\Livewire\Forms\RequisitionForm;
@@ -74,8 +74,10 @@ class RequisitionTable extends Component
             ->withQueryString();
     }
 
-   public function create(CreateRequestAction $create_request_action, CreateItemAction $create_item_action)
+   public function create(CreateRequestAction $create_request_action, AllocateStockToRequisitionAction $allocate_stock_action)
     {
+        $this->authorize('create', Requisition::class);
+
         if (!count($this->itemForm->requestedItems)) {
             throw ValidationException::withMessages([
                 'itemForm.requestedItems' => 'Please add at least one item.',
@@ -88,7 +90,7 @@ class RequisitionTable extends Component
         // mo add og items if the RIS is still false or not completed
         if ($newRequisition) {
 
-            $this->itemForm->create($create_item_action, $newRequisition);
+            $this->itemForm->create($allocate_stock_action, $newRequisition);
             broadcast(new RequestCreated($newRequisition))->toOthers();
             $this->dialog()->success('Success', 'Request Added!')->flash()->send();
             $this->dispatch('modal:add-request-close');

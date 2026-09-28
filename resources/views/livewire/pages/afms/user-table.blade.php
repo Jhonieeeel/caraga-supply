@@ -5,8 +5,8 @@
                 @foreach ($row->user->roles as $role)
                     @php
                         $color = match ($role->name) {
-                            'Super Admin' => 'blue',
-                            'Admin' => 'green',
+                            'SUPER-ADMIN' => 'blue',
+                            'ADMIN' => 'green',
                             default => 'gray',
                         };
                     @endphp
@@ -16,12 +16,12 @@
             @interact('column_section', $row)
                 {{ $row->section?->name }} - {{ $row->unit?->name }}
             @endinteract
-            @role('Super Admin')
+            @can('manage-users')
                 @interact('column_action', $employee)
                     <x-button.circle md flat icon="eye" wire:click="view({{ $employee->user->id }})" />
                     <x-button.circle md flat color="red" icon="trash" wire:click="deleteUser({{ $employee->user->id }})" />
                 @endinteract
-            @endrole
+            @endcan
         </x-table>
     </div>
 </div>

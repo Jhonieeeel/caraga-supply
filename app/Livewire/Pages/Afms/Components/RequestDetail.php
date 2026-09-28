@@ -4,8 +4,6 @@ namespace App\Livewire\Pages\Afms\Components;
 
 use App\Actions\Requisition\UpdateRequestAction;
 use App\Actions\RequisitionItem\UpdateItemAction;
-use App\Actions\Stock\UpdateStockQuantity;
-use App\Actions\Transaction\CreateTransaction;
 use App\Livewire\Forms\ItemForm;
 use App\Livewire\Forms\RequisitionForm;
 use App\Livewire\Pages\Afms\RequisitionTable;
@@ -38,6 +36,8 @@ class RequestDetail extends Component
 
     public function approvedRequisition(Requisition $requisition)
     {
+        $this->authorize('approve', $requisition);
+
         $requisition->status = 'approved';
         $requisition->save();
         $this->dispatch('alert', [
@@ -75,9 +75,13 @@ class RequestDetail extends Component
     #[On('generate-ris')]
     public function generateRIS()
     {
-        $date = now()->format('Y-m');
-        $count = Requisition::count();
-        return $this->requestForm->ris = "RIS-{$date}-{$count}";
+        $prefix = 'RIS-' . now()->format('Y-m') . '-';
+
+        $count = Requisition::where('ris', 'like', "{$prefix}%")->count();
+
+        $series = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+
+        return $this->requestForm->ris = "{$prefix}{$series}";
     }
 
     #[Computed()]
@@ -90,13 +94,11 @@ class RequestDetail extends Component
             ]);
     }
 
-    public function update(UpdateRequestAction $update_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
+    public function update(UpdateRequestAction $update_request_action)
     {
+        $this->authorize('update', $this->requisition);
 
-        $response = $this->requestForm->update($this->requisition, $update_request_action, $update_stock_quantity, $create_transaction);
-        if ($response->completed) {
-            $update_stock_quantity->handle($response);
-        }
+        $response = $this->requestForm->update($this->requisition, $update_request_action);
 
         $this->requisition = $response;
 

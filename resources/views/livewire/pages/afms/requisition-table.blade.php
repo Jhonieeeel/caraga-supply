@@ -39,7 +39,7 @@
                     {{-- ris --}}
                     <livewire:pages.afms.components.request-r-i-s />
                 </x-tab.items>
-                @role('Super Admin')
+                @can('approve-requisition')
                     <x-tab.items tab="RSMI">
                         <x-slot:right>
                             <x-icon name="cog-6-tooth" class="w-5 h-5" />
@@ -54,7 +54,7 @@
                         {{-- rsmi --}}
                         <livewire:pages.afms.components.request-rpci />
                     </x-tab.items>
-                @endrole
+                @endcan
             </x-tab>
         </div>
     </div>

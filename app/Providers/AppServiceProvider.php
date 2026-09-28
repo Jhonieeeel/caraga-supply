@@ -2,7 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Requisition;
+use App\Models\User;
+use App\Policies\RequisitionPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +29,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::policy(Requisition::class, RequisitionPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
+
         // table
         TallStackUi::personalize()
         ->table()

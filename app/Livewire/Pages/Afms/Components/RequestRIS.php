@@ -3,8 +3,6 @@
 namespace App\Livewire\Pages\Afms\Components;
 
 use App\Actions\Requisition\UpdateRequestAction;
-use App\Actions\Stock\UpdateStockQuantity;
-use App\Actions\Transaction\CreateTransaction;
 use App\Jobs\ProcessRequisition;
 use App\Livewire\Forms\RequisitionForm;
 use App\Livewire\Pages\Afms\RequisitionTable;
@@ -42,11 +40,11 @@ class RequestRIS extends Component
     }
 
     // RIS
-    public function updateRIS(UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
+    public function updateRIS(UpdateRequestAction $edit_request_action)
     {
         $this->requestForm->temporaryFile = $this->temporaryFile;
         $this->requestForm->fillForm($this->requisition);
-        $this->requisition = $this->requestForm->update($this->requisition, $edit_request_action, $update_stock_quantity, $create_transaction);
+        $this->requisition = $this->requestForm->update($this->requisition, $edit_request_action);
 
         $this->dispatch('alert', [
             'text' => 'Requisition Updated Successfully.',

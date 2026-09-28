@@ -9,8 +9,9 @@ use Spatie\Permission\Models\Role;
 uses(RefreshDatabase::class);
 
 test('add user form creates user, section, unit, and employee', function () {
-    $role = Role::create(['name' => 'Super Admin']);
+    $role = Role::create(['name' => 'SUPER-ADMIN']);
     $actingUser = User::factory()->create();
+    $actingUser->givePermissionTo('manage-users');
 
     Livewire::actingAs($actingUser)
         ->test(UserManagement::class)
@@ -25,11 +26,15 @@ test('add user form creates user, section, unit, and employee', function () {
         ->set('role_id', $role->id)
         ->set('sectionName', 'New Test Section')
         ->set('unitName', 'New Test Unit')
+        ->set('divisionName', 'New Test Division')
         ->call('create')
         ->assertHasNoErrors();
 
     $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
     $this->assertDatabaseHas('sections', ['name' => 'New Test Section']);
     $this->assertDatabaseHas('units', ['name' => 'New Test Unit']);
-    $this->assertDatabaseHas('employees', ['user_id' => User::where('email', 'jane@example.com')->first()->id]);
+    $this->assertDatabaseHas('employees', [
+        'user_id' => User::where('email', 'jane@example.com')->first()->id,
+        'division' => 'New Test Division',
+    ]);
 });

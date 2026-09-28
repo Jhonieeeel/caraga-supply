@@ -1,7 +1,7 @@
 <div class="space-y-6 shadow-sm">
 
     @php
-        $disabled = !auth()->user()->hasRole('Super Admin');
+        $disabled = !auth()->user()->can('manage-users');
     @endphp
 
     @if ($user)
@@ -21,15 +21,11 @@
                     <div class="flex flex-wrap gap-1">
                         @foreach ($user->roles as $role)
                             <x-badge text="{{ $role->name }}"
-                                color="{{ $role->name === 'Super Admin' ? 'blue' : 'gray' }}" />
+                                color="{{ in_array($role->name, ['SUPER-ADMIN', 'ADMIN'], true) ? 'blue' : 'gray' }}" />
                         @endforeach
                     </div>
                 </div>
             </div>
-
-            @hasrole('User')
-                <div></div>
-            @endrole
 
             {{-- FORM: Profile Update --}}
             <form wire:submit.prevent="updateUserInfo " class="space-y-3 pt-4 border-t">
@@ -51,8 +47,33 @@
             </form>
         </div>
 
-        {{-- Role (Super Admin only) --}}
-        @role('Super Admin')
+        {{-- Assignment (manage-users only) --}}
+        @can('manage-users')
+            @if ($user->employee)
+                <div class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900">Assignment</h2>
+                        <p class="text-sm text-gray-600">
+                            Update this user's section, unit, and division.
+                        </p>
+                    </div>
+
+                    <form wire:submit.prevent="updateAssignment" class="space-y-4">
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <x-input placeholder="Section" label="Section *" wire:model="sectionName" />
+                            <x-input placeholder="Unit" label="Unit *" wire:model="unitName" />
+                            <x-input placeholder="Division" label="Division *" wire:model="divisionName" />
+                        </div>
+                        <div class="pt-3 flex justify-end">
+                            <x-button text="Update Assignment" submit />
+                        </div>
+                    </form>
+                </div>
+            @endif
+        @endcan
+
+        {{-- Role (manage-users only) --}}
+        @can('manage-users')
             <div class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
                 <div>
                     <h2 class="text-lg font-semibold text-gray-900">Role</h2>
@@ -71,7 +92,7 @@
                     </div>
                 </form>
             </div>
-        @endrole
+        @endcan
 
         <form wire:submit.prevent="updatePassword" class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
 

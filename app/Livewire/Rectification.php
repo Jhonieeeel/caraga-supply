@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Livewire;
+use App\Models\Requisition;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -34,8 +36,6 @@ class Rectification extends Component
             $this->thisMonth = [];
         }
 
-        $this->year = now()->format('Y');
-
         $firstDay = Carbon::create($this->year, $this->month, 1);
         $daysInMonth = $firstDay->daysInMonth;
 
@@ -64,7 +64,11 @@ class Rectification extends Component
 
         $path = $this->dtrFile->store('dtr');
 
-        session()->flash('message', 'DTR uploaded successfully!');
+        session()->flash('message', [
+            'text' => 'DTR uploaded successfully!',
+            'color' => 'green',
+            'title' => 'Success',
+        ]);
     }
     
     #[On('refresh')]
@@ -84,8 +88,39 @@ class Rectification extends Component
 
     public function deleteUser($id)
     {
+        if ((int) $id === (int) Auth::id()) {
+            session()->flash('message', [
+                'text' => 'You cannot delete your own account.',
+                'color' => 'red',
+                'title' => 'Error',
+            ]);
+            return;
+        }
+
+        $hasRequisitions = Requisition::where('user_id', $id)
+            ->orWhere('requested_by', $id)
+            ->orWhere('approved_by', $id)
+            ->orWhere('issued_by', $id)
+            ->orWhere('received_by', $id)
+            ->exists();
+
+        if ($hasRequisitions) {
+            session()->flash('message', [
+                'text' => 'Cannot delete this user because they have related requisition records.',
+                'color' => 'red',
+                'title' => 'Error',
+            ]);
+            return;
+        }
+
         User::find($id)?->delete();
         $this->rows = User::all(); // Refresh rows
+
+        session()->flash('message', [
+            'text' => 'User deleted successfully.',
+            'color' => 'green',
+            'title' => 'Success',
+        ]);
     }
 
 

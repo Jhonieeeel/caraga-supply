@@ -4,8 +4,9 @@ namespace App\Livewire\Forms;
 
 use App\Actions\Stock\CreateStockAction;
 use App\Actions\Stock\EditStockAction;
-use App\Actions\Transaction\CreateTransaction;
+use App\Domain\Gasu\Aggregates\SupplyAggregate;
 use App\Models\Stock;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -33,20 +34,19 @@ class StockForm extends Form
     #[Rule('required')]
     public $stock_location;
 
-    public function createPurchaseOrder(CreateTransaction $create_transaction)
+    public function createPurchaseOrder()
     {
-        $this->validate();
+        $this->validate([
+            'stock_number' => ['required'],
+            'quantity' => ['required', 'numeric'],
+        ]);
 
         $stock = Stock::where('stock_number', $this->stock_number)->firstOrFail();
-        $stock->increment('quantity', $this->quantity);
-        $stock->increment('initial_quantity', $this->quantity);
+        $supply = $stock->supply;
 
-        $create_transaction->handle([
-            'stock_id' => $stock->id,
-            'quantity' => $this->quantity,
-            'current_quantity' => $stock->quantity,
-            'type_of_transaction' => 'PO'
-        ]);
+        SupplyAggregate::retrieve($supply->uuid)
+            ->receiveStock($stock->stock_number, (int) $this->quantity, Auth::id())
+            ->persist();
 
         $this->reset();
 
@@ -96,6 +96,10 @@ class StockForm extends Form
     {
         $this->supply_id = $stock->supply_id;
         $this->stock_number = $stock->stock_number;
+        $this->barcode = $stock->barcode;
+        $this->stock_location = $stock->stock_location;
+        $this->price = $stock->price;
+        $this->quantity = null;
     }
 
     public function toArray(): array

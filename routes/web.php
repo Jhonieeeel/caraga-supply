@@ -25,29 +25,32 @@ Volt::route('profile', 'pages.profile')
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('dashboard', Dashboard::class)->name('dashboard')->lazy();
-    Route::get('supply', SupplyTable::class)->name('supply.index');
-    Route::get('stock', StockTable::class)->name('stock.index');
     Route::get('requisition', RequisitionTable::class)->name('requisition.index');
 
     // logout
     Route::post('/logout', Logout::class)->name('logout');
 
-    // pmu
-    Route::get('pmu', Procurement::class)->name('pmu.index');
-    Route::get('pmu/{id}', ShowData::class)->name('pmu.show');
-    Route::get('pmu/{request}/print-request', ProcurementPrint::class)->name('print-pr');
-    Route::get('pmu/{request}/print-order', ProcurementOrderPrint::class)->name('print-po');
-
-
-
-
-    // user management
-
-    Route::get('user-management', UserManagement::class)->name('user-management.index');
-
-    Route::get('user', UserTable::class)->name('user.index');
     Route::get('/Rectification', Rectification::class)->name('Rectification');
     Route::get('/Managedtr', Managedtr::class)->name('Managedtr');
+
+    Route::middleware('permission:manage-supply|manage-stock')->group(function () {
+        Route::get('supply', SupplyTable::class)->name('supply.index');
+        Route::get('stock', StockTable::class)->name('stock.index');
+    });
+
+    // pmu
+    Route::middleware('permission:manage-procurement')->group(function () {
+        Route::get('pmu', Procurement::class)->name('pmu.index');
+        Route::get('pmu/{id}', ShowData::class)->name('pmu.show');
+        Route::get('pmu/{request}/print-request', ProcurementPrint::class)->name('print-pr');
+        Route::get('pmu/{request}/print-order', ProcurementOrderPrint::class)->name('print-po');
+    });
+
+    // user management
+    Route::middleware('permission:manage-users')->group(function () {
+        Route::get('user-management', UserManagement::class)->name('user-management.index');
+        Route::get('user', UserTable::class)->name('user.index');
+    });
 });
 
 require __DIR__ . '/auth.php';

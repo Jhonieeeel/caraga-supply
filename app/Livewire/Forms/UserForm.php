@@ -86,7 +86,7 @@ class UserForm extends Form
             'email' => $this->email
        ]);
 
-       $guest = Role::find(3);
+       $guest = Role::findByName('Guest');
 
        $user->assignRole($guest);
 

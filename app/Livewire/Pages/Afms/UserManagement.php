@@ -26,6 +26,7 @@ class UserManagement extends Component
     public $role_id;
     public $unitName;
     public $sectionName;
+    public $divisionName;
 
     // guest form
     public $agency;
@@ -41,9 +42,28 @@ class UserManagement extends Component
 
     public function create(CreateUser $create_user, CreateEmployee $create_employee)
     {
+        $this->authorize('manage-users');
+
         $this->validate([
             'sectionName' => 'required|string|max:255',
             'unitName' => 'required|string|max:255',
+            'divisionName' => [
+                function ($attribute, $value, $fail) {
+                    $sectionIsAfms = strtolower(trim((string) $this->sectionName)) === 'afms';
+
+                    if (blank($value)) {
+                        if (! $sectionIsAfms) {
+                            $fail('The division field is required.');
+                        }
+
+                        return;
+                    }
+
+                    if (mb_strlen($value) > 255) {
+                        $fail('The division field must not exceed 255 characters.');
+                    }
+                },
+            ],
         ]);
 
         $section = Section::firstOrCreate(['name' => trim($this->sectionName)]);
@@ -53,7 +73,7 @@ class UserManagement extends Component
         ]);
 
         $createdUser = $this->userForm->submit($create_user, $this->role_id);
-        $this->employeeForm->fillForm($unit->id, $section->id, $createdUser->id);
+        $this->employeeForm->fillForm($unit->id, $section->id, $createdUser->id, $this->divisionName ? trim($this->divisionName) : null);
         $this->employeeForm->submit($create_employee);
 
         $this->dispatch('modal:add-user-close');

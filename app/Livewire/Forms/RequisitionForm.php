@@ -4,8 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Actions\Requisition\CreateRequestAction;
 use App\Actions\Requisition\UpdateRequestAction;
-use App\Actions\Stock\UpdateStockQuantity;
-use App\Actions\Transaction\CreateTransaction;
+use App\Domain\Gasu\Aggregates\RequisitionAggregate;
 use App\Models\Requisition;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -88,7 +87,7 @@ class RequisitionForm extends Form
         return $requisition;
     }
 
-    public function update(Requisition $requisition, UpdateRequestAction $edit_request_action, UpdateStockQuantity $update_stock_quantity, CreateTransaction $create_transaction)
+    public function update(Requisition $requisition, UpdateRequestAction $edit_request_action)
     {
         $this->validate([
             'requested_date' => ['nullable', 'date'],
@@ -101,10 +100,20 @@ class RequisitionForm extends Form
             $this->validate();
         }
 
-        $currentPath = storage_path('app/public/' . $requisition->pdf);
+        if ($this->temporaryFile) {
+            // Only unlink an existing signed copy — on a requisition's
+            // first-ever upload $requisition->pdf is still null, so there is
+            // nothing to delete (fixes a latent bug where the old code
+            // resolved this path to the storage folder itself and treated
+            // that as "a file exists").
+            if ($requisition->pdf) {
+                $existingPath = storage_path('app/public/' . $requisition->pdf);
 
-        if ($this->temporaryFile && file_exists($currentPath)) {
-            unlink($currentPath);
+                if (file_exists($existingPath)) {
+                    unlink($existingPath);
+                }
+            }
+
             $extension = $this->temporaryFile->getClientOriginalExtension();
 
             $date = now()->format('Ymd');
@@ -122,25 +131,19 @@ class RequisitionForm extends Form
             $this->pdf = $storedPath;
             $this->status = 'completed';
             $this->completed = true;
-            $update_stock_quantity->handle($requisition);
-        }
 
+            // Guards internally against re-completing an already-completed
+            // requisition — this is a structural no-op in that case, rather
+            // than a flag we have to remember to check, which is what
+            // permanently closes the duplicate-transaction-logging bug class.
+            RequisitionAggregate::retrieve($requisition->uuid)
+                ->complete($storedPath, Auth::id())
+                ->persist();
+        }
 
         $edit_request_action->handle($requisition, $this->toArray());
 
-        if ($requisition->completed) {
-            foreach ($requisition->items as $item) {
-                $create_transaction->handle([
-                    'requisition_id' => $requisition->id,
-                    'stock_id' => $item->stock_id,
-                    'quantity' => $item->requested_qty,
-                    'current_quantity' => $item->stock->quantity,
-                    'type_of_transaction' => "RIS",
-                ]);
-            }
-        }
-
-        return $requisition;
+        return $requisition->fresh();
     }
 
     public function toArray(): array

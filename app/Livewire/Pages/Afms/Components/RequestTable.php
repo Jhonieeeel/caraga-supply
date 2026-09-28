@@ -51,6 +51,7 @@ class RequestTable extends Component
 
     public function deleteRequisition(Requisition $requisition)
     {
+        $this->authorize('delete', $requisition);
 
         if ($requisition) {
             return $this->dialog()

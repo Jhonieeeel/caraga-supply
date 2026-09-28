@@ -17,11 +17,14 @@ class EmployeeForm extends Form
     #[Validate('exists:users,id')]
     public ?int $user_id = null;
 
-    public function fillForm($unit_id, $section_id, $user_id): void
+    public ?string $division = null;
+
+    public function fillForm($unit_id, $section_id, $user_id, $division = null): void
     {
         $this->section_id = $section_id;
         $this->unit_id = $unit_id;
         $this->user_id = $user_id;
+        $this->division = $division;
     }
 
     public function toArray()
@@ -30,6 +33,7 @@ class EmployeeForm extends Form
             'section_id' => $this->section_id,
             'unit_id' => $this->unit_id,
             'user_id' => $this->user_id,
+            'division' => $this->division,
         ];
     }
 

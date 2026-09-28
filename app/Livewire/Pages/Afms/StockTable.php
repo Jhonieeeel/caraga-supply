@@ -4,7 +4,6 @@ namespace App\Livewire\Pages\Afms;
 
 use App\Actions\Stock\CreateStockAction;
 use App\Actions\Stock\EditStockAction;
-use App\Actions\Transaction\CreateTransaction;
 use App\Livewire\Forms\StockForm;
 use App\Models\Stock;
 use App\Models\Supply;
@@ -76,9 +75,11 @@ class StockTable extends Component
     }
 
     // purchase
-    public function savePurchaseStock(CreateTransaction $create_transaction)
+    public function savePurchaseStock()
     {
-        $stock = $this->stockForm->createPurchaseOrder($create_transaction);
+        $this->authorize('manage-stock');
+
+        $stock = $this->stockForm->createPurchaseOrder();
 
         $this->dispatch('modal:partial-edit-stock-close');
 
@@ -92,6 +93,8 @@ class StockTable extends Component
     }
     public function selectStock(Stock $stock)
     {
+        $this->authorize('manage-stock');
+
         $this->stockForm->partialForm($stock);
         $this->dispatch('modal:partial-edit-stock-open');
     }
@@ -100,6 +103,8 @@ class StockTable extends Component
     // create
     public function create(CreateStockAction $create_stock_action)
     {
+        $this->authorize('manage-stock');
+
         $this->stockForm->create($create_stock_action);
         $this->dispatch('modal:add-close');
     }
@@ -107,6 +112,8 @@ class StockTable extends Component
     // edit
     public function edit(Stock $stock)
     {
+        $this->authorize('manage-stock');
+
         $this->stock = $stock;
         $this->stockForm->fillForm($stock);
         $this->dispatch('modal:edit-stock-open');
@@ -115,6 +122,8 @@ class StockTable extends Component
     // update
     public function update(EditStockAction $edit_stock_action)
     {
+        $this->authorize('manage-stock');
+
         $stock = $this->stockForm->update($this->stock, $edit_stock_action);
         $this->dispatch('modal:edit-stock-close');
         $this->dispatch('refresh', id: $stock->id);
@@ -123,6 +132,8 @@ class StockTable extends Component
     // delete
     public function delete($id)
     {
+        $this->authorize('manage-stock');
+
         Stock::findOrFail($id)->delete();
         $this->dispatch('refresh', id: $id);
     }
