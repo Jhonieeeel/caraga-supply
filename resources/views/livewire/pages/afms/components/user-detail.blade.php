@@ -1,7 +1,7 @@
 <div class="space-y-6 shadow-sm">
 
     @php
-        $disabled = !auth()->user()->hasRole('Super Admin');
+        $disabled = !auth()->user()->can('manage-users');
     @endphp
 
     @if ($user)
@@ -11,7 +11,7 @@
 
             {{-- Header --}}
             <div class="flex gap-4 items-center">
-                <img src="{{ asset('illustrators/' . ($user->gender === 'Male' ? 'male_avatar.svg' : 'female_avatar.svg')) }}"
+                <img src="{{ asset('illustrators/' . (strtolower((string) $user->gender) === 'male' ? 'male_avatar.svg' : 'female_avatar.svg')) }}"
                     class="w-20 h-20 rounded-full object-cover" alt="User Avatar">
 
                 <div class="space-y-1">
@@ -21,15 +21,11 @@
                     <div class="flex flex-wrap gap-1">
                         @foreach ($user->roles as $role)
                             <x-badge text="{{ $role->name }}"
-                                color="{{ $role->name === 'Super Admin' ? 'blue' : 'gray' }}" />
+                                color="{{ in_array($role->name, ['SUPER-ADMIN', 'ADMIN'], true) ? 'blue' : 'gray' }}" />
                         @endforeach
                     </div>
                 </div>
             </div>
-
-            @hasrole('User')
-                <div></div>
-            @endrole
 
             {{-- FORM: Profile Update --}}
             <form wire:submit.prevent="updateUserInfo " class="space-y-3 pt-4 border-t">
@@ -51,8 +47,33 @@
             </form>
         </div>
 
-        {{-- Role (Super Admin only) --}}
-        @role('Super Admin')
+        {{-- Assignment (manage-users only) --}}
+        @can('manage-users')
+            @if ($user->employee)
+                <div class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900">Assignment</h2>
+                        <p class="text-sm text-gray-600">
+                            Update this user's section, unit, and division.
+                        </p>
+                    </div>
+
+                    <form wire:submit.prevent="updateAssignment" class="space-y-4">
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <x-input placeholder="Section" label="Section *" wire:model="sectionName" />
+                            <x-input placeholder="Unit" label="Unit *" wire:model="unitName" />
+                            <x-input placeholder="Division" label="Division *" wire:model="divisionName" />
+                        </div>
+                        <div class="pt-3 flex justify-end">
+                            <x-button text="Update Assignment" submit />
+                        </div>
+                    </form>
+                </div>
+            @endif
+        @endcan
+
+        {{-- Role (manage-users only) --}}
+        @can('manage-users')
             <div class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
                 <div>
                     <h2 class="text-lg font-semibold text-gray-900">Role</h2>
@@ -71,22 +92,22 @@
                     </div>
                 </form>
             </div>
-        @endrole
+        @endcan
 
         <form wire:submit.prevent="updatePassword" class="max-w-7xl mx-auto sm:px-6 py-6 bg-white border shadow rounded-lg space-y-4">
 
             <div>
                 <h2 class="text-lg font-semibold text-gray-900">Update Password</h2>
                 <p class="text-sm text-gray-600">
-                    Ensure your password is strong and secure.
+                    Set a new password (at least 8 characters) for this user. Enter your own password to confirm the change.
                 </p>
             </div>
 
             <div class="grid sm:grid-cols-2 gap-4 pt-2">
 
-                <x-password label="Current Password *" wire:model="userForm.current_password" />
+                <x-password label="Your Password *" hint="Your own password, to confirm it's you" wire:model="userForm.current_password" />
                 <x-password label="New Password *" wire:model="userForm.new_password" />
-                <x-password label="Confirm Password *" wire:model="userForm.new_password_confirmation" />
+                <x-password label="Confirm New Password *" wire:model="userForm.new_password_confirmation" />
 
             </div>
             <div class="pt-3 flex justify-end">

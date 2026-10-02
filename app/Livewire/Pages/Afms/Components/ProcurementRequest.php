@@ -101,6 +101,12 @@ class ProcurementRequest extends Component
                 'title' => 'Failed'
             ])->to(\App\Livewire\Pages\Afms\Procurement::class);
         }
+        $this->requestForm->philgeps_pdf_file = $this->philgeps_pdf_file;
+        $this->requestForm->app_spp_pdf_file = $this->app_spp_pdf_file;
+
+        // validates first; only report success once the request is actually saved
+        $request = $this->requestForm->submit($createRequest, $this->procurement_id);
+
         $this->dispatch('modal:add-request-close');
 
         $this->dispatch('alert', [
@@ -109,10 +115,9 @@ class ProcurementRequest extends Component
                 'title' => 'Success'
             ])->to(\App\Livewire\Pages\Afms\Procurement::class);
 
-        $this->requestForm->philgeps_pdf_file = $this->philgeps_pdf_file;
-        $this->requestForm->app_spp_pdf_file = $this->app_spp_pdf_file;
         $this->dispatch('procurement-order-refresh')->to(ProcurementOrder::class);
-        return $this->requestForm->submit($createRequest, $this->procurement_id);
+
+        return $request;
     }
 
     // button to PO

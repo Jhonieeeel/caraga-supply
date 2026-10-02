@@ -4,18 +4,20 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 User Management
             </h2>
-            @role('Super Admin')
+            @can('manage-users')
                 <x-button md x-on:click="$modalOpen('add-user')" icon="users" position="right">Add User</x-button>
-            @endrole
+            @endcan
         </div>
 
         <x-tab wire:model="tab">
             <x-tab.items tab="Users">
                 <livewire:pages.afms.user-table />
             </x-tab.items>
-            <x-tab.items tab="Roles">
-                <livewire:pages.afms.components.user-roles />
-            </x-tab.items>
+            @if (auth()->user()->hasRole(\App\Livewire\Pages\Afms\Components\UserRoles::LOCKED_ROLE))
+                <x-tab.items tab="Roles">
+                    <livewire:pages.afms.components.user-roles />
+                </x-tab.items>
+            @endif
         </x-tab>
 
         <div class="my-6">
@@ -52,13 +54,15 @@
                             <div class="border rounded-lg p-4 space-y-3">
                                 <h3 class="font-semibold text-gray-700">Assignment</h3>
 
-                                <div class="grid sm:grid-cols-3 gap-4">
+                                <div class="grid sm:grid-cols-2 gap-4">
                                     <x-select.styled placeholder="Role" label="Role *" wire:model.live="role_id"
                                         :options="$this->roles" searchable />
 
                                     <x-input placeholder="Section" label="Section *" wire:model="sectionName" />
 
                                     <x-input placeholder="Unit" label="Unit *" wire:model="unitName" />
+
+                                    <x-input placeholder="Division" label="Division *" wire:model="divisionName" />
                                 </div>
                             </div>
 

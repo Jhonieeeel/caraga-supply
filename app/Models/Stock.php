@@ -26,7 +26,7 @@ class Stock extends Model
 
     public function items()
     {
-        return $this->belongsTo(RequisitionItem::class);
+        return $this->hasMany(RequisitionItem::class);
     }
 
     public function transactions()

@@ -9,7 +9,9 @@ use App\Models\Supply;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,21 +20,35 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $super = Role::create([
-            'name' => 'Super Admin'
-        ]);
+        // Role names and permission matrix match the
+        // 2026_09_28_090000_migrate_legacy_roles_to_four_role_rbac migration,
+        // which runs before seeding (GASU/PMU roles and permissions are created there).
+        $permissions = [
+            'view-dashboard',
+            'manage-supply',
+            'manage-stock',
+            'create-requisition',
+            'approve-requisition',
+            'manage-procurement',
+            'manage-users',
+        ];
 
-        $admin = Role::create([
-            'name' => 'Admin'
-        ]);
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+        }
 
-        $user = Role::create([
-            'name' => 'User'
-        ]);
+        $super = Role::firstOrCreate(['name' => 'SUPER-ADMIN', 'guard_name' => 'web']);
+        $super->syncPermissions($permissions);
 
-        $guest = Role::create([
-            'name' => 'Guest'
-        ]);
+        $admin = Role::firstOrCreate(['name' => 'ADMIN', 'guard_name' => 'web']);
+        $admin->syncPermissions($permissions);
+
+        $user = Role::firstOrCreate(['name' => 'User', 'guard_name' => 'web']);
+        $user->syncPermissions(['create-requisition', 'view-dashboard']);
+
+        $guest = Role::firstOrCreate(['name' => 'Guest', 'guard_name' => 'web']);
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $dave = User::factory()->create([
             'name' => 'Dave Madayag',

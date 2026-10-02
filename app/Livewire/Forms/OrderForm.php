@@ -23,6 +23,7 @@ class OrderForm extends Form
     public $delivery_date;
     public $ntp;
     public $resolution_number;
+    public $supplier_id;
     public $supplier;
     public $supplier_address;
     public $supplier_contacts;
@@ -62,15 +63,17 @@ class OrderForm extends Form
             'abc'                  => ['nullable', 'exists:purchase_requests,id'],
 
             // Basic fields
-            'variance'             => ['nullable', 'numeric'],
-            'po_number'            => ['nullable', 'string'],
-            'resolution_number'    => ['nullable', 'string'],
-            'supplier'             => ['nullable', 'string'],
-            'supplier_address'     => ['nullable', 'string'],
-            'supplier_contacts'    => ['nullable', 'string'],
-            'tin'                  => ['nullable', 'string'],
-            'contract_price'       => ['nullable', 'numeric'],
-            'email_link'           => ['nullable', 'email'],
+            // variance = PR abc - contract price, so it can be negative; columns are decimal(15,2)
+            'variance'             => ['nullable', 'numeric', 'min:-9999999999999.99', 'max:9999999999999.99'],
+            'po_number'            => ['nullable', 'string', 'max:255'],
+            'resolution_number'    => ['nullable', 'string', 'max:255'],
+            'supplier_id'          => ['nullable', 'exists:suppliers,id'],
+            'supplier'             => ['nullable', 'string', 'max:255'],
+            'supplier_address'     => ['nullable', 'string', 'max:1000'],
+            'supplier_contacts'    => ['nullable', 'string', 'max:1000'],
+            'tin'                  => ['nullable', 'string', 'max:255'],
+            'contract_price'       => ['nullable', 'numeric', 'min:0', 'max:9999999999999.99'],
+            'email_link'           => ['nullable', 'email', 'max:255'],
 
             // Date fields
             'po_date'              => ['nullable', 'date'],
@@ -125,6 +128,7 @@ class OrderForm extends Form
         $this->delivery_date = $order->delivery_date;
         $this->ntp = $order->ntp;
         $this->resolution_number = $order->resolution_number;
+        $this->supplier_id = $order->supplier_id;
         $this->supplier = $order->supplier;
         $this->supplier_address = $order->supplier_address;
         $this->supplier_contacts = $order->supplier_contacts;
@@ -154,6 +158,7 @@ class OrderForm extends Form
             'delivery_date' => $this->delivery_date,
             'ntp' => $this->ntp,
             'resolution_number' => $this->resolution_number,
+            'supplier_id' => $this->supplier_id,
             'supplier' => $this->supplier,
             'supplier_address' => $this->supplier_address,
             'supplier_contacts' => $this->supplier_contacts,

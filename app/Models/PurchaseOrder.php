@@ -25,6 +25,7 @@ class PurchaseOrder extends Model
         'po_date',
         'delivery_date',
         'ntp',
+        'supplier_id',
         'supplier',
         'supplier_address',
         'supplier_contacts',
@@ -45,6 +46,11 @@ class PurchaseOrder extends Model
 
     public function purchaseRequest() {
         return $this->belongsTo(PurchaseRequest::class);
+    }
+
+    // Named supplierRecord because the `supplier` column (business name string) shadows a `supplier` property.
+    public function supplierRecord() {
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 
     public function datePosted() {

@@ -35,10 +35,10 @@ class RequestForm extends Form
     #[Validate(['nullable', 'string', 'max:100'])]
     public $pr_number;
 
-    #[Validate(['nullable', 'numeric', 'min:0'])]
+    #[Validate(['nullable', 'numeric', 'min:0', 'max:9999999999999.99'])]
     public $abc;
 
-    #[Validate(['nullable', 'email'])]
+    #[Validate(['nullable', 'email', 'max:255'])]
     public $email_posting;
 
     #[Validate(['nullable', 'date'])]

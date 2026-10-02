@@ -10,6 +10,7 @@ class Supply extends Model
     use HasFactory;
 
     protected $fillable = [
+        'uuid',
         'name',
         'category',
         'unit'

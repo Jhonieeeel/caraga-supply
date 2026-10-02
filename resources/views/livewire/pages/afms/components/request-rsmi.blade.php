@@ -32,7 +32,7 @@
                                 text="{{ $transaction->id }}" color="teal" loading icon="document" />
                             @if ($transaction->rsmi_file)
                                 <x-button.circle flat color="blue"
-                                    wire:click="downloadRsmi({{ $transaction->rsmi_file }})" loading
+                                    wire:click="downloadRsmi('{{ $transaction->rsmi_file }}')" loading
                                     icon="arrow-down-tray" />
                             @endif
                         @endinteract
@@ -48,7 +48,7 @@
                         <x-table :headers="$fileHeaders" :rows="$this->getGeneratedFiles ?? []" :quantity="[2, 5, 10]" loading>
                             @interact('column_action', $transaction)
                                 <x-button.circle flat color="blue"
-                                    wire:click="downloadRsmi({{ $transaction->rsmi_file }})" loading
+                                    wire:click="downloadRsmi('{{ $transaction->rsmi_file }}')" loading
                                     icon="arrow-down-tray" />
                             @endinteract
                         </x-table>

@@ -19,6 +19,8 @@ class ProcurementOrderPrint extends Component
     public ?float $editingPoValue = null;
     public function mount(LoadMealDraft $loadMealDraft): void
     {
+        $this->authorize('manage-procurement');
+
         $this->loadPoBlocks($loadMealDraft);
     }
     public function updatedType(LoadMealDraft $loadMealDraft): void
