@@ -20,18 +20,25 @@ class AllocateStockToRequisitionAction
      *                                  enough quantity, the handler spills
      *                                  the remainder across the same
      *                                  supply's other lots automatically.
+     *                                  All lines are allocated atomically:
+     *                                  if any line fails, none persists.
      */
     public function handle(Requisition $requisition, array $data): Collection
     {
+        $lines = [];
+
         foreach ($data as $stockId => $qty) {
             if ((int) $qty === 0) {
                 continue;
             }
 
-            $stock = Stock::findOrFail($stockId);
-            $supply = $stock->supply;
+            $stock = Stock::with('supply')->findOrFail($stockId);
 
-            $this->handler->handle($supply->uuid, $stock->stock_number, (int) $qty, $requisition->uuid);
+            $lines[] = [$stock->supply->uuid, $stock->stock_number, (int) $qty];
+        }
+
+        if ($lines) {
+            $this->handler->handleMany($lines, $requisition->uuid);
         }
 
         return $requisition->refresh()->items;

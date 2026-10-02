@@ -6,10 +6,14 @@ use App\Livewire\Managedtr;
 use App\Livewire\Pages\Afms\Components\ProcurementPrint;
 use App\Livewire\Pages\Afms\Components\ProcurementOrderPrint;
 use App\Livewire\Pages\Afms\Dashboard;
+use App\Livewire\Pages\Afms\Pmr;
 use App\Livewire\Pages\Afms\Procurement;
 use App\Livewire\Pages\Afms\RequisitionTable;
+use App\Livewire\Pages\Afms\RpciReport;
+use App\Livewire\Pages\Afms\RsmiReport;
 use App\Livewire\Pages\Afms\ShowData;
 use App\Livewire\Pages\Afms\StockTable;
+use App\Livewire\Pages\Afms\SupplierTable;
 use App\Livewire\Pages\Afms\SupplyTable;
 use App\Livewire\Pages\Afms\UserManagement;
 use App\Livewire\Pages\Afms\UserTable;
@@ -25,7 +29,8 @@ Volt::route('profile', 'pages.profile')
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('dashboard', Dashboard::class)->name('dashboard')->lazy();
-    Route::get('requisition', RequisitionTable::class)->name('requisition.index');
+    Route::get('requisition', RequisitionTable::class)->name('requisition.index')
+        ->middleware('permission:create-requisition');
 
     // logout
     Route::post('/logout', Logout::class)->name('logout');
@@ -38,9 +43,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('stock', StockTable::class)->name('stock.index');
     });
 
+    Route::middleware('permission:approve-requisition')->group(function () {
+        Route::get('rsmi', RsmiReport::class)->name('rsmi.index');
+        Route::get('rpci', RpciReport::class)->name('rpci.index');
+    });
+
     // pmu
     Route::middleware('permission:manage-procurement')->group(function () {
         Route::get('pmu', Procurement::class)->name('pmu.index');
+        Route::get('pmu/suppliers', SupplierTable::class)->name('suppliers.index');
+        Route::get('pmu/pmr', Pmr::class)->name('pmr.index');
         Route::get('pmu/{id}', ShowData::class)->name('pmu.show');
         Route::get('pmu/{request}/print-request', ProcurementPrint::class)->name('print-pr');
         Route::get('pmu/{request}/print-order', ProcurementOrderPrint::class)->name('print-po');

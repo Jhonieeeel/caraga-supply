@@ -12,6 +12,7 @@ test('add user form creates user, section, unit, and employee', function () {
     $role = Role::create(['name' => 'SUPER-ADMIN']);
     $actingUser = User::factory()->create();
     $actingUser->givePermissionTo('manage-users');
+    $actingUser->assignRole($role); // only a SUPER-ADMIN may grant SUPER-ADMIN
 
     Livewire::actingAs($actingUser)
         ->test(UserManagement::class)

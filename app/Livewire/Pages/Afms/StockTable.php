@@ -4,6 +4,8 @@ namespace App\Livewire\Pages\Afms;
 
 use App\Actions\Stock\CreateStockAction;
 use App\Actions\Stock\EditStockAction;
+use App\Actions\Stock\RemoveStockAction;
+use App\Domain\Gasu\Exceptions\StockLotInUseException;
 use App\Livewire\Forms\StockForm;
 use App\Models\Stock;
 use App\Models\Supply;
@@ -130,12 +132,32 @@ class StockTable extends Component
     }
 
     // delete
-    public function delete($id)
+    public function delete($id, RemoveStockAction $remove_stock_action)
     {
         $this->authorize('manage-stock');
 
-        Stock::findOrFail($id)->delete();
+        try {
+            // Through the SupplyAggregate (StockLotRemoved); only lots never
+            // requested in any requisition can be removed.
+            $remove_stock_action->handle(Stock::with('supply')->findOrFail($id));
+        } catch (StockLotInUseException $e) {
+            session()->flash('message', [
+                'text' => 'Cannot delete this stock because it has already been requested in a requisition.',
+                'color' => 'red',
+                'title' => 'Error',
+            ]);
+
+            return;
+        }
+
+        $this->dispatch('modal:edit-stock-close');
         $this->dispatch('refresh', id: $id);
+
+        session()->flash('message', [
+            'text' => 'Stock deleted successfully.',
+            'color' => 'green',
+            'title' => 'Success',
+        ]);
     }
 
     #[Computed('refresh')]

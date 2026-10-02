@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Actions\Logout;
+use App\Models\Requisition;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
@@ -16,6 +17,21 @@ new class extends Component
         $this->validate([
             'password' => ['required', 'string', 'current_password'],
         ]);
+
+        $id = Auth::id();
+
+        $hasRequisitions = Requisition::where('user_id', $id)
+            ->orWhere('requested_by', $id)
+            ->orWhere('approved_by', $id)
+            ->orWhere('issued_by', $id)
+            ->orWhere('received_by', $id)
+            ->exists();
+
+        if ($hasRequisitions) {
+            $this->addError('password', __('Your account cannot be deleted because it has related requisition records.'));
+
+            return;
+        }
 
         tap(Auth::user(), $logout(...))->delete();
 

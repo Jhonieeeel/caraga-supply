@@ -3,6 +3,7 @@
 namespace App\Domain\Gasu\Projectors;
 
 use App\Domain\Gasu\Events\RequisitionCompleted;
+use App\Domain\Gasu\Events\RequisitionDeleted;
 use App\Domain\Gasu\Events\RequisitionDetailsUpdated;
 use App\Domain\Gasu\Events\RequisitionOpened;
 use App\Models\Requisition;
@@ -36,6 +37,18 @@ class RequisitionProjector extends Projector
             'received_date' => $event->receivedDate,
             'purpose' => $event->purpose,
         ]);
+    }
+
+    public function onRequisitionDeleted(RequisitionDeleted $event): void
+    {
+        $requisition = Requisition::where('uuid', $event->requisitionUuid)->first();
+
+        if (! $requisition) {
+            return;
+        }
+
+        $requisition->items()->delete();
+        $requisition->delete();
     }
 
     public function onRequisitionCompleted(RequisitionCompleted $event): void

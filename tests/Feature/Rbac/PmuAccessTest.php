@@ -41,3 +41,17 @@ test('a PMU user is denied access to the supply route', function () {
         ->get(route('supply.index'))
         ->assertForbidden();
 });
+
+test('a GASU user is denied access to the new PMU feature routes', function () {
+    $user = User::factory()->create();
+    $user->assignRole(Role::findByName('GASU'));
+
+    $this->actingAs($user)->get(route('suppliers.index'))->assertForbidden();
+});
+
+test('a PMU user is granted access to the new PMU feature routes', function () {
+    $user = User::factory()->create();
+    $user->assignRole(Role::findByName('PMU'));
+
+    $this->actingAs($user)->get(route('suppliers.index'))->assertOk();
+});

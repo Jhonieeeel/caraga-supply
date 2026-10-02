@@ -51,9 +51,15 @@
                     <x-side-bar.item text="Dashboard" icon="chart-bar-square" wire:navigate :current="request()->routeIs('dashboard')"
                         :href="route('dashboard')" />
                 </x-side-bar.item>
-                <x-side-bar.item text="GASU" :visible="auth()->user()->canAny(['manage-supply', 'manage-stock'])">
-                    <x-side-bar.item text="Supply" icon="cube" wire:navigate :current="request()->routeIs('supply.index')" :href="route('supply.index')" />
-                    <x-side-bar.item text="Stock" icon="hashtag" wire:navigate :current="request()->routeIs('stock.index')" :href="route('stock.index')" />
+                <x-side-bar.item text="GASU" :visible="auth()->user()->canAny(['manage-supply', 'manage-stock', 'approve-requisition'])">
+                    <x-side-bar.item text="Supply" icon="cube" wire:navigate :current="request()->routeIs('supply.index')" :href="route('supply.index')"
+                        :visible="auth()->user()->canAny(['manage-supply', 'manage-stock'])" />
+                    <x-side-bar.item text="Stock" icon="hashtag" wire:navigate :current="request()->routeIs('stock.index')" :href="route('stock.index')"
+                        :visible="auth()->user()->canAny(['manage-supply', 'manage-stock'])" />
+                    <x-side-bar.item text="RSMI" icon="document-chart-bar" wire:navigate :current="request()->routeIs('rsmi.index')" :href="route('rsmi.index')"
+                        :visible="auth()->user()->can('approve-requisition')" />
+                    <x-side-bar.item text="RPCI" icon="clipboard-document-check" wire:navigate :current="request()->routeIs('rpci.index')" :href="route('rpci.index')"
+                        :visible="auth()->user()->can('approve-requisition')" />
                 </x-side-bar.item>
                 <x-side-bar.item text="Requisition" :visible="auth()->user()->can('create-requisition')">
                     <x-side-bar.item text="Requisition" icon="clipboard-document-list" :current="request()->routeIs('requisition.index')" wire:navigate
@@ -62,6 +68,10 @@
                 <x-side-bar.item text="PMU" :visible="auth()->user()->can('manage-procurement')">
                     <x-side-bar.item text="Tracking" icon="archive-box" wire:navigate :current="request()->routeIs('pmu.index')"
                         :href="route('pmu.index')" />
+                    <x-side-bar.item text="Suppliers" icon="building-storefront" wire:navigate :current="request()->routeIs('suppliers.index')"
+                        :href="route('suppliers.index')" />
+                    <x-side-bar.item text="PMR" icon="table-cells" wire:navigate :current="request()->routeIs('pmr.index')"
+                        :href="route('pmr.index')" />
                 </x-side-bar.item>
                 <x-side-bar.item text="HRMU" :visible="auth()->user()->can('manage-users')">
                     <x-side-bar.item text="Users" icon="users" wire:navigate :current="request()->routeIs('user-management.index')"

@@ -8,6 +8,9 @@ use App\Domain\Gasu\Aggregates\RequisitionAggregate;
 use App\Models\Requisition;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule as ValidationRule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -39,12 +42,14 @@ class RequisitionForm extends Form
     #[Rule('nullable')]
     public $status;
 
-    #[Rule(['nullable'])]
+    #[Rule(['nullable', 'string', 'max:255'])]
     public $purpose;
 
-    #[Validate(['nullable', 'file', 'mimes:pdf'])]
     public $pdf;
 
+    // Signed RIS upload: PDF only. It is always stored with a .pdf extension
+    // (never the client's), see update().
+    #[Validate(['nullable', 'file', 'mimes:pdf', 'max:10240'])]
     public $temporaryFile;
 
     // dates
@@ -89,38 +94,28 @@ class RequisitionForm extends Form
 
     public function update(Requisition $requisition, UpdateRequestAction $edit_request_action)
     {
-        $this->validate([
-            'requested_date' => ['nullable', 'date'],
-            'approved_date' => ['nullable', 'date', 'after_or_equal:requested_date'],
-            'issued_date' => ['nullable', 'date', 'after_or_equal:requested_date'],
-            'received_date' => ['nullable', 'date', 'after_or_equal:requested_date'],
-        ]);
+        // Always the full rule set (the RIS being filled in no longer skips
+        // the unique/exists checks), with the RIS uniqueness ignoring this
+        // requisition's own current value.
+        $this->validate($this->updateRules($requisition));
 
-        if (!$this->ris) {
-            $this->validate();
-        }
+        $this->guardApprovalFields($requisition);
 
         if ($this->temporaryFile) {
-            // Only unlink an existing signed copy — on a requisition's
-            // first-ever upload $requisition->pdf is still null, so there is
-            // nothing to delete (fixes a latent bug where the old code
-            // resolved this path to the storage folder itself and treated
-            // that as "a file exists").
+            // Only delete an existing copy — on a requisition's first-ever
+            // upload $requisition->pdf is still null, so there is nothing to
+            // delete.
             if ($requisition->pdf) {
-                $existingPath = storage_path('app/public/' . $requisition->pdf);
-
-                if (file_exists($existingPath)) {
-                    unlink($existingPath);
-                }
+                Storage::disk('public')->delete($requisition->pdf);
             }
-
-            $extension = $this->temporaryFile->getClientOriginalExtension();
 
             $date = now()->format('Ymd');
             $userId = $requisition->user_id;
             $random = substr((string) Str::uuid(), 0, 8);
 
-            $uniqueName = "SIGNED_RIS_{$date}_{$userId}_{$random}.{$extension}";
+            // Validated as a PDF above; never trust/keep the client's
+            // extension on the public disk.
+            $uniqueName = "SIGNED_RIS_{$date}_{$userId}_{$random}.pdf";
 
             $storedPath = $this->temporaryFile->storeAs(
                 'ris',
@@ -144,6 +139,51 @@ class RequisitionForm extends Form
         $edit_request_action->handle($requisition, $this->toArray());
 
         return $requisition->fresh();
+    }
+
+    protected function updateRules(Requisition $requisition): array
+    {
+        return [
+            'ris' => ['nullable', 'string', 'min:6', 'max:255', ValidationRule::unique('requisitions', 'ris')->ignore($requisition->id)],
+            'requested_by' => ['nullable', 'exists:users,id'],
+            'issued_by' => ['nullable', 'exists:users,id'],
+            'approved_by' => ['nullable', 'exists:users,id'],
+            'received_by' => ['nullable', 'exists:users,id'],
+            'purpose' => ['nullable', 'string', 'max:255'],
+            'requested_date' => ['nullable', 'date'],
+            'approved_date' => ['nullable', 'date', 'after_or_equal:requested_date'],
+            'issued_date' => ['nullable', 'date', 'after_or_equal:requested_date'],
+            'received_date' => ['nullable', 'date', 'after_or_equal:requested_date'],
+            'temporaryFile' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+        ];
+    }
+
+    /**
+     * Approval/issuance details may only be set by users who can approve
+     * requisitions (the UI hides these fields from everyone else); anyone
+     * else changing them is rejected rather than silently trusted.
+     */
+    protected function guardApprovalFields(Requisition $requisition): void
+    {
+        if (Auth::user()?->can('approve', $requisition)) {
+            return;
+        }
+
+        $normalize = fn ($value) => ($value === null || $value === '') ? null : (string) $value;
+
+        $errors = [];
+
+        foreach (['approved_by', 'issued_by', 'approved_date', 'issued_date'] as $field) {
+            if ($normalize($this->{$field}) !== $normalize($requisition->{$field})) {
+                $errors[$field] = 'Only an approver can set the approval and issuance details.';
+            }
+        }
+
+        if ($errors) {
+            throw ValidationException::withMessages(
+                collect($errors)->mapWithKeys(fn ($message, $field) => [$this->getPropertyName() . '.' . $field => $message])->all()
+            );
+        }
     }
 
     public function toArray(): array

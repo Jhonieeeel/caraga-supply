@@ -47,15 +47,15 @@
                                     </x-button>
                                     <div x-show="openSignatoryMenu" @click.away="openSignatoryMenu = false" x-transition
                                         class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
-                                        <button wire:click="option1"
+                                        <button type="button" wire:click="option1('signatory')"
                                             class="block px-2 py-2 w-full text-left hover:bg-gray-100">
                                             Blank
                                         </button>
-                                        <button wire:click="option2"
+                                        <button type="button" wire:click="option2('signatory')"
                                             class="block px-2 py-2 w-full text-left hover:bg-gray-100">
                                             Lorene Sia-Cathedral
                                         </button>
-                                        <button wire:click="option3"
+                                        <button type="button" wire:click="option3('signatory')"
                                             class="block px-2 py-2 w-full text-left hover:bg-gray-100">
                                             Marie Lynn B. Tadle
                                         </button>
@@ -68,15 +68,15 @@
 
                                     <div x-show="openCSCMenu" @click.away="openCSCMenu = false" x-transition
                                         class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
-                                        <button wire:click="option1"
+                                        <button type="button" wire:click="option1('print')"
                                             class="block px-2 py-2 w-full text-left hover:bg-gray-100">
                                             All
                                         </button>
-                                        <button wire:click="option2"
+                                        <button type="button" wire:click="option2('print')"
                                             class="block px-2 py-2 w-full text-left hover:bg-gray-100">
                                             1–15
                                         </button>
-                                        <button wire:click="option3"
+                                        <button type="button" wire:click="option3('print')"
                                             class="block px-2 py-2 w-full text-left hover:bg-gray-100">
                                             16–31
                                         </button>
@@ -85,6 +85,11 @@
                             </div>
                         </template>
                     </div>
+                    @if ($selectedSignatory || $printRange)
+                        <p class="text-center text-sm text-gray-600">
+                            Signatory: {{ $selectedSignatory ?? '-' }} | CSC Form No.48: {{ $printRange ?? '-' }}
+                        </p>
+                    @endif
                 </form>
             </div>
 
@@ -255,11 +260,13 @@
                                             <td class="border-b border-gray-200 px-4 py-2">{{ $row->created_at }}</td>
                                             <td class="border-b border-gray-200 px-4 py-2">{{ $row->in_out }}</td>
                                             <td class="border-b border-gray-200 px-4 py-2">
-                                                <button wire:click="deleteUser({{ $row->id }})"
-                                                    onclick="return confirm('Are you sure?')"
-                                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
-                                                    Delete
-                                                </button>
+                                                @can('delete', $row)
+                                                    <button type="button" wire:click="deleteUser({{ $row->id }})"
+                                                        onclick="return confirm('Are you sure?')"
+                                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                                                        Delete
+                                                    </button>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach

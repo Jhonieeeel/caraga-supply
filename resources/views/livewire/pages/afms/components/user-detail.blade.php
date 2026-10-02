@@ -11,7 +11,7 @@
 
             {{-- Header --}}
             <div class="flex gap-4 items-center">
-                <img src="{{ asset('illustrators/' . ($user->gender === 'Male' ? 'male_avatar.svg' : 'female_avatar.svg')) }}"
+                <img src="{{ asset('illustrators/' . (strtolower((string) $user->gender) === 'male' ? 'male_avatar.svg' : 'female_avatar.svg')) }}"
                     class="w-20 h-20 rounded-full object-cover" alt="User Avatar">
 
                 <div class="space-y-1">
@@ -99,15 +99,15 @@
             <div>
                 <h2 class="text-lg font-semibold text-gray-900">Update Password</h2>
                 <p class="text-sm text-gray-600">
-                    Ensure your password is strong and secure.
+                    Set a new password (at least 8 characters) for this user. Enter your own password to confirm the change.
                 </p>
             </div>
 
             <div class="grid sm:grid-cols-2 gap-4 pt-2">
 
-                <x-password label="Current Password *" wire:model="userForm.current_password" />
+                <x-password label="Your Password *" hint="Your own password, to confirm it's you" wire:model="userForm.current_password" />
                 <x-password label="New Password *" wire:model="userForm.new_password" />
-                <x-password label="Confirm Password *" wire:model="userForm.new_password_confirmation" />
+                <x-password label="Confirm New Password *" wire:model="userForm.new_password_confirmation" />
 
             </div>
             <div class="pt-3 flex justify-end">

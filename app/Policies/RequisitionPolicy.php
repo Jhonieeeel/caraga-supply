@@ -24,6 +24,25 @@ class RequisitionPolicy
         return $isOwner && ! $twoFieldsFilled;
     }
 
+    /**
+     * Generating the RIS and uploading the signed copy (which completes the
+     * requisition) is open to the requisition's owner and to approvers only.
+     * Unlike update(), the owner keeps this right after requested_by and
+     * received_by are filled, since that is exactly when the RIS is signed.
+     */
+    public function complete(User $user, Requisition $requisition): bool
+    {
+        if ($user->can('approve-requisition')) {
+            return true;
+        }
+
+        return $user->id === $requisition->user_id;
+    }
+
+    /**
+     * Also gates setting approval/issuance details (approved_by, issued_by,
+     * approved_date, issued_date) — see RequisitionForm::update().
+     */
     public function approve(User $user, Requisition $requisition): bool
     {
         return $user->can('approve-requisition');

@@ -27,18 +27,20 @@ class UserDetail extends Component
     public $divisionName;
 
     // userInfo
-    public function updatePassword(User $user) {
-        $this->authorize('update', User::class);
+    public function updatePassword() {
+        $this->authorize('update', $this->user);
 
         $this->userForm->updatePass($this->user);
 
-        return;
+        $this->dialog()->success('Success', 'Password updated successfully.')->send();
     }
 
     public function updateUserInfo() {
-        $this->authorize('update', User::class);
+        $this->authorize('update', $this->user);
 
-        return $this->userForm->updateInfo($this->user);
+        $this->userForm->updateInfo($this->user);
+
+        $this->dialog()->success('Success', 'Profile updated successfully.')->send();
     }
 
     public function updateRole()
@@ -59,7 +61,7 @@ class UserDetail extends Component
 
     public function updateAssignment()
     {
-        $this->authorize('update', User::class);
+        $this->authorize('update', $this->user);
 
         $this->validate([
             'sectionName' => 'required|string|max:255',

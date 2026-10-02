@@ -39,22 +39,6 @@
                     {{-- ris --}}
                     <livewire:pages.afms.components.request-r-i-s />
                 </x-tab.items>
-                @can('approve-requisition')
-                    <x-tab.items tab="RSMI">
-                        <x-slot:right>
-                            <x-icon name="cog-6-tooth" class="w-5 h-5" />
-                        </x-slot:right>
-                        {{-- rsmi --}}
-                        <livewire:pages.afms.components.request-rsmi />
-                    </x-tab.items>
-                    <x-tab.items tab="RPCI">
-                        <x-slot:right>
-                            <x-icon name="cog-6-tooth" class="w-5 h-5" />
-                        </x-slot:right>
-                        {{-- rsmi --}}
-                        <livewire:pages.afms.components.request-rpci />
-                    </x-tab.items>
-                @endcan
             </x-tab>
         </div>
     </div>

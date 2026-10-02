@@ -65,11 +65,15 @@ class UserTable extends Component
     #[On('refresh-users')]
     public function updateList($id = null) {}
 
-    public function deleteUser(User $user)
+    /**
+     * Self-delete, authorization and related-requisition checks. Shared by
+     * deleteUser() and confirmed(), since confirmed() receives a client-supplied id.
+     */
+    private function ensureDeletable(User $user): bool
     {
         if ($user->id === Auth::id()) {
             $this->dialog()->error('Error', 'You cannot delete your own account.')->send();
-            return;
+            return false;
         }
 
         $this->authorize('delete', $user);
@@ -83,6 +87,15 @@ class UserTable extends Component
 
         if ($hasRequisitions) {
             $this->dialog()->error('Error', 'Cannot delete this user because they have related requisition records.')->send();
+            return false;
+        }
+
+        return true;
+    }
+
+    public function deleteUser(User $user)
+    {
+        if (! $this->ensureDeletable($user)) {
             return;
         }
 
@@ -95,7 +108,17 @@ class UserTable extends Component
 
     public function confirmed(array $data)
     {
-        $user = User::findOrFail($data['id']);
+        $user = User::find($data['id'] ?? null);
+
+        if (! $user) {
+            $this->dialog()->error('Error', 'User not found.')->send();
+            return;
+        }
+
+        if (! $this->ensureDeletable($user)) {
+            return;
+        }
+
         $user->delete();
 
         $this->dialog()->success('Success', $data['message'])->send();

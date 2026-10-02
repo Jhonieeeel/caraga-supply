@@ -11,13 +11,13 @@ use Livewire\Form;
 
 class SupplyForm extends Form
 {
-    #[Rule(['required', 'min:6'])]
+    #[Rule(['required', 'string', 'min:2', 'max:255'])]
     public $name;
 
-    #[Rule(['required'])]
+    #[Rule(['required', 'string', 'max:255'])]
     public $category;
 
-    #[Rule(['required'])]
+    #[Rule(['required', 'string', 'max:255'])]
     public $unit;
 
 

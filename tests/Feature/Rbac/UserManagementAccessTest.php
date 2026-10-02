@@ -24,7 +24,7 @@ test('an admin can create a user via user management', function () {
         ->set('userForm.office_position', 'Clerk')
         ->set('userForm.password', 'password123')
         ->set('userForm.password_confirmation', 'password123')
-        ->set('role_id', Role::findByName('ADMIN')->id)
+        ->set('role_id', Role::firstOrCreate(['name' => 'User', 'guard_name' => 'web'])->id) // granting ADMIN requires SUPER-ADMIN
         ->set('sectionName', 'AFMS')
         ->set('unitName', 'GASU')
         ->set('divisionName', 'Division')

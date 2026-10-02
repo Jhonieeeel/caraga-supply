@@ -42,6 +42,13 @@ class RequestRIS extends Component
     // RIS
     public function updateRIS(UpdateRequestAction $edit_request_action)
     {
+        abort_unless($this->requisition, 404);
+        $this->authorize('complete', $this->requisition);
+
+        $this->validate([
+            'temporaryFile' => ['required', 'file', 'mimes:pdf', 'max:10240'],
+        ]);
+
         $this->requestForm->temporaryFile = $this->temporaryFile;
         $this->requestForm->fillForm($this->requisition);
         $this->requisition = $this->requestForm->update($this->requisition, $edit_request_action);
@@ -63,6 +70,9 @@ class RequestRIS extends Component
     // generate ris
     public function getRIS()
     {
+        abort_unless($this->requisition, 404);
+        $this->authorize('complete', $this->requisition);
+
         // generate pdf
         ProcessRequisition::dispatchSync($this->requisition->id);
 

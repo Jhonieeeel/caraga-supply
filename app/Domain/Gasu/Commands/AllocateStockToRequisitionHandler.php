@@ -20,17 +20,37 @@ class AllocateStockToRequisitionHandler
      */
     public function handle(string $supplyUuid, string $anchorStockNumber, int $quantity, string $requisitionUuid): void
     {
-        retry(3, function () use ($supplyUuid, $anchorStockNumber, $quantity, $requisitionUuid) {
-            $supply = SupplyAggregate::retrieve($supplyUuid);
-            $allocations = $supply->allocate($anchorStockNumber, $quantity, $requisitionUuid);
+        $this->handleMany([[$supplyUuid, $anchorStockNumber, $quantity]], $requisitionUuid);
+    }
 
+    /**
+     * All-or-nothing allocation of several lines to one requisition: every
+     * line is allocated against in-memory aggregates first and everything is
+     * persisted in a single transaction only if ALL lines succeed, so an
+     * InsufficientStockException on the 2nd line never leaves the 1st line
+     * allocated.
+     *
+     * @param  array<int, array{0: string, 1: string, 2: int}>  $lines  [supply_uuid, anchor_stock_number, quantity]
+     */
+    public function handleMany(array $lines, string $requisitionUuid): void
+    {
+        retry(3, function () use ($lines, $requisitionUuid) {
             $requisition = RequisitionAggregate::retrieve($requisitionUuid);
 
-            foreach ($allocations as $stockNumber => $allocatedQuantity) {
-                $requisition->recordAllocation($supplyUuid, $stockNumber, $allocatedQuantity);
+            /** @var array<string, SupplyAggregate> $supplies */
+            $supplies = [];
+
+            foreach ($lines as [$supplyUuid, $anchorStockNumber, $quantity]) {
+                $supply = $supplies[$supplyUuid] ??= SupplyAggregate::retrieve($supplyUuid);
+
+                $allocations = $supply->allocate($anchorStockNumber, (int) $quantity, $requisitionUuid);
+
+                foreach ($allocations as $stockNumber => $allocatedQuantity) {
+                    $requisition->recordAllocation($supplyUuid, (string) $stockNumber, $allocatedQuantity);
+                }
             }
 
-            AggregateRoot::persistInTransaction($supply, $requisition);
+            AggregateRoot::persistInTransaction(...array_values($supplies), ...[$requisition]);
         }, 50, fn (\Throwable $e) => $e instanceof CouldNotPersistAggregate);
     }
 }

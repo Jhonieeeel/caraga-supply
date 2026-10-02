@@ -37,6 +37,13 @@ class User extends Authenticatable
 
     public function hasPermissionTo($permission, $guardName = null): bool
     {
+        // Per-user removals set by the SUPER-ADMIN win over role and unit access.
+        $name = is_string($permission) ? $permission : ($permission->name ?? null);
+
+        if ($name !== null && in_array($name, $this->revoked_permissions ?? [], true)) {
+            return false;
+        }
+
         if ($this->baseHasPermissionTo($permission, $guardName)) {
             return true;
         }
@@ -85,6 +92,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'revoked_permissions' => 'array',
         ];
     }
 

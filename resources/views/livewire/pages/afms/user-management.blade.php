@@ -13,9 +13,11 @@
             <x-tab.items tab="Users">
                 <livewire:pages.afms.user-table />
             </x-tab.items>
-            <x-tab.items tab="Roles">
-                <livewire:pages.afms.components.user-roles />
-            </x-tab.items>
+            @if (auth()->user()->hasRole(\App\Livewire\Pages\Afms\Components\UserRoles::LOCKED_ROLE))
+                <x-tab.items tab="Roles">
+                    <livewire:pages.afms.components.user-roles />
+                </x-tab.items>
+            @endif
         </x-tab>
 
         <div class="my-6">

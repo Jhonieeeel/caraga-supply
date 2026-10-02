@@ -19,7 +19,9 @@
             @can('manage-users')
                 @interact('column_action', $employee)
                     <x-button.circle md flat icon="eye" wire:click="view({{ $employee->user->id }})" />
-                    <x-button.circle md flat color="red" icon="trash" wire:click="deleteUser({{ $employee->user->id }})" />
+                    @can('delete', $employee->user)
+                        <x-button.circle md flat color="red" icon="trash" wire:click="deleteUser({{ $employee->user->id }})" />
+                    @endcan
                 @endinteract
             @endcan
         </x-table>

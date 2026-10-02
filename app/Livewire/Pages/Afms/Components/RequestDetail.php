@@ -3,13 +3,17 @@
 namespace App\Livewire\Pages\Afms\Components;
 
 use App\Actions\Requisition\UpdateRequestAction;
+use App\Actions\RequisitionItem\RemoveItemAction;
 use App\Actions\RequisitionItem\UpdateItemAction;
+use App\Domain\Gasu\Exceptions\InsufficientStockException;
+use App\Domain\Gasu\Exceptions\RequisitionLockedException;
 use App\Livewire\Forms\ItemForm;
 use App\Livewire\Forms\RequisitionForm;
 use App\Livewire\Pages\Afms\RequisitionTable;
 use App\Models\Requisition;
 use App\Models\RequisitionItem;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -19,7 +23,7 @@ class RequestDetail extends Component
 {
     use Interactions;
     public $requisition;
-    public RequisitionItem $requisitionItem;
+    public ?RequisitionItem $requisitionItem = null;
 
     public RequisitionForm $requestForm;
     public ItemForm $itemForm;
@@ -53,6 +57,8 @@ class RequestDetail extends Component
 
     public function editRequestItem(RequisitionItem $item)
     {
+        $this->authorize('update', $item->requisition);
+
         $this->requisitionItem = $item;
         $this->itemForm->fillForm($this->requisitionItem);
         $this->dispatch('modal:edit-item-open');
@@ -61,15 +67,48 @@ class RequestDetail extends Component
 
     public function updateRequestItem(UpdateItemAction $update_item_action)
     {
+        abort_unless($this->requisitionItem, 404);
+        $this->authorize('update', $this->requisitionItem->requisition);
+
+        try {
+            // Quantity changes go through the aggregates (allocate more /
+            // release back to the lot), never a direct requisition_items update.
+            $this->itemForm->update($update_item_action, $this->requisitionItem);
+        } catch (InsufficientStockException|RequisitionLockedException|\InvalidArgumentException $e) {
+            throw ValidationException::withMessages([
+                'itemForm.requested_qty' => $e instanceof InsufficientStockException
+                    ? 'Not enough stock available for that quantity.'
+                    : $e->getMessage(),
+            ]);
+        }
+
         $this->dispatch('modal:edit-item-close');
-        return $this->itemForm->update($update_item_action, $this->requisitionItem);
+        $this->refreshRequisition();
     }
 
-    public function deleteRequisitionItem($id)
+    public function deleteRequisitionItem($id, RemoveItemAction $remove_item_action)
     {
-        $item = RequisitionItem::find($id);
-        $item->delete();
-        return;
+        $item = RequisitionItem::findOrFail($id);
+
+        $this->authorize('update', $item->requisition);
+
+        try {
+            // Releases the item's allocated stock back to its lot.
+            $remove_item_action->handle($item);
+        } catch (RequisitionLockedException|\InvalidArgumentException $e) {
+            $this->dialog()->error('Error', $e->getMessage())->send();
+
+            return;
+        }
+
+        $this->refreshRequisition();
+    }
+
+    protected function refreshRequisition(): void
+    {
+        if ($this->requisition) {
+            $this->requisition = Requisition::with('items.stock.supply')->find($this->requisition->id);
+        }
     }
 
     #[On('generate-ris')]
@@ -77,9 +116,15 @@ class RequestDetail extends Component
     {
         $prefix = 'RIS-' . now()->format('Y-m') . '-';
 
-        $count = Requisition::where('ris', 'like', "{$prefix}%")->count();
+        // Next series = highest existing series for this year-month + 1
+        // (a count would reuse a number after deletions and collide with the
+        // unique requisitions.ris index).
+        $maxSeries = Requisition::where('ris', 'like', "{$prefix}%")
+            ->pluck('ris')
+            ->map(fn (string $ris) => (int) substr($ris, strlen($prefix)))
+            ->max() ?? 0;
 
-        $series = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+        $series = str_pad($maxSeries + 1, 3, '0', STR_PAD_LEFT);
 
         return $this->requestForm->ris = "{$prefix}{$series}";
     }
@@ -124,9 +169,9 @@ class RequestDetail extends Component
         $this->requisition = Requisition::with('items.stock.supply')->find($requisition);
         $this->requestForm->fillForm($this->requisition);
 
-        $isApproved = $this->requisition->requested_by && $this->requisition->approved_by && $this->requisition->issued_by && $this->requisition->received_by;
-
-        if (!$isApproved) {
+        // Only number a requisition that has no RIS yet; never renumber one
+        // that already has its RIS.
+        if (! $this->requisition->ris) {
             $this->dispatch('generate-ris');
         }
 
