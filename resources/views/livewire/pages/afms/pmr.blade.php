@@ -2,11 +2,15 @@
     $money = fn ($value) => is_null($value) ? '' : number_format($value, 2);
     $statusColor = ['Not Yet Started' => 'gray', 'Ongoing' => 'yellow', 'Completed' => 'teal'];
     $totals = $this->totals;
+    $pageRows = $this->pageRows;
+    $onPage = $pageRows->pluck('id')->flip();
 @endphp
 
 <div class="space-y-6">
     <style>
+        .pmr-off-page { display: none; }
         @media print {
+            .pmr-off-page { display: table-row; }
             @page { size: landscape; margin: 8mm; }
             body * { visibility: hidden; }
             #pmr-report, #pmr-report * { visibility: visible; }
@@ -102,8 +106,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {{-- every row is rendered so Print gets the full report; off-page rows show only in print --}}
                         @forelse ($this->rows as $row)
-                            <tr wire:key="pmr-{{ $row['id'] }}" class="align-top hover:bg-gray-50">
+                            <tr wire:key="pmr-{{ $row['id'] }}" @class(['align-top hover:bg-gray-50', 'pmr-off-page' =>! $onPage->has($row['id'])])>
                                 <td class="border px-2 py-1 whitespace-nowrap">
                                     <a href="{{ route('pmu.show', $row['id']) }}" wire:navigate class="text-primary-600 hover:underline">{{ $row['code'] }}</a>
                                 </td>
@@ -140,7 +145,7 @@
                     @if ($this->rows->isNotEmpty())
                         <tfoot class="bg-gray-50 font-semibold">
                             <tr>
-                                <td colspan="14" class="border px-2 py-1 text-right">Total</td>
+                                <td colspan="14" class="border px-2 py-1 text-right">Total (all {{ $pageRows->total() }} records)</td>
                                 <td class="border px-2 py-1 text-right whitespace-nowrap">{{ number_format($totals['abc'], 2) }}</td>
                                 <td class="border px-2 py-1 text-right whitespace-nowrap">{{ number_format($this->rows->sum('abc_mooe'), 2) }}</td>
                                 <td class="border px-2 py-1 text-right whitespace-nowrap">{{ number_format($this->rows->sum('abc_co'), 2) }}</td>
@@ -151,6 +156,10 @@
                         </tfoot>
                     @endif
                 </table>
+            </div>
+
+            <div class="pmr-no-print">
+                {{ $pageRows->links() }}
             </div>
         </div>
     </div>

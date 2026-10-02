@@ -147,3 +147,35 @@ test('CSV export contains the header row and one line per project', function () 
     expect($csv)->toContain('APP-2026-003,"ICT Equipment",ICT');
     expect($csv)->toContain('275000');
 });
+
+test('the PMR shows 10 rows per page while totals and CSV cover every row', function () {
+    foreach (range(1, 23) as $i) {
+        Procurement::create([
+            'code' => sprintf('APP-2026-%03d', $i),
+            'project_title' => "Paged Item {$i}",
+            'app_year' => 2026,
+            'estimated_budget_total' => 100,
+        ]);
+    }
+
+    $component = Livewire::actingAs(pmrUser())->test(Pmr::class)->set('year', 2026);
+
+    $page = $component->instance()->pageRows;
+    expect($page->count())->toBe(10)
+        ->and($page->total())->toBe(23)
+        ->and($page->first()['code'])->toBe('APP-2026-001')
+        ->and($component->instance()->totals['abc'])->toEqual(2300);
+
+    $component->call('gotoPage', 3);
+    expect($component->instance()->pageRows->pluck('code')->all())
+        ->toBe(['APP-2026-021', 'APP-2026-022', 'APP-2026-023']);
+
+    // Changing a filter goes back to page 1.
+    $component->set('search', 'Paged Item');
+    expect($component->instance()->pageRows->currentPage())->toBe(1);
+
+    // CSV is the whole report: title + header + 23 rows.
+    $component->call('gotoPage', 2)->call('exportCsv');
+    $lines = array_filter(preg_split('/\r?\n/', base64_decode($component->effects['download']['content'])));
+    expect($lines)->toHaveCount(2 + 23);
+});

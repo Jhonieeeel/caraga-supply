@@ -3,15 +3,21 @@
 namespace App\Livewire\Pages\Afms;
 
 use App\Models\Procurement;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Pmr extends Component
 {
+    use WithPagination;
+
     public const STATUSES = ['Not Yet Started', 'Ongoing', 'Completed'];
+
+    public const PER_PAGE = 10;
 
     public ?int $year = null;
     public ?string $status = null;
@@ -22,6 +28,32 @@ class Pmr extends Component
         $this->authorize('manage-procurement');
 
         $this->year = Procurement::max('app_year') ?? (int) now()->year;
+    }
+
+    public function updated($property): void
+    {
+        if (in_array($property, ['year', 'status', 'search'], true)) {
+            $this->resetPage();
+        }
+    }
+
+    /**
+     * The rows shown on screen. Status is derived per row, so the filtered
+     * collection is paged in memory; totals, print and CSV still use all rows.
+     */
+    #[Computed()]
+    public function pageRows(): LengthAwarePaginator
+    {
+        $rows = $this->rows;
+        $page = min($this->getPage(), max(1, (int) ceil($rows->count() / self::PER_PAGE)));
+
+        return new LengthAwarePaginator(
+            $rows->forPage($page, self::PER_PAGE)->values(),
+            $rows->count(),
+            self::PER_PAGE,
+            $page,
+            ['path' => route('pmr.index'), 'pageName' => 'page'],
+        );
     }
 
     /**
