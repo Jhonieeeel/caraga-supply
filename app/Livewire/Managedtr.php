@@ -13,6 +13,15 @@ class Managedtr extends Component
 
     public $dtrFile;
 
+    // holiday inputs
+    public $newHoliday = '';
+    public $newDate = '';
+
+    // signatory inputs
+    public $signatoryName = '';
+    public $signatoryPosition = '';
+    public $signatories = [];
+
     public function mount()
     {
         $this->headers = [
@@ -61,12 +70,17 @@ class Managedtr extends Component
         $this->signatories = array_values($this->signatories);
     }
 
-    #[Layout('layouts.app')]
     public function remove($index)
     {
         unset($this->rows[$index]);
         $this->rows = array_values($this->rows); // reindex array
     }
 
-
+    #[Layout('layouts.app')]
+    public function render()
+    {
+        // the view file is "Managedtr.blade.php" (capital M); name it explicitly
+        // so it also resolves on case-sensitive filesystems
+        return view('livewire.Managedtr');
+    }
 }

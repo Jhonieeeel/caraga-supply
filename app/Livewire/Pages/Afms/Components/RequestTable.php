@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Afms\Components;
 
+use App\Actions\Requisition\DeleteRequisitionAction;
 use App\Events\DeleteRequest;
 use App\Events\RequestDeleted;
 use App\Events\RequisitionUploaded;
@@ -51,6 +52,7 @@ class RequestTable extends Component
 
     public function deleteRequisition(Requisition $requisition)
     {
+        $this->authorize('delete', $requisition);
 
         if ($requisition) {
             return $this->dialog()
@@ -62,16 +64,21 @@ class RequestTable extends Component
 
     }
 
-    public function confirmed(array $data) {
-        $this->dialog()->success('Success', $data['message'])->send();
+    public function confirmed(array $data, DeleteRequisitionAction $delete_requisition_action) {
+        $requisition = Requisition::findOrFail($data['id'] ?? null);
 
-        $requisition = Requisition::findOrFail($data['id']);
+        // The dialog's params come back from the client, so re-authorize the
+        // actual requisition being deleted here, not just in deleteRequisition().
+        $this->authorize('delete', $requisition);
+
+        // Returns any still-allocated stock of a not-yet-issued requisition
+        // through the aggregates before removing it.
+        $delete_requisition_action->handle($requisition);
 
         // broadcast
-        broadcast(new RequestDeleted($data['id']))->toOthers();
+        broadcast(new RequestDeleted($requisition->id))->toOthers();
 
-        $requisition->delete();
-
+        $this->dialog()->success('Success', $data['message'] ?? 'Request Deleted')->send();
     }
 
     public function cancelled(string $message): void

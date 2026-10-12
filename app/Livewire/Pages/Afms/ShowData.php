@@ -9,6 +9,7 @@ use App\Livewire\Forms\RequestForm;
 use App\Models\Procurement;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
@@ -37,26 +38,46 @@ class ShowData extends Component
     public $updatePoFile;
     public $updateResoFile;
 
-    // PO
-    public $varianceResult;
-
     public function mount($id = null)
     {
-        $this->procurement = $id
-            ? Procurement::with(['purchaseRequest', 'purchaseOrder'])->find($id)
-            : [];
+        $this->authorize('manage-procurement');
+
+        $this->procurement = Procurement::with(['purchaseRequest', 'purchaseOrder'])->findOrFail($id);
     }
     public function deleteOrder(PurchaseOrder $order) {
         $this->dispatch('procurement-tab', 'Annual');
 
-        return $order->delete();
+        return DB::transaction(function () use ($order) {
+            $this->refundOrder($order);
+
+            return $order->delete();
+        });
     }
 
     public function deleteRequest(PurchaseRequest $request) {
         $this->dispatch('procurement-tab', 'Annual');
 
-        return $request->delete();
+        return DB::transaction(function () use ($request) {
+            // the database cascade-deletes every PO pointing at this PR, so refund them first
+            PurchaseOrder::where('purchase_request_id', $request->id)
+                ->orWhere('abc', $request->id)
+                ->orWhere('date_posted', $request->id)
+                ->get()
+                ->each(fn (PurchaseOrder $order) => $this->refundOrder($order));
 
+            return $request->delete();
+        });
+    }
+
+    private function refundOrder(PurchaseOrder $order): void
+    {
+        if ($order->procurement_id && !is_null($order->contract_price)) {
+            $procurement = Procurement::find($order->procurement_id);
+
+            if ($procurement && !is_null($procurement->remaining_budget)) {
+                $procurement->increment('remaining_budget', (float) $order->contract_price);
+            }
+        }
     }
 
     public function redirectRequest() {
@@ -104,8 +125,8 @@ class ShowData extends Component
     public function submitEditOrder(UpdateOrder $updateOrder, PurchaseOrder $purchaseOrder) {
 
         if ($this->updateNtpFile) {
-            if ($this->purchaseOrder->ntp_pdf_file && Storage::exists($this->purchaseOrder->ntp_pdf_file)) {
-                Storage::delete($this->purchaseOrder->ntp_pdf_file);
+            if ($this->purchaseOrder->ntp_pdf_file && Storage::disk('public')->exists($this->purchaseOrder->ntp_pdf_file)) {
+                Storage::disk('public')->delete($this->purchaseOrder->ntp_pdf_file);
             }
 
             $this->orderForm->ntp_pdf_file = $this->updateNtpFile;
@@ -114,8 +135,8 @@ class ShowData extends Component
         }
 
         if ($this->updateNoaFile) {
-            if ($this->purchaseOrder->noa_pdf_file && Storage::exists($this->purchaseOrder->noa_pdf_file)) {
-                Storage::delete($this->purchaseOrder->noa_pdf_file);
+            if ($this->purchaseOrder->noa_pdf_file && Storage::disk('public')->exists($this->purchaseOrder->noa_pdf_file)) {
+                Storage::disk('public')->delete($this->purchaseOrder->noa_pdf_file);
             }
             $this->orderForm->noa_pdf_file = $this->updateNoaFile;
         }else {
@@ -123,8 +144,8 @@ class ShowData extends Component
         }
 
         if ($this->updatePoFile) {
-            if ($this->purchaseOrder->po_pdf_file && Storage::exists($this->purchaseOrder->po_pdf_file)) {
-                Storage::delete($this->purchaseOrder->po_pdf_file);
+            if ($this->purchaseOrder->po_pdf_file && Storage::disk('public')->exists($this->purchaseOrder->po_pdf_file)) {
+                Storage::disk('public')->delete($this->purchaseOrder->po_pdf_file);
             }
             $this->orderForm->po_pdf_file = $this->updatePoFile;
         }else {
@@ -132,15 +153,19 @@ class ShowData extends Component
         }
 
         if ($this->updateResoFile) {
-            if ($this->purchaseOrder->reso_pdf_file && Storage::exists($this->purchaseOrder->reso_pdf_file)) {
-                Storage::delete($this->purchaseOrder->reso_pdf_file);
+            if ($this->purchaseOrder->reso_pdf_file && Storage::disk('public')->exists($this->purchaseOrder->reso_pdf_file)) {
+                Storage::disk('public')->delete($this->purchaseOrder->reso_pdf_file);
             }
             $this->orderForm->reso_pdf_file = $this->updateResoFile;
         }else {
             $this->orderForm->currentResoFile = $this->purchaseOrder->reso_pdf_file;
         }
 
-        $this->orderForm->variance = $this->varianceResult;
+        // Same formula as ProcurementOrder::variance(): PR abc - contract price.
+        $purchaseRequest = PurchaseRequest::find($this->purchaseOrder->purchase_request_id);
+        $this->orderForm->variance = $purchaseRequest
+            ? (float) $purchaseRequest->abc - (float) $this->orderForm->contract_price
+            : $this->purchaseOrder->variance;
         $this->dispatch('modal:update-order-close');
 
         return $this->orderForm->update($updateOrder, $this->purchaseOrder);
@@ -155,7 +180,7 @@ class ShowData extends Component
 
     public function submitEditRequest(UpdateRequest $updateRequest) {
         if ($this->updatePhilFile) {
-            if ($this->purchaseRequest->philgeps_pdf_file && Storage::exists($this->purchaseRequest->philgeps_pdf_file)) {
+            if ($this->purchaseRequest->philgeps_pdf_file && Storage::disk('public')->exists($this->purchaseRequest->philgeps_pdf_file)) {
                 Storage::disk('public')->delete($this->purchaseRequest->philgeps_pdf_file);
             }
             $this->requestForm->philgeps_pdf_file = $this->updatePhilFile;
@@ -164,7 +189,7 @@ class ShowData extends Component
         }
 
         if ($this->updateAppFile) {
-            if ($this->purchaseRequest->app_spp_pdf_file && Storage::exists($this->purchaseRequest->app_spp_pdf_file)) {
+            if ($this->purchaseRequest->app_spp_pdf_file && Storage::disk('public')->exists($this->purchaseRequest->app_spp_pdf_file)) {
                 Storage::disk('public')->delete($this->purchaseRequest->app_spp_pdf_file);
             }
             $this->requestForm->app_spp_pdf_file = $this->updateAppFile;
@@ -175,10 +200,6 @@ class ShowData extends Component
         $this->dispatch('modal:update-request-close');
 
         return $this->requestForm->update($updateRequest, $this->purchaseRequest);
-    }
-
-    public function printOrder() {
-        dd($this->procurement->purchaseOrder);
     }
 
     #[Layout('layouts.app')]

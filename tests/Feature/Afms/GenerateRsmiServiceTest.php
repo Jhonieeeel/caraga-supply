@@ -6,10 +6,17 @@ use App\Models\Supply;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Afms\GenerateRsmiService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 uses(RefreshDatabase::class);
+
+// The serial's year-month comes from "now"; pin it so these assertions don't
+// depend on the month the suite happens to run in.
+beforeEach(function () {
+    $this->travelTo(Carbon::parse('2026-09-15 10:00:00'));
+});
 
 function makeTransactionForRsmi(): Transaction
 {

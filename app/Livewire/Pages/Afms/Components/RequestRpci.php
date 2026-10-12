@@ -90,7 +90,8 @@ class RequestRpci extends Component
         $stockDetails = Stock::with([
             'transactions' => function ($q) use ($start, $end) {
                 $q->whereBetween('created_at', [$start, $end]);
-            }
+            },
+            'transactions.requisition',
         ])
         ->where(function ($q) use ($start, $end) {
             $q->where('quantity', '!=', 0)
@@ -105,8 +106,10 @@ class RequestRpci extends Component
             $poTransactions = $stock->transactions
                 ->where('type_of_transaction', 'PO');
 
-            $risTransactions = $stock->transactions()
-                ->where('type_of_transaction', 'RIS')->with('requisition')->get();
+            // Same report date range as the POs above (the eager-loaded,
+            // date-filtered relation), not every RIS ever issued.
+            $risTransactions = $stock->transactions
+                ->where('type_of_transaction', 'RIS');
 
 
             // $this->requisition = $risTransactions->

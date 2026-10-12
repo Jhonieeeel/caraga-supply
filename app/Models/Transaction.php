@@ -14,6 +14,7 @@ class Transaction extends Model
         'current_quantity',
         'type_of_transaction',
         'rsmi_file',
+        'rsmi_serial',
         'rpci_file',
     ];
 

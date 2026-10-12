@@ -10,6 +10,7 @@ uses(RefreshDatabase::class);
 
 test('super admin can delete another user', function () {
     $admin = User::factory()->create();
+    $admin->givePermissionTo('manage-users');
     $target = User::factory()->create();
 
     Livewire::actingAs($admin)
@@ -32,6 +33,7 @@ test('a user cannot delete their own account', function () {
 
 test('a user with related requisitions cannot be deleted', function () {
     $admin = User::factory()->create();
+    $admin->givePermissionTo('manage-users');
     $target = User::factory()->create();
 
     Requisition::create([

@@ -38,6 +38,13 @@ class Holiday extends Component
         $this->newHoliday = '';
         $this->newDate = '';
     }
+
+    public function remove($index)
+    {
+        unset($this->rows[$index]);
+        $this->rows = array_values($this->rows); // reindex array
+    }
+
     public function render()
     {
         return view('livewire.holiday');

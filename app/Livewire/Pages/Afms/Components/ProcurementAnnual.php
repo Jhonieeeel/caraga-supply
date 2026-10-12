@@ -135,13 +135,6 @@ class ProcurementAnnual extends Component
     {
         $this->annualForm->update($this->procurement, $updateAnnual);
         $this->dispatch('modal:edit-entry-close');
-    }
-
-    public function edit(Procurement $procurement)
-    {
-        $this->procurement = $procurement;
-        $this->annualForm->fillForm($procurement);
-        $this->dispatch('modal:edit-entry-open');
         $this->dispatch('alert', [
             'text' => 'Annual Procurement Updated Successfully.',
             'color' => 'teal',
@@ -149,13 +142,22 @@ class ProcurementAnnual extends Component
         ])->to(AfmsProcurement::class);
     }
 
+    public function edit(Procurement $procurement)
+    {
+        $this->procurement = $procurement;
+        $this->annualForm->fillForm($procurement);
+        $this->dispatch('modal:edit-entry-open');
+    }
+
 
     #[Computed()]
     public function rows() {
        return Procurement::query()
             ->when($this->search, function ($query) {
-                $query->where('code', 'like', '%' . $this->search . '%')
-                    ->orWhere('project_title', 'like', '%' . $this->search . '%');
+                $query->where(function ($q) {
+                    $q->where('code', 'like', '%' . $this->search . '%')
+                        ->orWhere('project_title', 'like', '%' . $this->search . '%');
+                });
             })
             ->when($this->filterYear, function ($query) {
             $query->where('app_year', $this->filterYear);

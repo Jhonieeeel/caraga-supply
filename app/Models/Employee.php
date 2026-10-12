@@ -11,6 +11,7 @@ class Employee extends Model
         'user_id',
         'section_id',
         'unit_id',
+        'division',
     ];
 
     public function user()

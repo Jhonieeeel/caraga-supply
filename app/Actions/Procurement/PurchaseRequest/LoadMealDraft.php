@@ -57,7 +57,7 @@ class LoadMealDraft
                                 'check_in' => $i->check_in,
                                 'check_out' => $i->check_out,
                                 'no_of_nights' => (int) $i->no_of_nights,
-                                'other_requirement' => $i->other_requirement,
+                                'other_requirement' => $i->other_requirements,
                                 'qty' => (float) $i->qty,
                                 'unit' => $i->unit,
                                 'estimated_unit_cost' => (float) $i->estimated_unit_cost,

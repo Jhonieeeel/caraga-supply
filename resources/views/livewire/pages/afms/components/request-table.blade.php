@@ -1,10 +1,7 @@
 <div>
     {{-- @if ($this->rows) wire:poll.10s @else wire:poll.5s @endif --}}
     @php
-        $isAdmin = auth()->user()->hasRole('Super Admin');
-        $user = auth()->user()->hasRole('User');
         $authUser = auth()->user()->id;
-
     @endphp
     <span wire:loading.delay wire:target='view'>
         <x-loading />
@@ -33,11 +30,10 @@
         @interact('column_action', $requisition)
             <x-button.circle flat color="teal" icon="magnifying-glass" loading="view"
                 wire:click="view({{ $requisition->id }})" />
-            @if (auth()->user()->hasRole('Super Admin') ||
-                    (!$requisition->completed && auth()->user()->id === $requisition->user_id))
+            @can('delete', $requisition)
                 <x-button.circle flat color="red" loading="deleteRequisition" icon="trash"
                     wire:click="deleteRequisition({{ $requisition }})" />
-            @endif
+            @endcan
         @endinteract
     </x-table>
 

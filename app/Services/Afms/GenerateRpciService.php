@@ -148,9 +148,13 @@ class GenerateRpciService
                    foreach ($requisition as $request) {
                         $currentSheet->setCellValue("F{$startRow}", $request->ris);
                         $currentSheet->setCellValue("H{$startRow}", $transaction['quantity']);
-                        $section = $request->user->employee->section->name;
-                        $unit = $request->user->employee->unit->name;
-                        $currentSheet->setCellValue("I{$startRow}", "{$section}-{$unit}");
+                        // Requesters without an employee record (or without a
+                        // section/unit) must not break the whole report.
+                        $employee = $request->user?->employee;
+                        $office = collect([$employee?->section?->name, $employee?->unit?->name])
+                            ->filter()
+                            ->implode('-');
+                        $currentSheet->setCellValue("I{$startRow}", $office !== '' ? $office : 'N/A');
                    }
                 }
 

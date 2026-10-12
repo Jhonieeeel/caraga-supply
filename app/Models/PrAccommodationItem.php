@@ -15,7 +15,7 @@ class PrAccommodationItem extends Model
         'check_in',
         'check_out',
         'no_of_nights',
-        'other_requirement',
+        'other_requirements',
         'qty',
         'unit',
         'estimated_unit_cost',

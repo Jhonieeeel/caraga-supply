@@ -84,6 +84,8 @@ class ProcurementPrint extends Component
         LoadTransportationDraft $loadTransportationDraft,
         LoadServiceDraft $loadServiceDraft
     ): void {
+        $this->authorize('manage-procurement');
+
         $this->request = $request;
 
         foreach ($this->blockForms() as $form) $form->initDefaults();

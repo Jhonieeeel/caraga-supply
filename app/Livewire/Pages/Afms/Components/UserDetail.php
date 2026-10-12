@@ -3,6 +3,8 @@
 namespace App\Livewire\Pages\Afms\Components;
 
 use App\Livewire\Forms\UserForm;
+use App\Models\Section;
+use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
@@ -19,15 +21,26 @@ class UserDetail extends Component
     public UserForm $userForm;
     public $role_id;
 
+    // assignment
+    public $sectionName;
+    public $unitName;
+    public $divisionName;
+
     // userInfo
-    public function updatePassword(User $user) {
+    public function updatePassword() {
+        $this->authorize('update', $this->user);
+
         $this->userForm->updatePass($this->user);
 
-        return;
+        $this->dialog()->success('Success', 'Password updated successfully.')->send();
     }
 
     public function updateUserInfo() {
-        return $this->userForm->updateInfo($this->user);
+        $this->authorize('update', $this->user);
+
+        $this->userForm->updateInfo($this->user);
+
+        $this->dialog()->success('Success', 'Profile updated successfully.')->send();
     }
 
     public function updateRole()
@@ -38,9 +51,53 @@ class UserDetail extends Component
         }
 
         $role = Role::findOrFail($this->role_id);
+
+        $this->authorize('changeRole', [$this->user, $role]);
+
         $this->user->syncRoles([$role]);
 
         $this->dialog()->success('Success', 'Role updated successfully.')->send();
+    }
+
+    public function updateAssignment()
+    {
+        $this->authorize('update', $this->user);
+
+        $this->validate([
+            'sectionName' => 'required|string|max:255',
+            'unitName' => 'required|string|max:255',
+            'divisionName' => [
+                function ($attribute, $value, $fail) {
+                    $sectionIsAfms = strtolower(trim((string) $this->sectionName)) === 'afms';
+
+                    if (blank($value)) {
+                        if (! $sectionIsAfms) {
+                            $fail('The division field is required.');
+                        }
+
+                        return;
+                    }
+
+                    if (mb_strlen($value) > 255) {
+                        $fail('The division field must not exceed 255 characters.');
+                    }
+                },
+            ],
+        ]);
+
+        $section = Section::firstOrCreate(['name' => trim($this->sectionName)]);
+        $unit = Unit::firstOrCreate([
+            'name' => trim($this->unitName),
+            'section_id' => $section->id,
+        ]);
+
+        $this->user->employee->update([
+            'section_id' => $section->id,
+            'unit_id' => $unit->id,
+            'division' => $this->divisionName ? trim($this->divisionName) : null,
+        ]);
+
+        $this->dialog()->success('Success', 'Assignment updated successfully.')->send();
     }
 
     #[Computed()]
@@ -59,6 +116,11 @@ class UserDetail extends Component
         $this->user = $user;
         $this->userForm->fillForm($this->user);
         $this->role_id = $user->roles->first()?->id;
+
+        $employee = $user->employee;
+        $this->sectionName = $employee?->section?->name;
+        $this->unitName = $employee?->unit?->name;
+        $this->divisionName = $employee?->division;
     }
 
     public function render()

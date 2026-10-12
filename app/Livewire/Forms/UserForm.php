@@ -4,6 +4,9 @@ namespace App\Livewire\Forms;
 
 use App\Actions\User\CreateUser;
 use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 use Spatie\Permission\Models\Role;
@@ -25,12 +28,13 @@ class UserForm extends Form
     #[Validate('nullable')]
     public $office_position;
 
-    #[Validate('required|in:male,female')]
+    #[Validate('required|in:male,female,prefer_not')]
     public $gender;
 
 
-    // update 
+    // update
 
+    // the OPERATOR's own password, re-entered to confirm the change
     public ?string $current_password = '';
 
     #[Validate('required|string|min:8|confirmed')]
@@ -50,49 +54,62 @@ class UserForm extends Form
 
         $validated = $this->validate([
             'current_password' => ['required', 'string', 'current_password'],
-            'new_password' => ['required', 'string', 'confirmed'], // looks for new_password_confirmation
+            'new_password' => ['required', 'string', Password::defaults(), 'confirmed'], // looks for new_password_confirmation
+        ], [
+            'current_password.current_password' => 'Your own password is incorrect.',
+        ], [
+            'current_password' => 'your password',
+            'new_password' => 'new password',
         ]);
 
         $user->update([
             'password' => $validated['new_password']
         ]);
 
-        Log:info("Update ".$user);
+        $this->reset(['current_password', 'new_password', 'new_password_confirmation']);
 
         return $user;
     }
 
     public function updateInfo(User $user) {
+        $validated = $this->validate([
+            'name' => 'required|string|max:255',
+            'email' => ['required', 'string', 'max:255', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+        ]);
+
         $user->update([
-            'name' => $this->name,
-            'email' => $this->email,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
         ]);
     }
 
+    /**
+     * Creates a guest account with a random password.
+     *
+     * @return array{0: User, 1: string} the user and the generated plain-text password
+     */
     public function submitGuest(CreateUser $createUser) {
-
-       $this->password = 'password';
-
-       $this->password_confirmation = $this->password;
 
        $this->validate([
            'name' => 'required|string|max:255',
            'email' => 'required|string|max:255|email|unique:users,email',
        ]);
 
+       $password = Str::password(12);
+
        $user = $createUser->handle([
             'name' => $this->name,
-            'password' => $this->password,
+            'password' => $password,
             'email' => $this->email
        ]);
 
-       $guest = Role::find(3);
+       $guest = Role::firstOrCreate(['name' => 'Guest', 'guard_name' => 'web']);
 
        $user->assignRole($guest);
 
        $this->reset();
 
-        return $user;
+        return [$user, $password];
     }
 
     public function submit(CreateUser $create_action, $rold_id)
@@ -103,13 +120,13 @@ class UserForm extends Form
             'dtr_number' => 'nullable',
             'designation' => 'nullable',
             'office_position' => 'nullable',
-            'gender' => 'required|in:male,female',
+            'gender' => 'required|in:male,female,prefer_not',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = $create_action->handle($this->payload());
 
-        $role = Role::find($rold_id);
+        $role = Role::findOrFail($rold_id);
 
         $user->assignRole($role);
 
@@ -121,9 +138,8 @@ class UserForm extends Form
     public function fillForm(User $user): void
     {
         $this->name = $user->name;
-        $this->password = $user->password;
         $this->email = $user->email;
-        $this->dtr_number = $user->dtr->number ?? '';
+        $this->dtr_number = $user->dtr_number ?? '';
         $this->designation = $user->designation ?? '';
         $this->office_position = $user->office_position ?? '';
         $this->gender = $user->gender;

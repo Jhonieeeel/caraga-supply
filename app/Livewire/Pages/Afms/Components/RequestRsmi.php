@@ -43,8 +43,29 @@ class RequestRsmi extends Component
     }
 
     public function downloadRsmi($file) {
-        return Storage::download($file);
+        return $this->downloadGeneratedFile($file);
+    }
 
+    /**
+     * Only files this module generated (recorded on a transaction, under
+     * rsmi/ on the public disk) can be downloaded; the path comes from the
+     * client, so never hand it straight to the filesystem.
+     */
+    protected function downloadGeneratedFile($file)
+    {
+        $this->authorize('approve-requisition');
+
+        $file = (string) $file;
+
+        abort_unless(
+            str_starts_with($file, 'rsmi/')
+                && ! str_contains($file, '..')
+                && Transaction::where('rsmi_file', $file)->exists()
+                && Storage::disk('public')->exists($file),
+            404
+        );
+
+        return Storage::disk('public')->download($file);
     }
 
     public function submitDate()
@@ -72,10 +93,16 @@ class RequestRsmi extends Component
                 ? Carbon::parse($this->transactionDate[1])->endOfDay()
                 : $start->copy()->endOfDay();
 
-            return Transaction::select(['stock_id'])
-                    ->distinct()
-                    ->with(['requisition', 'stock'])
+            // One row per stock, carrying what the view needs: an id for the
+            // button label and the latest generated RSMI file (file names are
+            // timestamped, so MAX() is the newest) for the download button.
+            return Transaction::query()
+                    ->select('stock_id')
+                    ->selectRaw('MAX(id) as id')
+                    ->selectRaw('MAX(rsmi_file) as rsmi_file')
+                    ->with(['stock.supply'])
                     ->whereBetween('created_at', [$start, $end])
+                    ->groupBy('stock_id')
                     ->paginate(5)
                     ->withQueryString();
 
@@ -87,12 +114,14 @@ class RequestRsmi extends Component
 
     #[On('downloadRsmi')]
     public function autoDownload($file) {
-        return Storage::disk('public')->download($file);
+        return $this->downloadGeneratedFile($file);
     }
 
 
     public function createRsmi($stock_id, GenerateRsmiService $generate_rsmi_service)
     {
+        $this->authorize('approve-requisition');
+
         $start = Carbon::parse($this->transactionDate[0])->startOfDay();
         $end = isset($this->transactionDate[1])
             ? Carbon::parse($this->transactionDate[1])->endOfDay()

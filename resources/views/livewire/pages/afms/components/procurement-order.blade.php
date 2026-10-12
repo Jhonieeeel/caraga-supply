@@ -44,6 +44,8 @@
             <x-date label="Ntp *" wire:model="orderForm.ntp" format="YYYY-MM-DD" />
             <x-input label="Resolution Number *" wire:model="orderForm.resolution_number" />
             <x-date label="Delivery Date *" wire:model="orderForm.delivery_date" format="YYYY-MM-DD" />
+            <x-select.styled wire:model.live='orderForm.supplier_id' label="Supplier (from registry)" :options="$this->getSuppliers"
+                searchable />
             <x-input label="Supplier *" wire:model="orderForm.supplier" />
             <x-input label="Supplier Address" wire:model="orderForm.supplier_address" />
             <x-input label="Supplier Contacts" wire:model="orderForm.supplier_contacts" />

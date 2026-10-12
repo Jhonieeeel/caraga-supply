@@ -16,7 +16,7 @@ class GenerateRisService
             ->implode('-');
 
         // fields
-        $docx->setValue('division', 'DRRMD');
+        $docx->setValue('division', $employee?->division ?? '');
         $docx->setValue('responsibility_code', '');
         $docx->setValue('office', $office);
         $docx->setValue('ris', $requisition->ris ?? '');

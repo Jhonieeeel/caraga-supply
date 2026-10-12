@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Requisition extends Model
 {
     protected $fillable = [
+        'uuid',
         'ris',
         'user_id',
         'requested_by',

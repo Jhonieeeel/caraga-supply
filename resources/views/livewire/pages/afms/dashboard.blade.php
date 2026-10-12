@@ -25,14 +25,14 @@
             </div>
         </div>
         <div class="sm:grid-cols-1">
-            <x-stats :number="$supplies" icon="cube" title="Supplies" footer="Total number of supplies." animated />
+            <x-stats :number="$supplies" icon="cube" title="Supplies" footer="Total number of supplies." />
         </div>
         <div class="sm:grid-cols-1">
             <x-stats :number="$stocks" icon="hashtag" title="Stocks"
-                footer="Total number of stocks (quantity per item)." animated />
+                footer="Total number of stocks (quantity per item)." />
         </div>
         <div class="sm:grid-cols-1">
-            <x-stats :number="$requisitions" icon="document" title="Requests" footer="Total number of requests." animated />
+            <x-stats :number="$requisitions" icon="document" title="Requests" footer="Total number of requests." />
         </div>
     </div>
     <div class="w-full bg-white p-3 rounded shadow-md sm:mt-12 border">

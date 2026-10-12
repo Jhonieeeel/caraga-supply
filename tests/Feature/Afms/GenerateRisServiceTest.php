@@ -19,7 +19,7 @@ test('generated RIS document includes division, office, and designations', funct
     $unit = Unit::create(['name' => 'GASU', 'section_id' => $section->id]);
 
     $requestedBy = User::factory()->create(['designation' => 'GASU Head']);
-    Employee::create(['user_id' => $requestedBy->id, 'section_id' => $section->id, 'unit_id' => $unit->id]);
+    Employee::create(['user_id' => $requestedBy->id, 'section_id' => $section->id, 'unit_id' => $unit->id, 'division' => 'DRRMD']);
 
     $approvedBy = User::factory()->create(['designation' => 'Approving Officer']);
     $issuedBy = User::factory()->create(['designation' => 'Issuing Officer']);

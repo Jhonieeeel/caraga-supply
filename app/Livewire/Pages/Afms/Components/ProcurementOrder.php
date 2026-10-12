@@ -7,6 +7,7 @@ use App\Livewire\Forms\OrderForm;
 use App\Models\Procurement;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
+use App\Models\Supplier;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -19,7 +20,7 @@ class ProcurementOrder extends Component
 
     public OrderForm $orderForm;
 
-    public ?PurchaseRequest $purchaseRequest;
+    public ?PurchaseRequest $purchaseRequest = null;
 
     public ?string $search = '';
     public ?int $quantity = 5;
@@ -54,13 +55,47 @@ class ProcurementOrder extends Component
     }
 
     public function onSubmit(CreateOrder $createOrder) {
-        $this->orderForm->variance = $this->varianceResult;
+        $this->orderForm->validateOnly('purchase_request_id');
+
+        $this->purchaseRequest = PurchaseRequest::findOrFail($this->orderForm->purchase_request_id);
+
+        if (PurchaseOrder::where('purchase_request_id', $this->purchaseRequest->id)->exists()) {
+            $this->addError('orderForm.purchase_request_id', 'This purchase request already has a purchase order.');
+
+            return $this->dispatch('alert', [
+                'text' => 'Data Already Added to Order',
+                'color' => 'yellow',
+                'title' => 'Failed'
+            ])->to(\App\Livewire\Pages\Afms\Procurement::class);
+        }
+
+        $this->orderForm->variance = (float) $this->purchaseRequest->abc - (float) $this->orderForm->contract_price;
         $this->orderForm->po_pdf_file = $this->po_pdf_file;
         $this->orderForm->procurement_id = $this->purchaseRequest->procurement_id;
         $this->orderForm->abc_based_app = $this->purchaseRequest->procurement_id;
         $this->orderForm->abc = $this->purchaseRequest->id;
         $this->orderForm->date_posted = $this->purchaseRequest->id;
         return $this->orderForm->submit($createOrder);
+    }
+
+    public function updatedOrderFormSupplierId($value)
+    {
+        if ($supplier = Supplier::find($value)) {
+            $this->orderForm->supplier = $supplier->business_name;
+            $this->orderForm->supplier_address = $supplier->address;
+            $this->orderForm->supplier_contacts = trim($supplier->contact_person . ' / ' . $supplier->phone, ' /');
+            $this->orderForm->tin = $supplier->tin;
+        }
+    }
+
+    #[Computed()]
+    public function getSuppliers()
+    {
+        return Supplier::all(['id', 'business_name'])
+            ->map(fn($supplier) => [
+                'label' => $supplier->business_name,
+                'value' => $supplier->id,
+            ]);
     }
 
 

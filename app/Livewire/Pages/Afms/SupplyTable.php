@@ -58,24 +58,32 @@ class SupplyTable extends Component
     // crud
     // create
     public function create(CreateSupplyAction $create_supply_action) {
+        $this->authorize('manage-supply');
+
         $this->supplyForm->create($create_supply_action);
         $this->dispatch('modal:add-close');
     }
 
     // edit and update
     public function edit(Supply $supply) {
+        $this->authorize('manage-supply');
+
         $this->supply = $supply;
         $this->supplyForm->fillForm($supply);
         $this->dispatch('modal:edit-open');
     }
 
     public function update(EditSupplyAction $edit_supply_action) {
+        $this->authorize('manage-supply');
+
         $this->supplyForm->update($this->supply, $edit_supply_action);
         $this->dispatch('modal:edit-close');
     }
 
     // delete
     public function delete($id) {
+        $this->authorize('manage-supply');
+
         $supply = Supply::findOrFail($id);
         if ($supply->stocks()->exists()) {
             return session()->flash('message', [
@@ -85,8 +93,9 @@ class SupplyTable extends Component
         ]);
         }
 
-        return $supply->delete();
-            session()->flash('message', [
+        $supply->delete();
+
+        session()->flash('message', [
             'text' => 'Supply deleted successfully.',
             'color' => 'green',
             'title' => 'Success',

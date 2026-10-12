@@ -4,6 +4,7 @@ use App\Livewire\Pages\Afms\Components\RequestDetail;
 use App\Models\Requisition;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -11,6 +12,7 @@ uses(RefreshDatabase::class);
 test('received date cannot be earlier than requested date', function () {
     $user = User::factory()->create();
     $requisition = Requisition::create([
+        'uuid' => (string) Str::uuid(),
         'user_id' => $user->id,
         'completed' => false,
     ]);
@@ -27,6 +29,7 @@ test('received date cannot be earlier than requested date', function () {
 test('received date cannot be earlier than requested date even after the RIS has already been generated', function () {
     $user = User::factory()->create();
     $requisition = Requisition::create([
+        'uuid' => (string) Str::uuid(),
         'user_id' => $user->id,
         'ris' => 'RIS-2026-09-0001',
         'completed' => false,
@@ -46,6 +49,7 @@ test('received date cannot be earlier than requested date even after the RIS has
 test('received date equal to or later than requested date passes validation', function () {
     $user = User::factory()->create();
     $requisition = Requisition::create([
+        'uuid' => (string) Str::uuid(),
         'user_id' => $user->id,
         'completed' => false,
     ]);
@@ -62,6 +66,7 @@ test('received date equal to or later than requested date passes validation', fu
 test('approved date cannot be earlier than requested date', function () {
     $user = User::factory()->create();
     $requisition = Requisition::create([
+        'uuid' => (string) Str::uuid(),
         'user_id' => $user->id,
         'completed' => false,
     ]);
@@ -78,6 +83,7 @@ test('approved date cannot be earlier than requested date', function () {
 test('issued date cannot be earlier than requested date', function () {
     $user = User::factory()->create();
     $requisition = Requisition::create([
+        'uuid' => (string) Str::uuid(),
         'user_id' => $user->id,
         'completed' => false,
     ]);
@@ -94,6 +100,7 @@ test('issued date cannot be earlier than requested date', function () {
 test('approved and issued dates cannot be earlier than requested date even after the RIS has already been generated', function () {
     $user = User::factory()->create();
     $requisition = Requisition::create([
+        'uuid' => (string) Str::uuid(),
         'user_id' => $user->id,
         'ris' => 'RIS-2026-09-0002',
         'completed' => false,

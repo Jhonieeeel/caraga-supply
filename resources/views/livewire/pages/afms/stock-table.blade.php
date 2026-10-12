@@ -4,20 +4,26 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Stock
             </h2>
-            @role('Super Admin')
+            @can('manage-stock')
                 <x-button md x-on:click="$modalOpen('add')" icon="cube" position="right">Add Stock</x-button>
-            @endrole
+            @endcan
         </div>
         <div class="overflow-hidden sm:rounded-lg">
             <div class="p-6 text-gray-900">
+                @if (session('message'))
+                    <div class="sm:py-4">
+                        <x-alert title="{{ session('message')['title'] }}" text="{{ session('message')['text'] }}"
+                            color="{{ session('message')['color'] }}" light />
+                    </div>
+                @endif
                 <x-table :$headers :rows='$this->rows' filter :quantity="[2, 5, 10]" loading paginate>
-                    @role('Super Admin')
+                    @can('manage-stock')
                         @interact('column_action', $stock)
                             <x-button.circle flat color="teal" icon="pencil-square" wire:click='edit({{ $stock }})' />
                             <x-button.circle flat color="blue" icon="folder-plus"
                                 wire:click="selectStock({{ $stock }})" />
                         @endinteract
-                    @endrole
+                    @endcan
                 </x-table>
             </div>
         </div>
@@ -41,7 +47,7 @@
                         hint="Insert your quantity" />
                 </div>
                 <div class="sm:col-span-1">
-                    <x-number wire:model='stockForm.price' min="1.0" label="Price *" step="1.0"
+                    <x-number wire:model='stockForm.price' min="0" label="Price *" step="0.01"
                         hint="Insert your price" />
                 </div>
                 <div class="sm:col-span-2">
@@ -56,22 +62,26 @@
 
         <x-modal title="Edit Stock Form" id="edit-stock">
             <form wire:submit.prevent='update' class="grid sm:grid-cols-2 sm:gap-4 gap-5">
+                {{-- Supply, stock number and quantity identify / move the lot in the event
+                     stream, so they are read-only here: add quantity via the purchase order
+                     button; create a new stock for a different supply or stock number. --}}
                 <div class="sm:col-span-2">
-                    <x-select.styled wire:model='stockForm.supply_id' label="Select Supply *" :options="$this->getSupplies"
-                        searchable />
+                    <x-select.styled wire:model='stockForm.supply_id' disabled label="Supply"
+                        hint="Not editable" :options="$this->getSupplies" searchable />
                 </div>
                 <div class="sm:col-span-1">
                     <x-input wire:model='stockForm.barcode' label="Barcode *" hint="Insert your barcode" />
                 </div>
                 <div class="sm:col-span-1">
-                    <x-input wire:model='stockForm.stock_number' label="Stock Number *" hint="Insert your stock no." />
+                    <x-input wire:model='stockForm.stock_number' disabled label="Stock Number"
+                        hint="Not editable" />
                 </div>
                 <div class="sm:col-span-1">
-                    <x-number wire:model='stockForm.quantity' min="1" label="Quantity *"
-                        hint="Insert your quantity" />
+                    <x-number wire:model='stockForm.quantity' disabled label="Quantity"
+                        hint="Use Purchase Order to add quantity" />
                 </div>
                 <div class="sm:col-span-1">
-                    <x-number wire:model='stockForm.price' min="1.0" label="Price *" step="0.01"
+                    <x-number wire:model='stockForm.price' min="0" label="Price *" step="0.01"
                         hint="Insert your price" />
                 </div>
                 <div class="sm:col-span-2">
@@ -92,23 +102,23 @@
                         searchable />
                 </div>
                 <div class="sm:col-span-1">
-                    <x-input wire:model='stockForm.barcode' label="Barcode *" hint="Insert your barcode" />
+                    <x-input wire:model='stockForm.barcode' disabled label="Barcode" hint="Current barcode (not editable here)" />
                 </div>
                 <div class="sm:col-span-1">
                     <x-input wire:model='stockForm.stock_number' disabled label="Stock Number *"
                         hint="Insert your stock no." />
                 </div>
                 <div class="sm:col-span-1">
-                    <x-number wire:model='stockForm.quantity' min="1" label="Quantity *"
-                        hint="Insert your quantity" />
+                    <x-number wire:model='stockForm.quantity' min="1" label="Quantity to Add *"
+                        hint="Insert the additional quantity" />
                 </div>
                 <div class="sm:col-span-1">
-                    <x-number wire:model='stockForm.price' min="1.0" label="Price *" step="0.01"
-                        hint="Insert your price" />
+                    <x-number wire:model='stockForm.price' disabled min="0" label="Price" step="0.01"
+                        hint="Current price (not editable here)" />
                 </div>
                 <div class="sm:col-span-2">
-                    <x-input wire:model='stockForm.stock_location' label="Stock Location *"
-                        hint="Insert your stock location." />
+                    <x-input wire:model='stockForm.stock_location' disabled label="Stock Location"
+                        hint="Current location (not editable here)" />
                 </div>
                 <div class="sm:col-span-2 ms-auto flex">
                     <x-button md submit text="Submit" color="primary" />

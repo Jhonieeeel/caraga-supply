@@ -4,9 +4,9 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Supply
             </h2>
-            @role('Super Admin')
+            @can('manage-supply')
                 <x-button md x-on:click="$modalOpen('add')" icon="cube" position="right">Add Supply</x-button>
-            @endrole
+            @endcan
         </div>
         <div class="overflow-hidden sm:rounded-lg">
             <div class="p-6 text-gray-900">
@@ -20,12 +20,12 @@
                     'quantity' => 'Items',
                 ]" :filter="['quantity' => 'quantity', 'search' => 'search']" :quantity="[2, 5, 10]" paginate
                     loading>
-                    @role('Super Admin')
+                    @can('manage-supply')
                         @interact('column_action', $supply)
                             <x-button.circle color="red" flat icon="trash" wire:click="delete('{{ $supply->id }}')" />
                             <x-button.circle color="teal" flat icon="pencil-square" wire:click='edit({{ $supply }})' />
                         @endinteract
-                    @endrole
+                    @endcan
                 </x-table>
             </div>
         </div>

@@ -7,15 +7,14 @@
                 $requisition->issued_by &&
                 $requisition->received_by;
 
-            $status = auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin');
+            $status = auth()->user()->can('update', $requisition);
 
             $disableStatus = $isApproved || !$status;
 
             $isCompleted = $requisition->completed;
 
             $isOwner = auth()->user()->id === $requisition->user_id;
-            $isUser = auth()->user()->hasRole('User');
-            $isAdmin = auth()->user()->hasRole('Super Admin');
+            $isAdmin = auth()->user()->can('approve-requisition');
 
             $twoFieldsFilled = $requisition->requested_by && $requisition->received_by;
 
@@ -58,7 +57,7 @@
                             class="w-full" />
                     </div>
                     <div>
-                        @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
+                        @if (!$isApproved && auth()->user()->can('update', $requisition))
                             <x-button wire:click="generateRIS" loading="generateRIS" class="w-full sm:w-auto"
                                 md>Generate
                             </x-button>
@@ -154,7 +153,7 @@
                                         <th scope="col"
                                             class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                             Requested Quantity</th>
-                                        @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
+                                        @if (!$isApproved && auth()->user()->can('update', $requisition))
                                             <th scope="col"
                                                 class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                                 Action</th>
@@ -172,7 +171,7 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                 {{ $item->requested_qty }}
                                             </td>
-                                            @if (!$isApproved && (auth()->user()->id === $requisition->user_id || auth()->user()->hasRole('Super Admin')))
+                                            @if (!$isApproved && auth()->user()->can('update', $requisition))
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                     <x-button.circle flat
                                                         wire:click="editRequestItem({{ $item }})"
